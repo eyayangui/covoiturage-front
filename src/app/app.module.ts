@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { EventComponent } from './Modal/event/event/event.component';
 import { ClaimComponent } from './Modal/Claim/claim/claim.component';
+import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 
 
@@ -21,6 +22,7 @@ import { LoginComponent } from './login/login.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule
     FormsModule
   ],
   providers: [],
