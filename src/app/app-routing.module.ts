@@ -1,8 +1,8 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EventComponent } from './Modal/event/event/event.component';
-import { ClaimComponent } from './Modal/Claim/claim/claim.component';
-import { EventUpdateComponent } from './Modal/event/event-update/event-update.component';
+import { EventComponent } from './components/event/event/event.component';
+import { ClaimComponent } from './components/Claim/claim/claim.component';
+import { EventUpdateComponent } from './components/event/event-update/event-update.component';
 
 const routes: Routes = [
   {path: "event" , component: EventComponent},
