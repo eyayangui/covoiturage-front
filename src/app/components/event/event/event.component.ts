@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { EventService } from 'src/app/services/event.service';
-import { Event} from 'src/app/Modal/Modals/event'; 
+import { Event} from 'src/app/Models/Event'; 
 import { Router } from '@angular/router'; 
 
 
@@ -40,6 +40,16 @@ export class EventComponent implements OnInit {
     },
     error => {
       console.error('Error fetching planned events:', error);
+    }
+  );
+}
+deleteEvent(eventID: any): void {
+  this.eventService.deleteEvent(eventID).subscribe(
+    () => {
+      window.location.reload();
+    },
+    error => {
+      console.error('Error deleting event:', error);
     }
   );
 }
