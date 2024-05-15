@@ -21,7 +21,7 @@ export class EventService {
 public deleteEvent(eventID : any){
   return  this.http.delete(`http://localhost:8093/event/delete-event/${eventID}`)
 }
-public updateEvent(event : Event, eventID : any): Observable<any>{
+public updateEvent(event : any, eventID : any): Observable<any>{
   return this.http.put<any>(`${this.apiServerUrl}/update-event/${eventID}`,event )
 }
 
