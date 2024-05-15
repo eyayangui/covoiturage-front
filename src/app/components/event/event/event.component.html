@@ -1,46 +1,44 @@
 <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-            <li><a class="tag" href="#">Add Event</a></li>
-            <li><button class="tag" (click)="showPlannedEvents()">Event Planned</button></li>
-          </ol>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
+          <li><a class="tag" href="/Add-event">Add Event</a></li>
+          <li><button class="tag" (click)="showPlannedEvents()">Event Planned</button></li>
+        </ol>
+      </div>
+      <div class="card-body">
+        <div *ngIf="noEventsFound" class="alert alert-info" role="alert">
+          <span class="alert-icon"><span class="visually-hidden">Info</span></span>
+          <p>No Events Found</p>
         </div>
-        <div class="card-body">
-          <div *ngIf="noEventsFound" class="alert alert-info" role="alert">
-            <span class="alert-icon"><span class="visually-hidden">Info</span></span>
-            <p>No Events Found</p>
-          </div>
-          <div class="row">
-            <div class="col-4" *ngFor="let Event of events">
-              <div class="card mb-3" style="max-width: 480px;">
-                <div class="row g-0">
-                  <div class="col-md-4">
-                    <svg class="bd-placeholder-img img-fluid"  width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
-                      <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="var(--bs-secondary-bg)"/>
-                      <!-- Placer l'élément img ici -->
-                      <image href="assets/brand/eventt.png" width="200" height="200" class="card-img-top" alt="..."/>
-                      <svg  x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
-                      </svg>
+        <div class="row">
+          <div class="col-4" *ngFor="let event of events">
+            <div class="card mb-3" style="max-width: 480px;">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                    <title>Placeholder</title>
+                    <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
+                    <image href="assets/brand/eventt.png" width="200" height="200" class="card-img-top" alt="..." />
+                    <svg x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
                     </svg>
+                  </svg>
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ event.eventName }}</h5>
+                    <p class="card-text">Date of event: {{ event.eventDate }}</p>
+                    <p class="card-text">Location: {{ event.location }}</p>
                   </div>
-                  <div class="col-md-8">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ Event.eventName }}</h5>
-                      <p class="card-text">Date of event: {{ Event.eventDate }}</p>
-                      <p class="card-text">Location: {{ Event.location }}</p>
-                    </div>
-                    <div class="btn-group" role="group">
-                      <a href="#" class="btn btn-outline-secondary active">Annonce</a>
-                    </div>
+                  <div class="btn-group" role="group">
+                    <a href="/Annoncement" class="btn btn-outline-secondary active">Annonce</a>
                   </div>
                 </div>
-                <div class="btn-group" role="group">
-                    <a href="update-event" class="btn btn-outline-secondary">Update</a>
-                    <a href="/event" class="btn btn-outline-secondary" (click)="deleteEvent(Event.eventID)">Delete</a>
-                  </div>
+              </div>
+              <div class="btn-group" role="group">
+                <a href="/update-event"   class="btn btn-outline-secondary">Update</a>
+                <a href="/event" class="btn btn-outline-secondary" (click)="deleteEvent(event.eventID)">Delete</a>
               </div>
             </div>
           </div>
@@ -48,3 +46,4 @@
       </div>
     </div>
   </div>
+</div>

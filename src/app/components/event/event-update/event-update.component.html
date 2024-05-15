@@ -1,19 +1,26 @@
-<!-- <div class="container">
-    <h2>Update Event</h2>
-    <form (ngSubmit)="updateEvent()" #eventForm="ngForm">
-      <div class="mb-3">
-        <label for="eventName" class="form-label">Event Name</label>
-        <input type="text" class="form-control" id="eventName" name="eventName" [(ngModel)]="event.eventName" required>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
+          <li><a class="tag" href="/Add-event">Add Event</a></li>
+          <li><a href="/event" class="tag"  >Event Planned </a> </li>
+        </ol>
       </div>
-      <div class="mb-3">
-        <label for="eventDate" class="form-label">Event Date</label>
-        <input type="date" class="form-control" id="eventDate" name="eventDate" [(ngModel)]="event.eventDate" required>
-      </div>
-      <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
-        <input type="text" class="form-control" id="location" name="location" [(ngModel)]="event.location" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-  </div> -->
-  
+
+<form [formGroup]="eventUpdateform" (ngSubmit)="updateEventForm()">
+
+  <label for="eventName">Event Name:</label>
+  <input type="text" id="eventName" formControlName="eventName">
+
+  <label for="eventDate">Event Date:</label>
+  <input type="date" id="eventDate" formControlName="eventDate">
+
+
+  <label for="location">Location:</label>
+  <input type="text" id="location" formControlName="location">
+
+  <button href="/event" type="submit">Update Event</button>
+</form>
+</div>
+</div>
