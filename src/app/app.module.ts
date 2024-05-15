@@ -9,7 +9,7 @@ import { EventComponent } from './components/event/event/event.component';
 import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { HttpClientModule } from '@angular/common/http';
 import { EventUpdateComponent } from './components/event/event-update/event-update.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 
 
 
@@ -19,13 +19,13 @@ import { LoginComponent } from './login/login.component';
     NavComponent,
     EventComponent,
     ClaimComponent,
-    EventUpdateComponent
+    EventUpdateComponent,
     LoginComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
     FormsModule
   ],
   providers: [],
