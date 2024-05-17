@@ -45,6 +45,13 @@
               ],
               "outputHashing": "all"
             },
+            "architect": {
+              "serve": {
+                "options": {
+                  "proxyConfig": "src/proxy.conf.json"
+                }
+              }
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,

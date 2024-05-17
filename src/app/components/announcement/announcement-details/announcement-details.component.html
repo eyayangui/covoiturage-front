@@ -1,0 +1,24 @@
+<div class="modal" tabindex="-1" [ngClass]="{'show': showModal}" [ngStyle]="{'display': showModal ? 'block' : 'none'}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <img class="modal-img" src="assets/brand/your-image.jpg" alt="Announcement Image">
+        <div class="modal-header">
+          <h5 class="modal-title">Announcement Details</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"><span class="visually-hidden">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <p>Date of Covoiturage: {{ announcement?.dateCovoiturage }}</p>
+          <p>Nombre des places: {{ announcement?.nbrPlaces }}</p>
+          <p>Aller et Retour: {{ announcement?.aller_Retour }}</p>
+          <p>Heure de Depart: {{ announcement?.heureDepart }}</p>
+          <p>Heure de Retour: {{ announcement?.heureRetour }}</p>
+          <p>Bagage: {{ announcement?.bagage }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary">Reserver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,11 @@
+.btn-orange-border {
+    border: 3px solid rgb(255, 153, 0);
+    border-radius: 4px;
+    padding: 4px;
+    display: inline-block;
+}
+
+.annonce {
+    padding-right: 30px;
+}
+

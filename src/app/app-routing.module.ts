@@ -9,42 +9,20 @@ import { AnnouncementDriverComponent } from './components/announcement/announcem
 import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './services/auth/auth.guard';
+import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
 
 
 const routes: Routes = [
-  {path: "event" , component: EventComponent},
-  {path: "update-event" , component: EventUpdateComponent},
-  {path: "Add-event" , component: AddEventComponent},
-  {path: "Annoncement" , component: AnnouncementComponent},
-  {path: "Annoncement-Passenger" , component: AnnouncementPassengerComponent},
-  {path: "Annoncement-Driver" , component: AnnouncementDriverComponent},
-
-
-  {path: "claim" , component: ClaimComponent}
-  {
-    path: "event" ,
-    component: EventComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: "update-event" ,
-    component: EventUpdateComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: "claim" ,
-    component: ClaimComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: "login" ,
-    component: LoginComponent
-  },
-  {
-    path:"**",
-    pathMatch:"full",
-    redirectTo:"login"
-  }
+  {path: "event" , component: EventComponent,canActivate: [authGuard]},
+  {path: "update-event" , component: EventUpdateComponent, canActivate: [authGuard]},
+  {path: "add-event" , component: AddEventComponent},
+  {path: "annoncement" , component: AnnouncementComponent},
+  {path: "annoncement-passenger" , component: AnnouncementPassengerComponent},
+  {path: "annoncement-driver" , component: AnnouncementDriverComponent},
+  { path: 'announcement-details/:id', component: AnnouncementDetailsComponent },
+  {path: "claim" , component: ClaimComponent,canActivate: [authGuard]},
+  {path: "login" ,component: LoginComponent},
+  {path:"**",pathMatch:"full",redirectTo:"login"}
 
 ];
 

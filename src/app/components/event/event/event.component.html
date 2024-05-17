@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-header">
         <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-          <li><a class="tag" href="/Add-event">Add Event</a></li>
+          <li><a class="tag" href="/add-event">Add Event</a></li>
           <li><button class="tag" (click)="showPlannedEvents()">Event Planned</button></li>
         </ol>
       </div>
@@ -31,15 +31,24 @@
                     <p class="card-text">Date of event: {{ event.eventDate }}</p>
                     <p class="card-text">Location: {{ event.location }}</p>
                   </div>
-                  <div class="btn-group" role="group">
-                    <a href="/Annoncement" class="btn btn-outline-secondary active">Annonce</a>
+                  
+                  <div class="btn-group" role="group" >
+              
+                    <a href="/annoncement" class="btn btn-outline-secondary active">Annonce</a>
+                    <div class="d-flex justify-content-end" class="modify">
+                      <a href="/update-event" class="btn btn-orange-border">
+                        <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
+                      </a>
+                      <a href="/event" class="btn btn-orange-border" (click)="deleteEvent(event.eventID)">
+                        <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
+                      </a>
+                    </div>
                   </div>
+                  
                 </div>
+                
               </div>
-              <div class="btn-group" role="group">
-                <a href="/update-event"   class="btn btn-outline-secondary">Update</a>
-                <a href="/event" class="btn btn-outline-secondary" (click)="deleteEvent(event.eventID)">Delete</a>
-              </div>
+              
             </div>
           </div>
         </div>

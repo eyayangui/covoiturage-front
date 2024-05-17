@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Annonce } from 'src/app/Models/Annonce';
+import { Annonce } from 'src/app/Models/AnnonceDto';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
 
@@ -24,15 +25,16 @@ export class AnnouncementComponent implements OnInit {
       annoncements => {
         this.annoncements = annoncements;
       },
+      
       error => {
         console.error('Error fetching events:', error);
       }
     );
   }
-  deleteAnnouncement(AnnonceID: any): void {
-    this.announcementService.deleteAnnouncement(AnnonceID).subscribe(
+  deleteAnnouncement(annonceID: number): void {
+    this.announcementService.deleteAnnouncement(annonceID).subscribe(
       () => {
-        this.router.navigate(['/event']);
+        this.availableannouncement(); 
       },
       error => {
         console.error('Error deleting event:', error);
@@ -53,5 +55,26 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
+  viewDetails(annonce: Annonce): void {
+    Swal.fire({
+      title: annonce.rayon,
+      html: `
+        <p>Date de Covoiturage: ${annonce.dateCovoiturage}</p>
+        <p>Nombre des places: ${annonce.nbrPlaces}</p>
+        <p>Prix: ${annonce.prix}</p>
+        <p>Aller Retour: ${annonce.aller_Retour}</p>
+        <p>Heure de Depart: ${annonce.heureDepart}</p>
+        <p>Heure de Retour: ${annonce.heureRetour}</p>
+        <p>Bagage: ${annonce.bagage}</p>
+        <p>Départ: ${annonce.departure}</p>
+        <p>Destinaton: ${annonce.destination}</p>
+        <p>Date publication : ${annonce.datePublication}</p>
+
+
+      `,
+    
+    });
+  }
+
 
 }
