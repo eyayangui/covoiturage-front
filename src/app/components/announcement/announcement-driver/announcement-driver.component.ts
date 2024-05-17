@@ -51,7 +51,7 @@ export class AnnouncementDriverComponent implements OnInit {
       },
       buttonsStyling: false
     });
-  
+
     swalWithBootstrapButtons.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -64,7 +64,7 @@ export class AnnouncementDriverComponent implements OnInit {
       if (result.isConfirmed) {
         this.announcementDriverService.deleteAnnouncementDriver(annonceID).subscribe(
           () => {
-            this.announcementDriverDate(); 
+            this.announcementDriverDate();
             swalWithBootstrapButtons.fire(
               'Deleted!',
               'Your file has been deleted.',
@@ -104,9 +104,9 @@ export class AnnouncementDriverComponent implements OnInit {
         <p>Destination: ${annonce.destination}</p>
         <p>Date publication: ${annonce.datePublication}</p>
       `,
-      
-      buttonsStyling: true , 
+
+      buttonsStyling: true ,
     });
   }
-  
+
 }
