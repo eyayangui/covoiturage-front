@@ -20,13 +20,17 @@ export class AnnouncementPassengerService {
   public getAnnouncementPassenger(): Observable<AnnoncePassenger[]> {
     return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger`);
   }
+  public updateAnnouncementPassenger(annonce: AnnoncePassenger) : Observable<AnnoncePassenger> {
+    return this.http.put<AnnoncePassenger>(`http://localhost:8090/announcement-passenger/update-announcement-passenger/${annonce.annonceID}`, annonce);
+  }
+  
 
  public deleteAnnouncementDriver(annonceID : any){
     return  this.http.delete(`http://localhost:8090/announcement/delete-announcement/${annonceID}`)
   }
 
   public availableAnnouncementPassenger(): Observable<AnnoncePassenger[]> {
-    return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/available-announcement`);
+    return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}http://localhost:8090/announcement-passenger/available-announcement`);
   }
 
   public announcementPassengerDate(): Observable<AnnoncePassenger[]> {

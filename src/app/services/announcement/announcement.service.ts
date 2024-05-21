@@ -24,4 +24,7 @@ export class AnnouncementService {
 public availableannouncement () : Observable<Annonce[]>{
   return this.http.get<Annonce[]>(`${this.apiServerUrl}/announcement/available-announcement`);
 }
+public updateAnnouncement(annonce: Annonce) : Observable<Annonce> {
+  return this.http.put<Annonce>(`http://localhost:8090/announcement/update-announcement/${annonce.annonceID}`, annonce);
+}
 }

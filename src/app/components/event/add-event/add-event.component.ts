@@ -19,20 +19,5 @@ export class AddEventComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // public AddEvent(): void {
-  //   this.eventservice.AddEvent(this.event).subscribe(
-  //     res => {
-  //       if (res) {
-  //         console.log({severity: 'success', summary: 'Sucess', detail: 'Operation effectued'});
-  //       } else {
-  //         (error: HttpErrorResponse) => {
-  //           console.log({severity: 'error', summary: 'Error', detail: 'Operation not effectued'});
-  //           console.log(error);
-  //         }
-  //       }
-  //     },
-  //     error => console.error('Error:', error)
-  //   );
-  //   this.router.navigate(['/blog-grid']);
-  // }
+ 
 }

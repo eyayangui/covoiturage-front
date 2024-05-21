@@ -1,8 +1,8 @@
 export interface Annonce {
     AnnonceID: number;
     aller_Retour: Boolean;
-    heureDepart: Date;
-    heureRetour: Date;
+    heureDepart: string;
+    heureRetour: string;
     nbrPlaces: number;
     prix : number;
     dateCovoiturage: Date;

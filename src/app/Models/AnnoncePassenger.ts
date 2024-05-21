@@ -1,8 +1,8 @@
 export interface AnnoncePassenger {
     annonceID: number;
     aller_Retour: Boolean;
-    heureDepart: Date;
-    heureRetour: Date;
+    heureDepart: string;
+    heureRetour: string;
     nbrPlaces: number;
     dateCovoiturage: Date;
     bagage: Boolean;

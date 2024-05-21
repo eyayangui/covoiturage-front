@@ -16,8 +16,13 @@ export class AnnouncementDriverService {
   public addAnnouncementDriver(annonce: AnnouncementDriver): Observable<any> {
     return this.http.post<any>(`${this.apiServerUrl}/announcement-passenger/add-announcement-passenger`, annonce);
   }
+  public updateAnnouncementDriver(annonce: AnnouncementDriver) : Observable<AnnouncementDriver> {
+    return this.http.put<AnnouncementDriver>(`http://localhost:8090/announcement-driver/update-announcements-driver/${annonce.annonceID}`, annonce);
+  }
+ 
 
-  public getAnnouncementDriver(): Observable<AnnouncementDriver[]> {
+
+ public getAnnouncementDriver(): Observable<AnnouncementDriver[]> {
     return this.http.get<AnnouncementDriver[]>(`${this.apiServerUrl}/announcement-driver/announcements-driver`);
   }
   

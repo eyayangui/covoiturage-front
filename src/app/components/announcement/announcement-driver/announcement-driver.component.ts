@@ -3,7 +3,7 @@ import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
 import { AnnouncementDriverService } from 'src/app/services/announcement/announcement-driver.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-announcement-driver',
@@ -12,10 +12,26 @@ import Swal from 'sweetalert2';
 })
 export class AnnouncementDriverComponent implements OnInit {
   annoncements: AnnouncementDriver[] = [];
-  selectedAnnouncement: AnnouncementDriver | undefined;
-  showModal: boolean = false;
+  selectedAnnouncement: AnnouncementDriver | null = null; 
+  updateForm: FormGroup;
+  selectedRayon: string = '';
 
-  constructor(private announcementDriverService: AnnouncementDriverService, private router: Router) {}
+  constructor(private announcementDriverService: AnnouncementDriverService, private router: Router, private fb: FormBuilder) {
+    this.updateForm = this.fb.group({
+      dateCovoiturage: ['', Validators.required],
+      nbrPlaces: ['', Validators.required],
+      prix: ['', Validators.required],
+      aller_Retour: [false, Validators.required],
+      heureDepart: ['', Validators.required],
+      heureRetour: ['', Validators.required],
+      bagage: ['', Validators.required],
+      fumer: [false, Validators.required],
+      music: [false, Validators.required],
+      rayon: ['', Validators.required],
+      datePublication: ['', Validators.required],
+      routeID: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.announcementDriverDate();
@@ -64,7 +80,7 @@ export class AnnouncementDriverComponent implements OnInit {
       if (result.isConfirmed) {
         this.announcementDriverService.deleteAnnouncementDriver(annonceID).subscribe(
           () => {
-            this.announcementDriverDate();
+            this.announcementDriverDate(); 
             swalWithBootstrapButtons.fire(
               'Deleted!',
               'Your file has been deleted.',
@@ -89,6 +105,7 @@ export class AnnouncementDriverComponent implements OnInit {
       }
     });
   }
+
   viewDetails(annonce: AnnouncementDriver): void {
     Swal.fire({
       title: annonce.rayon,
@@ -100,13 +117,60 @@ export class AnnouncementDriverComponent implements OnInit {
         <p>Heure de Depart: ${annonce.heureDepart}</p>
         <p>Heure de Retour: ${annonce.heureRetour}</p>
         <p>Bagage: ${annonce.bagage}</p>
+        <p>Fumer: ${annonce.fumer}</p>
+        <p>Music: ${annonce.music}</p>
         <p>Départ: ${annonce.departure}</p>
         <p>Destination: ${annonce.destination}</p>
         <p>Date publication: ${annonce.datePublication}</p>
       `,
-
-      buttonsStyling: true ,
+      buttonsStyling: true,
+      confirmButtonColor: "buttonsStyling",
     });
   }
+
+  openUpdateModal(announcement: AnnouncementDriver): void {
+    this.selectedAnnouncement = announcement;
+    this.updateForm.patchValue({
+      dateCovoiturage: announcement.dateCovoiturage,
+      nbrPlaces: announcement.nbrPlaces,
+      prix: announcement.prix,
+      aller_Retour: announcement.aller_Retour,
+      heureDepart: announcement.heureDepart,
+      heureRetour: announcement.heureRetour,
+      bagage: announcement.bagage,
+      music: announcement.music,
+      fumer: announcement.fumer,
+      rayon: announcement.rayon,
+      datePublication: announcement.datePublication,
+      routeID: announcement.routeID,
+    });
+    this.selectedRayon = announcement.rayon;  
+  }
+
+  selectRayon(rayon: string): void {
+    this.selectedRayon = rayon;
+    this.updateForm.get('rayon')?.setValue(rayon);
+  }
+
+  onSubmit(): void {
+    if (this.updateForm.valid && this.selectedAnnouncement) {
+      const updatedAnnouncement: AnnouncementDriver = {
+        ...this.selectedAnnouncement,
+        ...this.updateForm.value
+      };
+
+      this.announcementDriverService.updateAnnouncementDriver(updatedAnnouncement).subscribe(
+        () => {
+          Swal.fire('Success', 'Announcement updated successfully!', 'success');
+          this.announcementDriverDate();
+        },
+        error => {
+          console.error('Error updating announcement:', error);
+          Swal.fire('Error', 'Failed to update announcement!', 'error');
+        }
+      );
+    }
+  }
+
 
 }

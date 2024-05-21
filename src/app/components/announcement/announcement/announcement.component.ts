@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-announcement',
@@ -12,10 +13,25 @@ import { AnnouncementService } from 'src/app/services/announcement/announcement.
 })
 export class AnnouncementComponent implements OnInit {
   annoncements : Annonce[] = [];
+  selectedAnnouncement: Annonce | null = null; 
+  updateForm: FormGroup;
+  selectedRayon: string = '';
   
 
-  constructor(private announcementService: AnnouncementService, private router: Router) { }
-
+  constructor(private announcementService: AnnouncementService,  private router: Router, private fb: FormBuilder) {
+    this.updateForm = this.fb.group({
+      dateCovoiturage: ['', Validators.required],
+      nbrPlaces: ['', Validators.required],
+      prix: ['', Validators.required],
+      aller_Retour: [false, Validators.required],
+      heureDepart: ['', Validators.required],
+      heureRetour: ['', Validators.required],
+      bagage: ['', Validators.required],
+      rayon: ['', Validators.required],
+      datePublication: ['', Validators.required],
+      routeID: ['', Validators.required]
+    });
+  }
   ngOnInit(): void {
     this.availableannouncement();
   }
@@ -74,6 +90,47 @@ export class AnnouncementComponent implements OnInit {
       `,
     
     });
+  }
+  openUpdateModal(announcement: Annonce): void {
+    this.selectedAnnouncement = announcement;
+    this.updateForm.patchValue({
+      dateCovoiturage: announcement.dateCovoiturage,
+      nbrPlaces: announcement.nbrPlaces,
+      prix: announcement.prix,
+      aller_Retour: announcement.aller_Retour,
+      heureDepart: announcement.heureDepart,
+      heureRetour: announcement.heureRetour,
+      bagage: announcement.bagage,
+      rayon: announcement.rayon,
+      datePublication: announcement.datePublication,
+      routeID: announcement.routeID,
+    });
+    this.selectedRayon = announcement.rayon;  
+  }
+
+  selectRayon(rayon: string): void {
+    this.selectedRayon = rayon;
+    this.updateForm.get('rayon')?.setValue(rayon);
+  }
+
+  onSubmit(): void {
+    if (this.updateForm.valid && this.selectedAnnouncement) {
+      const updatedAnnouncement: Annonce = {
+        ...this.selectedAnnouncement,
+        ...this.updateForm.value
+      };
+
+      this.announcementService.updateAnnouncement(updatedAnnouncement).subscribe(
+        () => {
+          Swal.fire('Success', 'Announcement updated successfully!', 'success');
+          this.availableannouncement();
+        },
+        error => {
+          console.error('Error updating announcement:', error);
+          Swal.fire('Error', 'Failed to update announcement!', 'error');
+        }
+      );
+    }
   }
 
 

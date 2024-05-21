@@ -37,9 +37,9 @@
                   </div>
                 </div>
                 <div class="d-flex justify-content-end" >
-                  <a href="/update-event" class="btn ">
+                  <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
                     <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
-                  </a>
+                  </button>
                   <a  href="/annoncement" class="btn " (click)="deleteAnnouncement(annoncement.annonceID)">
                     <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
                   </a>
@@ -48,6 +48,90 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modifier votre annonce</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="rayon" class="form-label">Rayon</label>
+              <div class="dropdown">
+                <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ selectedRayon || 'Sélectionnez le rayon' }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                  <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">GrandTUNIS</a></li>
+                  <li><a class="dropdown-item"  (click)="selectRayon('SFAX')">SFAX</a></li>
+                  <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">TouteLaTunisie</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            
+            <div class="mb-3">
+              <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
+              <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+            </div>
+            <div class="mb-3">
+                <label for="heureDepart" class="form-label">Heure de Depart</label>
+                <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+              </div>
+              <div class="mb-3">
+                <label for="heureRetour" class="form-label">Heure de Retour</label>
+                <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
+              </div>
+            <div class="mb-3">
+              <label for="nbrPlaces" class="form-label">Nombre de places</label>
+              <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+            </div>
+            <div class="mb-3">
+                <label for="prix" class="form-label">Prix</label>
+                <input type="number" class="form-control" id="prix" formControlName="prix">
+              </div>
+              <div class="mb-3">
+                <label for="allerRetour" class="form-label">Aller Retour</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
+                    <label class="form-check-label" for="allerRetourOui">Oui</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
+                    <label class="form-check-label" for="allerRetourNon">Non</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="bagage" class="form-label">Bagage</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="bagageOui" formControlName="bagage" [value]="true">
+                    <label class="form-check-label" for="bagageOui">Oui</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="bagageNon" formControlName="bagage" [value]="false">
+                    <label class="form-check-label" for="bagageNon">Non</label>
+                  </div>
+                </div>
+              </div>
+                          
+           
+                       
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
