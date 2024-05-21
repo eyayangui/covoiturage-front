@@ -10,6 +10,7 @@ import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { HttpClientModule } from '@angular/common/http';
 import { EventUpdateComponent } from './components/event/event-update/event-update.component';
 import { LoginComponent } from './components/login/login.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 
@@ -26,7 +27,8 @@ import { LoginComponent } from './components/login/login.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
