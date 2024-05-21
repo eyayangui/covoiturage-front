@@ -18,19 +18,19 @@ export class EventService {
   public getEvent(): Observable<EventModel[]> {
     return this.http.get<EventModel[]>(`${this.apiServerUrl}/event/all-events`);
   }
-public deleteEvent(eventID : any){
-  return  this.http.delete(`http://localhost:8093/event/delete-event/${eventID}`)
-}
-public updateEvent(event : Event, eventID : any): Observable<any>{
-  return this.http.put<any>(`${this.apiServerUrl}/update-event/${eventID}`,event )
-}
+  public deleteEvent(eventID : any){
+    return  this.http.delete(`http://localhost:8093/event/delete-event/${eventID}`)
+  }
+  public updateEvent(event : Event, eventID : any): Observable<any>{
+    return this.http.put<any>(`${this.apiServerUrl}/update-event/${eventID}`,event )
+  }
 
-public eventPlanned () : Observable<EventModel[]>{
-  return this.http.get<EventModel[]>(`${this.apiServerUrl}/event/event-planned`);
-}
-public eventById ( eventID : any): Observable<any>{
-  return this.http.get<any>(`${this.apiServerUrl}/event/${eventID}` )
-}
+  public eventPlanned () : Observable<EventModel[]>{
+    return this.http.get<EventModel[]>(`${this.apiServerUrl}/event/event-planned`);
+  }
+  public eventById ( eventID : any): Observable<any>{
+    return this.http.get<any>(`${this.apiServerUrl}/event/${eventID}` )
+  }
 
 
 }
