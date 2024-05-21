@@ -18,6 +18,7 @@ export class EventService {
   public getEvent(): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.apiServerUrl}/event/all-events`);
   }
+
 public deleteEvent(eventID : any){
   return  this.http.delete(`http://localhost:8093/event/delete-event/${eventID}`)
 }
