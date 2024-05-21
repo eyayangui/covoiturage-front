@@ -1,0 +1,139 @@
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
+            <li><a class="tag" href="/add-event">Add Annoncement</a></li>
+            <li>
+              <button class="btn" (click)="getAnnouncement()">
+                <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
+              </button>
+            </li>
+          </ol>
+          
+        </div>
+        <div class="card-body">
+         
+          <div class="row">
+            <div class="col-4" *ngFor="let annoncement of annoncements">
+              <div class="card mb-3" style="max-width: 480px;">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                      <title>Placeholder</title>
+                      <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
+                      <image href="assets/brand/covoi.jpg" width="200" height="200" class="card-img-top" alt="..." />
+                    </svg>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ annoncement.rayon }}</h5>
+                      <p class="card-text">Date of Covoiturage: {{ annoncement.dateCovoiturage }}</p>
+                      <p class="card-text">Nombre des places: {{ annoncement.nbrPlaces }}</p>
+                      <p class="card-text">Prix: {{ annoncement.prix }}</p>
+                      <a href="/annoncement" class="btn btn-success">Reserver</a>
+                      <button class="btn btn-primary" (click)="viewDetails(annoncement)">Details</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end" >
+                  <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
+                    <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
+                  </button>
+                  <a  href="/annoncement" class="btn " (click)="deleteAnnouncement(annoncement.annonceID)">
+                    <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
+                  </a>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modifier votre annonce</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="rayon" class="form-label">Rayon</label>
+              <div class="dropdown">
+                <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ selectedRayon || 'Sélectionnez le rayon' }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                  <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">GrandTUNIS</a></li>
+                  <li><a class="dropdown-item"  (click)="selectRayon('SFAX')">SFAX</a></li>
+                  <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">TouteLaTunisie</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            
+            <div class="mb-3">
+              <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
+              <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+            </div>
+            <div class="mb-3">
+                <label for="heureDepart" class="form-label">Heure de Depart</label>
+                <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+              </div>
+              <div class="mb-3">
+                <label for="heureRetour" class="form-label">Heure de Retour</label>
+                <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
+              </div>
+            <div class="mb-3">
+              <label for="nbrPlaces" class="form-label">Nombre de places</label>
+              <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+            </div>
+            <div class="mb-3">
+                <label for="prix" class="form-label">Prix</label>
+                <input type="number" class="form-control" id="prix" formControlName="prix">
+              </div>
+              <div class="mb-3">
+                <label for="allerRetour" class="form-label">Aller Retour</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
+                    <label class="form-check-label" for="allerRetourOui">Oui</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
+                    <label class="form-check-label" for="allerRetourNon">Non</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="bagage" class="form-label">Bagage</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="bagageOui" formControlName="bagage" [value]="true">
+                    <label class="form-check-label" for="bagageOui">Oui</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="bagageNon" formControlName="bagage" [value]="false">
+                    <label class="form-check-label" for="bagageNon">Non</label>
+                  </div>
+                </div>
+              </div>
+                          
+           
+                       
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
