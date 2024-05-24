@@ -10,6 +10,8 @@ export interface AnnoncePassenger {
     rayon : string
     routeID : number;
     telephone: number;
+    
 
 }
+
 

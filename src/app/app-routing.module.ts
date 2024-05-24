@@ -18,7 +18,7 @@ const routes: Routes = [
   {path: "add-event" , component: AddEventComponent},
   {path: "annoncement" , component: AnnouncementComponent},
   {path: "annoncement-passenger" , component: AnnouncementPassengerComponent},
-  {path: "annoncement-driver" , component: AnnouncementDriverComponent},
+  {path: "annoncement-driver" , component: AnnouncementDriverComponent, canActivate: [authGuard]},
   { path: 'announcement-details/:id', component: AnnouncementDetailsComponent },
   {path: "claim" , component: ClaimComponent,canActivate: [authGuard]},
   {path: "login" ,component: LoginComponent},

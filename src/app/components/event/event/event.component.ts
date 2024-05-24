@@ -20,20 +20,31 @@ export class EventComponent implements OnInit {
   isupdated = false;
   updateForm: FormGroup;
   selectedEvent: Event | null = null; 
+  addForm: FormGroup;
 
 
-  constructor(private eventService: EventService, private router: Router,private fb: FormBuilder) {  this.updateForm = this.fb.group({
-    eventName: [''],
-    eventDate: [''],
-    datePublication: [''],
-    location: [''],
-    heure:['']
+
+  constructor(private eventService: EventService, private router: Router,private fb: FormBuilder) { 
+    
+      this.addForm = this.fb.group({
+        eventName: ['', Validators.required],
+        eventDate: ['', Validators.required],
+        datePublication:['', Validators.required],
+        location: ['', Validators.required],
+        heure:['', Validators.required],
+      }); 
+      this.updateForm = this.fb.group({
+    eventName: ['', Validators.required],
+    eventDate: ['', Validators.required],
+    datePublication: ['', Validators.required],
+    location:['', Validators.required],
+    heure:['', Validators.required],
 
   });
 }
 
   ngOnInit(): void {
-    this.getEvents();
+    this.showPlannedEvents();
   }
 
   getEvents(): void {
@@ -74,6 +85,14 @@ export class EventComponent implements OnInit {
       }
     );
   }
+  getRemainingDays(eventDate: Date): number {
+    const currentDate = new Date();
+    const covoiturageDate = new Date(eventDate);
+    const differenceInTime = covoiturageDate.getTime() - currentDate.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+    return differenceInDays;
+  }
+
   openUpdateModal(event: any): void {
     this.selectedEvent = event;
     this.updateForm.patchValue({
@@ -104,4 +123,22 @@ export class EventComponent implements OnInit {
       );
     }
   }
+  onAddSubmit(): void {
+    
+    const newevent: Event = this.addForm.value;
+    this.eventService.AddEvent(newevent).subscribe(
+      (response: Event) => {
+        Swal.fire('Success', 'event added successfully!', 'success');
+        
+        this.showPlannedEvents();
+        this.addForm.reset();
+      },
+    
+      (error: any) => {
+        console.error('Error adding event:', error);
+        Swal.fire('Error', 'Failed to add event!', 'error');
+      }
+    );
+  
+}
 }

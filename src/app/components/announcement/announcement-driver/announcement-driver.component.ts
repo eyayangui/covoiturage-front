@@ -4,6 +4,14 @@ import { AnnouncementDriverService } from 'src/app/services/announcement/announc
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ClaimService } from 'src/app/services/Claim/claim.service';
+import { formatDate } from '@angular/common';
+import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
+import { forkJoin } from 'rxjs';
+
+
 
 @Component({
   selector: 'app-announcement-driver',
@@ -12,30 +20,67 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class AnnouncementDriverComponent implements OnInit {
   annoncements: AnnouncementDriver[] = [];
+  searchDate: string | undefined;
+
   selectedAnnouncement: AnnouncementDriver | null = null; 
   updateForm: FormGroup;
   selectedRayon: string = '';
+  addForm: FormGroup;
+  claimForm: FormGroup;
+  selectedAnnonceID: number | null = null;
+  userFirstName: string | undefined;
 
-  constructor(private announcementDriverService: AnnouncementDriverService, private router: Router, private fb: FormBuilder) {
-    this.updateForm = this.fb.group({
+
+  
+
+
+  constructor(private announcementDriverService: AnnouncementDriverService, 
+    private router: Router, private fb: FormBuilder,
+    
+    private claimService: ClaimService , 
+   
+
+  ) {
+    this.addForm = this.fb.group({
+      rayon: ['', Validators.required],
       dateCovoiturage: ['', Validators.required],
       nbrPlaces: ['', Validators.required],
       prix: ['', Validators.required],
       aller_Retour: [false, Validators.required],
       heureDepart: ['', Validators.required],
-      heureRetour: ['', Validators.required],
-      bagage: ['', Validators.required],
-      fumer: [false, Validators.required],
-      music: [false, Validators.required],
-      rayon: ['', Validators.required],
-      datePublication: ['', Validators.required],
+      heureRetour: [],
+      bagage: [false],
+      fumer: [false],
+      music: [false],
+      datePublication: [],
       routeID: ['', Validators.required]
     });
+    this.updateForm = this.fb.group({
+      rayon: ['', Validators.required],
+      dateCovoiturage: ['', Validators.required],
+      nbrPlaces: ['', Validators.required],
+      prix: ['', Validators.required],
+      aller_Retour: [false, Validators.required],
+      heureDepart: ['', Validators.required],
+      heureRetour: [],
+      bagage: [false],
+      fumer: [false],
+      music: [false],
+      datePublication: [],
+      routeID: []
+    });
+    this.claimForm = this.fb.group({
+      titre: ['', Validators.required],
+      description: ['', Validators.required],
+      type: ['', Validators.required]
+    });
   }
+  
 
   ngOnInit(): void {
     this.announcementDriverDate();
   }
+  
 
   announcementDriverDate(): void {
     this.announcementDriverService.announcementDriverDate().subscribe(
@@ -43,10 +88,28 @@ export class AnnouncementDriverComponent implements OnInit {
         this.annoncements = annoncements;
       },
       error => {
-        console.error('Error fetching planned events:', error);
+        console.error('Error fetching planned annoncement:', error);
       }
     );
   }
+
+
+  formatDateOnly(dateString: Date): string {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+     return new Date(dateString).toLocaleDateString(undefined, options);}
+
+     convertBooleanToYesNo(value: Boolean): string {
+      return value ? 'Oui' : 'Non';
+    }
+
+    getRemainingDays(dateCovoiturage: Date): number {
+      const currentDate = new Date();
+      const covoiturageDate = new Date(dateCovoiturage);
+      const differenceInTime = covoiturageDate.getTime() - currentDate.getTime();
+      const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+      return differenceInDays;
+    }
+  
 
   getAnnouncementDriver(): void {
     this.announcementDriverService.getAnnouncementDriver().subscribe(
@@ -54,83 +117,48 @@ export class AnnouncementDriverComponent implements OnInit {
         this.annoncements = annoncements;
       },
       error => {
-        console.error('Error fetching events:', error);
+        console.error('Error fetching annoncement:', error);
       }
     );
   }
 
   deleteAnnouncementDriver(annonceID: number): void {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger'
+    this.announcementDriverService.deleteAnnouncementDriver(annonceID).subscribe(
+      () => {
+        this.router.navigate(['/annoncement-driver']);
       },
-      buttonsStyling: false
-    });
-
-    swalWithBootstrapButtons.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.announcementDriverService.deleteAnnouncementDriver(annonceID).subscribe(
-          () => {
-            this.announcementDriverDate(); 
-            swalWithBootstrapButtons.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            );
-          },
-          error => {
-            console.error('Error deleting event:', error);
-            swalWithBootstrapButtons.fire(
-              'Error!',
-              'An error occurred while deleting the announcement.',
-              'error'
-            );
-          }
-        );
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire(
-          'Cancelled',
-          'Your announcement is safe :)',
-          'error'
-        );
+      error => {
+        console.error('Error deleting annoncement:', error);
       }
-    });
+    );
   }
-
   viewDetails(annonce: AnnouncementDriver): void {
     Swal.fire({
       title: annonce.rayon,
+      color: '#000',
       html: `
-        <p>Date de Covoiturage: ${annonce.dateCovoiturage}</p>
-        <p>Nombre des places: ${annonce.nbrPlaces}</p>
-        <p>Prix: ${annonce.prix}</p>
-        <p>Aller Retour: ${annonce.aller_Retour}</p>
-        <p>Heure de Depart: ${annonce.heureDepart}</p>
-        <p>Heure de Retour: ${annonce.heureRetour}</p>
-        <p>Bagage: ${annonce.bagage}</p>
-        <p>Fumer: ${annonce.fumer}</p>
-        <p>Music: ${annonce.music}</p>
-        <p>Départ: ${annonce.departure}</p>
-        <p>Destination: ${annonce.destination}</p>
-        <p>Date publication: ${annonce.datePublication}</p>
+        <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
+        <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
+        <p>Prix: <strong>${annonce.prix} DT</strong></p>
+        <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
+        <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
+        ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
+        <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
+        <p>Fumer:<strong> ${this.convertBooleanToYesNo(annonce.fumer)}</strong></p>
+        <p>Music:<strong> ${this.convertBooleanToYesNo(annonce.music)}</strong></p>
+        <p>Départ:<strong> ${annonce.departure}</strong></p>
+        <p>Destination:<strong> ${annonce.destination}</strong></p> 
+        <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
       `,
-      buttonsStyling: true,
-      confirmButtonColor: "buttonsStyling",
+      confirmButtonColor: '#ff7900',
     });
   }
+  
 
   openUpdateModal(announcement: AnnouncementDriver): void {
     this.selectedAnnouncement = announcement;
     this.updateForm.patchValue({
+      rayon: announcement.rayon,
       dateCovoiturage: announcement.dateCovoiturage,
       nbrPlaces: announcement.nbrPlaces,
       prix: announcement.prix,
@@ -140,17 +168,22 @@ export class AnnouncementDriverComponent implements OnInit {
       bagage: announcement.bagage,
       music: announcement.music,
       fumer: announcement.fumer,
-      rayon: announcement.rayon,
       datePublication: announcement.datePublication,
       routeID: announcement.routeID,
     });
-    this.selectedRayon = announcement.rayon;  
+    this.selectedRayon = announcement.rayon;
   }
 
   selectRayon(rayon: string): void {
     this.selectedRayon = rayon;
     this.updateForm.get('rayon')?.setValue(rayon);
   }
+
+  selectRayonAdd(rayon: string): void {
+    this.selectedRayon = rayon;
+    this.addForm.get('rayon')?.setValue(rayon);
+  }
+
 
   onSubmit(): void {
     if (this.updateForm.valid && this.selectedAnnouncement) {
@@ -171,6 +204,84 @@ export class AnnouncementDriverComponent implements OnInit {
       );
     }
   }
-
-
+  onAddSubmit(): void {
+    
+    const newAnnouncement: AnnouncementDriver = this.addForm.value;
+    this.announcementDriverService.addAnnouncementDriver(newAnnouncement).subscribe(
+      (response: AnnouncementDriver) => {
+        Swal.fire('Success', 'Announcement added successfully!', 'success');
+        
+        this.announcementDriverDate();
+        this.addForm.reset();
+      },
+    
+      (error: any) => {
+        console.error('Error adding announcement:', error);
+        Swal.fire('Error', 'Failed to add announcement!', 'error');
+      },
+      
+    );
+    
+  
 }
+openClaimModal(annonceID: number): void {
+  this.selectedAnnonceID = annonceID;
+  this.claimForm.reset();
+}
+
+onClaimSubmit(): void {
+  if (this.claimForm.valid && this.selectedAnnonceID !== null) {
+    const claimData = {
+      ...this.claimForm.value,
+      annonceID: this.selectedAnnonceID
+    };
+    this.claimService.AddClaim(claimData).subscribe(
+      response => {
+        Swal.fire('Success', 'Claim added successfully!', 'success');
+        // Reset form and close modal
+        this.claimForm.reset();
+        const offcanvasElement = document.getElementById('offcanvasBottom');
+
+        
+      },
+      error => {
+        console.error('Error adding claim:', error);
+        Swal.fire('Error', 'Failed to add claim!', 'error');
+      }
+    );
+  }
+}
+
+filterAnnouncements(rayon: string): void {
+  this.selectedRayon = rayon;
+  this.announcementDriverService.getAnnouncementDriverByRayon(rayon).subscribe(
+    annonces => {
+      if (Array.isArray(annonces)) {
+        this.annoncements = annonces.filter(annonce => 
+          new Date(annonce.dateCovoiturage) > new Date()
+        ); 
+      } else {
+        this.annoncements = [annonces].filter(annonce => 
+          new Date(annonce.dateCovoiturage) > new Date()
+        );
+      }
+    },
+    error => {
+      console.error('Error fetching announcements by rayon:', error);
+    }
+  );
+}
+
+searchByDate(): void {
+  if (this.searchDate) {
+    const selectedDate = new Date(this.searchDate);
+    this.annoncements = this.annoncements.filter(annonce =>
+      new Date(annonce.dateCovoiturage).toDateString() === selectedDate.toDateString()
+    );
+  }
+}
+}
+
+
+
+
