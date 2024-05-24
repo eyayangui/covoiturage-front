@@ -1,3 +1,4 @@
+
     export interface AnnouncementDriver {
         annonceID: number;
         aller_Retour: Boolean;
@@ -7,9 +8,8 @@
         dateCovoiturage: Date;
         bagage: Boolean;
         datePublication: Date;
-        rayon : string
+        rayon : string;
         routeID : number;
-        telephone: number;
         music: Boolean;
         fumer: Boolean; 
         departure: string;

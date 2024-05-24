@@ -16,8 +16,6 @@ import { AnnouncementDriverComponent } from './components/announcement/announcem
 import { AnnouncementPassengerComponent } from './components/announcement/announcement-passenger/announcement-passenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
 
 
 
@@ -44,8 +42,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule
-    FontAwesomeModule
-  ],
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

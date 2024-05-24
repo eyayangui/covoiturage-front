@@ -86,9 +86,9 @@ export class AnnouncementComponent implements OnInit {
         <p>Destinaton: ${annonce.destination}</p>
         <p>Date publication : ${annonce.datePublication}</p>
 
-
+        ff7900
       `,
-    
+    confirmButtonColor: '#ff7900',
     });
   }
   openUpdateModal(announcement: Annonce): void {
