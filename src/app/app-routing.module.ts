@@ -10,6 +10,7 @@ import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './services/auth/auth.guard';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
+import { RouteComponent } from './components/route/route.component';
 
 
 const routes: Routes = [
@@ -21,6 +22,8 @@ const routes: Routes = [
   {path: "annoncement-driver" , component: AnnouncementDriverComponent, canActivate: [authGuard]},
   { path: 'announcement-details/:id', component: AnnouncementDetailsComponent },
   {path: "claim" , component: ClaimComponent,canActivate: [authGuard]},
+  {path: "route" , component: RouteComponent,canActivate: [authGuard]},
+
   {path: "login" ,component: LoginComponent},
   {path:"**",pathMatch:"full",redirectTo:"login"}
 

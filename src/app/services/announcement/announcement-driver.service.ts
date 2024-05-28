@@ -41,10 +41,7 @@ export class AnnouncementDriverService {
     return this.http.get<AnnouncementDriver[]>(`${this.apiServerUrl}/announcement-driver/announcement-driver-date`);
   }
   getAnnouncementDriverByRayon(rayon: string): Observable<AnnouncementDriver> {
-    return this.http.get<AnnouncementDriver>(`${this.apiServerUrl}/announcement/announcement-by-rayon/${rayon}`);
+    return this.http.get<AnnouncementDriver>(`${this.apiServerUrl}/announcement-driver/announcement-driver-by-rayon/${rayon}`);
     
-
-
-
   }
 }

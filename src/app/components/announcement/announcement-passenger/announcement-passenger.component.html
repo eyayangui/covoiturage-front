@@ -13,17 +13,36 @@
               </button>
             </li>          
           </ol>
+          <div class="row">
+            
+            <div class="col-md-6 mb-3 d-flex align-items-end">
+              <div class="dropdown-container d-flex justify-content-start">
+                <button class="tag btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ selectedRayon || 'Select Rayon' }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('GrandTUNIS')">Grand Tunis</a></li>
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('SFAX')">Sfax</a></li>
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('TouteLaTunisie')">Toute la Tunisie</a></li>
+                </ul>
+              </div>
+              <div style="margin-right: 2%;"></div>
+              <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" style="width: 30%;">
+              <button class="btn" (click)="searchByDate()" title="cherche"><img src="assets/brand/search.png" alt="search" style="width: 24px; height: 24px;"></button>
+            </div>
+            
+          </div>
         </div>
         <div class="card-body ">
          
           <div class="row ">
             <div class="col-4" *ngFor="let annoncement of annoncements">
               <div class="content mb-3 rounded " style="max-width: 480px;">
-                <div class="row g-0 ">
+                <div class="row g-0 orange-border rounded-top">
                   <div class="d-flex justify-content-end">
-                    <button class="btn" (click)="viewDetails(annoncement)" title="Details">
+                    <button class="btn " (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">
                       <img src="assets/brand/infos.png" alt="Details" style="width: 30px; height: 30px;">
-                    </button>
+                  </button>
                   </div>
                  <div class="col-md-4 ">
                     <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -36,14 +55,26 @@
                   </div> 
                   <div class="col-md-8">
                     <div class="card-body ">
-                      <h5 class="card-title">{{ annoncement.rayon }}</h5>
+                      <h5 class="card-title text-primary">{{ annoncement.rayon }}</h5>
+                      <hr>
                       <p class="card-text">Date of Covoiturage: <strong>{{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong></p>
                       <p class="card-text">Nombre des places:<strong> {{ annoncement.nbrPlaces }}</strong></p>
-                      <p class="card-text">Telephone: <strong>{{ annoncement.telephone }}</strong></p>
+                      
+                      <p class="card-text">Départ:<strong> {{ annoncement.departure }}</strong></p>
+                      <p class="card-text">Destination:<strong> {{ annoncement.destination }}</strong></p>
                       <p class="card-text" *ngIf="getRemainingDays(annoncement.dateCovoiturage) >= 0">
                         Il reste : <strong>{{ getRemainingDays(annoncement.dateCovoiturage) }} jours</strong>
                       </p>
-
+                      <hr>
+                      <button class="btn" (click)="viewPhone(annoncement)" title="Numero" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">
+                        <img src="assets/brand/phone.png" alt="telephone" style="width: 30px; height: 30px;">
+                      </button>
+                      <button class="btn" (click)="confirmAndUpdateSeats(annoncement)" title="Confimer" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">
+                        <img src="assets/brand/confirme.png" alt="confirme" style="width: 30px; height: 30px;">
+                      </button>
+                      <button class="btn" title="Route" (click)="showRouteDetails(annoncement.routeID)">
+                        <img src="assets/brand/map.png" alt="route" style="width: 40px; height: 40px;">
+                      </button>
                     </div>
                     <!-- <div class="btn-group" role="group">
                       <a href="/Annoncement" class="btn btn-outline-secondary active">Annonce</a>
@@ -52,7 +83,7 @@
                 </div>
                 
               
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end orange-border rounded-bottom">
                   
                   <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)" title="Modifier">
                     <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">

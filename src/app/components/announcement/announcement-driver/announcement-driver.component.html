@@ -41,7 +41,7 @@
               <div class="content mb-3 rounded" style="max-width: 480px;">
                 <div class="row g-0 orange-border rounded-top">
                   <div class="d-flex justify-content-end">
-                    <button class="btn " (click)="viewDetails(annoncement)" title="Details">
+                    <button class="btn " (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">
                       <img src="assets/brand/infos.png" alt="Details" style="width: 30px; height: 30px;">
                   </button>
                   </div>
@@ -57,18 +57,22 @@
                   
                   <div class="col-md-8">
                     <div class="card-body">
-                      <h5 class="card-title">{{ annoncement.rayon }}</h5>
-                      <p class="card-text">Date of Covoiturage: <strong>{{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong></p>
+                      <h5 class="card-title text-primary">{{ annoncement.rayon }} </h5>
+                      <hr>
+                      <p class="card-text">Date de covoiturage: <strong>{{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong></p>
                       <p class="card-text">Nombre des places: <strong>{{ annoncement.nbrPlaces }}</strong></p>
                       <p class="card-text">Prix: <strong>{{ annoncement.prix }} DT</strong></p>
                       <p class="card-text">Départ: <strong>{{ annoncement.departure }} </strong></p>
-                      <p class="card-text">Destination: <strong>{{ annoncement.destination }} </strong></p>
 
                       <p class="card-text" *ngIf="getRemainingDays(annoncement.dateCovoiturage) >= 0">
                         Il reste : <strong>{{ getRemainingDays(annoncement.dateCovoiturage) }} jours</strong>
                       </p>
+                      <hr>
                       <a href="/annoncement" class="btn btn-success" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">Reserver</a>
-                     
+
+                      <button class="btn" title="Route" (click)="showRouteDetails(annoncement.routeID)">
+                        <img src="assets/brand/map.png" alt="route" style="width: 40px; height: 40px;">
+                      </button>
                     </div> 
                   </div>
                 </div>

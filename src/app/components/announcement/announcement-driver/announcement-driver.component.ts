@@ -10,6 +10,8 @@ import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { forkJoin } from 'rxjs';
+import { RouteP } from 'src/app/Models/RouteP';
+import { RouteService } from 'src/app/services/Route/route.service';
 
 
 
@@ -36,7 +38,8 @@ export class AnnouncementDriverComponent implements OnInit {
 
   constructor(private announcementDriverService: AnnouncementDriverService, 
     private router: Router, private fb: FormBuilder,
-    
+    private routeService: RouteService, 
+
     private claimService: ClaimService , 
    
 
@@ -132,29 +135,45 @@ export class AnnouncementDriverComponent implements OnInit {
       }
     );
   }
-  viewDetails(annonce: AnnouncementDriver): void {
-    Swal.fire({
-      title: annonce.rayon,
-      color: '#000',
-      html: `
-        <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
-        <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
-        <p>Prix: <strong>${annonce.prix} DT</strong></p>
-        <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
-        <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
-        ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
-        <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
-        <p>Fumer:<strong> ${this.convertBooleanToYesNo(annonce.fumer)}</strong></p>
-        <p>Music:<strong> ${this.convertBooleanToYesNo(annonce.music)}</strong></p>
-        <p>Départ:<strong> ${annonce.departure}</strong></p>
-        <p>Destination:<strong> ${annonce.destination}</strong></p> 
-        <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
-      `,
-      confirmButtonColor: '#ff7900',
-    });
-  }
+  viewDetails(annonce: AnnouncementDriver, routeID: number): void {
+    this.routeService.routeById(routeID).subscribe(
+      (route: RouteP) => {
+        const assemblyPointsHtml = route.assemblyPoints.length > 0
+          ? `<p><strong>Point de rassemblement:</strong></p>
+             <ul>
+               ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
+             </ul>`
+          : '';
   
-
+        Swal.fire({
+          title: annonce.rayon,
+          color: '#000',
+          html: `
+            <hr>
+            <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
+            <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
+            <p>Prix: <strong>${annonce.prix} DT</strong></p>
+            <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
+            <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
+            ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
+            <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
+            <p>Fumer:<strong> ${this.convertBooleanToYesNo(annonce.fumer)}</strong></p>
+            <p>Music:<strong> ${this.convertBooleanToYesNo(annonce.music)}</strong></p>
+            <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
+            <hr>
+            <p><strong>Départ:</strong> ${route.departure}</p>
+            <p><strong>Destination:</strong> ${route.destination}</p>
+            ${assemblyPointsHtml}
+          `,
+          confirmButtonColor: '#ff7900',
+        });
+      },
+      error => {
+        console.error('Error fetching route details:', error);
+        Swal.fire('Error', 'Failed to fetch route details!', 'error');
+      }
+    );
+  }
   openUpdateModal(announcement: AnnouncementDriver): void {
     this.selectedAnnouncement = announcement;
     this.updateForm.patchValue({
@@ -229,6 +248,8 @@ openClaimModal(annonceID: number): void {
   this.claimForm.reset();
 }
 
+
+
 onClaimSubmit(): void {
   if (this.claimForm.valid && this.selectedAnnonceID !== null) {
     const claimData = {
@@ -279,9 +300,29 @@ searchByDate(): void {
       new Date(annonce.dateCovoiturage).toDateString() === selectedDate.toDateString()
     );
   }
-}
+} 
+showRouteDetails(routeID: number): void {
+  this.routeService.routeById(routeID).subscribe(
+    (route: RouteP) => {
+      Swal.fire({
+        html: `
+          <p><strong>Departure:</strong> ${route.departure}</p>
+          <p><strong>Destination:</strong> ${route.destination}</p>
+          <p><strong>Assembly Points:</strong></p>
+          <ul>
+            ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
+          </ul>
+        `,
+        confirmButtonColor: '#ff7900',
+      });
+    },
+    error => {
+      console.error('Error fetching route details:', error);
+      Swal.fire('Error', 'Failed to fetch route details!', 'error');
+    }
+  );
 }
 
-
+}
 
 

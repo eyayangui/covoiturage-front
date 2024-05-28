@@ -1,4 +1,5 @@
 export interface AnnoncePassenger {
+    confirmButtonDisabled: boolean;
     annonceID: number;
     aller_Retour: Boolean;
     heureDepart: string;
@@ -10,6 +11,8 @@ export interface AnnoncePassenger {
     rayon : string
     routeID : number;
     telephone: number;
+    departure: string,
+    destination: string,
     
 
 }
