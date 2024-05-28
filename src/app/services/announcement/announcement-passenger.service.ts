@@ -36,4 +36,9 @@ export class AnnouncementPassengerService {
   public announcementPassengerDate(): Observable<AnnoncePassenger[]> {
     return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger-date`);
   }
+
+  getAnnouncementPassengerByRayon(rayon: string): Observable<AnnoncePassenger> {
+    return this.http.get<AnnoncePassenger>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger-by-rayon/${rayon}`);
+    
+  }
 }

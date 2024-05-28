@@ -16,6 +16,7 @@ import { AnnouncementDriverComponent } from './components/announcement/announcem
 import { AnnouncementPassengerComponent } from './components/announcement/announcement-passenger/announcement-passenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
+import { RouteComponent } from './components/route/route.component';
 
 
 
@@ -31,7 +32,8 @@ import { AnnouncementDetailsComponent } from './components/announcement/announce
     AnnouncementComponent,
     AnnouncementDriverComponent,
     AnnouncementPassengerComponent,
-    AnnouncementDetailsComponent
+    AnnouncementDetailsComponent,
+    RouteComponent
   
    
   ],
