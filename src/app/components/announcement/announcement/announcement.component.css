@@ -1,5 +1,63 @@
-.btn-orange-border {
-    border: 3px solid orange;
-    padding: 5px;
-    margin-left: 100px;
-  }
+/* .btn-orange-border {
+    border: 3px solid rgb(255, 153, 0);
+    border-radius: 4px;
+    padding: 4px;
+    display: inline-block;
+} */
+.content{
+   
+  box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
+  
+}
+.orange-border {
+  border: 2px solid rgb(122, 121, 121);
+}
+.card-container {
+  height: 350px; 
+}
+.map-container {
+  height: 100%;
+  width: 100%;
+  min-height: 500px; /* Assurez-vous que le conteneur de la carte a une hauteur minimale */
+}
+@import "~leaflet/dist/leaflet.css";
+.pagination .page-item .page-link {
+  cursor: pointer;
+}
+
+.pagination .page-item.disabled .page-link {
+  cursor: not-allowed;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+.small-button {
+  padding: 2px 5px; /* Adjust padding as needed */
+}
+
+.small-button img {
+  width: 25px; /* Adjust the width as needed */
+  height: 25px; /* Adjust the height as needed */
+}
+.btn-orange {
+  background-color: #f8790a; /* Couleur orange */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+.card-container {
+  background-color: #fcf8f2d7;
+ 
+}
+

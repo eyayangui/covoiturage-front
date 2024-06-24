@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Annonce } from 'src/app/Models/AnnonceDto';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouteP } from 'src/app/Models/RouteP';
+import { RouteService } from 'src/app/services/Route/route.service';
 
 @Component({
   selector: 'app-announcement',
@@ -16,9 +19,18 @@ export class AnnouncementComponent implements OnInit {
   selectedAnnouncement: Annonce | null = null; 
   updateForm: FormGroup;
   selectedRayon: string = '';
-  
+  today: string = new Date().toISOString().split('T')[0]; 
+  isAdmin: boolean = false;
+  searchPrice: number | undefined;
+  originalAnnouncements: Annonce[] = [];
 
-  constructor(private announcementService: AnnouncementService,  private router: Router, private fb: FormBuilder) {
+
+  constructor(private announcementService: AnnouncementService,
+    private route: ActivatedRoute,
+    private routeService: RouteService, 
+    private router: Router,
+
+    private fb: FormBuilder) {
     this.updateForm = this.fb.group({
       dateCovoiturage: ['', Validators.required],
       nbrPlaces: ['', Validators.required],
@@ -29,13 +41,33 @@ export class AnnouncementComponent implements OnInit {
       bagage: ['', Validators.required],
       rayon: ['', Validators.required],
       datePublication: ['', Validators.required],
+      description:[],
       routeID: ['', Validators.required]
     });
   }
   ngOnInit(): void {
-    this.availableannouncement();
+    this.route.params.subscribe(params => {
+      const eventID = +params['eventID'];
+      if (eventID) {
+        this.getAnnoncesByEventID(eventID);
+      }
+    });
+    this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
+
   }
 
+  getAnnoncesByEventID(eventID: number): void {
+    this.announcementService.findAnnoncesByEventID(eventID).subscribe(
+      (response: Annonce[]) => {
+        this.annoncements = response;
+        this.originalAnnouncements = [...response];
+
+      },
+      (error: any) => {
+        console.error('An error occurred while fetching announcements by event ID:', error);
+      }
+    );
+  }
   getAnnouncement(): void {
     this.announcementService.getAnnouncement().subscribe(
       annoncements => {
@@ -57,6 +89,8 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
+
+  
   availableannouncement(): void {
     this.announcementService.availableannouncement().subscribe(
       events => {
@@ -71,30 +105,58 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
-  viewDetails(annonce: Annonce): void {
-    Swal.fire({
-      title: annonce.rayon,
-      html: `
-        <p>Date de Covoiturage: ${annonce.dateCovoiturage}</p>
-        <p>Nombre des places: ${annonce.nbrPlaces}</p>
-        <p>Prix: ${annonce.prix}</p>
-        <p>Aller Retour: ${annonce.aller_Retour}</p>
-        <p>Heure de Depart: ${annonce.heureDepart}</p>
-        <p>Heure de Retour: ${annonce.heureRetour}</p>
-        <p>Bagage: ${annonce.bagage}</p>
-        <p>Départ: ${annonce.departure}</p>
-        <p>Destinaton: ${annonce.destination}</p>
-        <p>Date publication : ${annonce.datePublication}</p>
+  formatDateOnly(dateString: Date): string {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+     return new Date(dateString).toLocaleDateString(undefined, options);}
 
-        ff7900
-      `,
-    confirmButtonColor: '#ff7900',
-    });
+     convertBooleanToYesNo(value: Boolean): string {
+      return value ? 'Oui' : 'Non';
+    }
+
+  viewDetails(annonce: Annonce, routeID: number): void {
+    this.routeService.routeById(routeID).subscribe(
+      (route: RouteP) => {
+        const assemblyPointsHtml = route.assemblyPoints.length > 0
+          ? `<p><strong>Point de rassemblement:</strong></p>
+             <ul>
+               ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
+             </ul>`
+          : '';
+  
+        Swal.fire({
+          title: annonce.rayon,
+          color: '#000',
+          html: `
+            <hr>
+            <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
+            <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
+            <p>Prix: <strong>${annonce.prix === 0 ? 'Gratuit' : `${annonce.prix} DT`}</strong></p>
+            <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
+            <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
+            ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
+            <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
+            <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
+            ${annonce.description ? `<p> Description:<strong> ${annonce.description}</strong></p>` : ''}
+
+            <hr>
+            <p><strong>Départ:</strong><br> ${route.departure}</p>
+            <p><strong>Destination:</strong><br> ${route.destination}</p>
+            ${assemblyPointsHtml}
+          `,
+          confirmButtonColor: '#ff7900',
+        });
+      },
+      error => {
+        console.error('Error fetching route details:', error);
+        Swal.fire('Error', 'Failed to fetch route details!', 'error');
+      }
+    );
   }
+
   openUpdateModal(announcement: Annonce): void {
-    this.selectedAnnouncement = announcement;
+    this.selectedAnnouncement = { ...announcement }; 
     this.updateForm.patchValue({
-      dateCovoiturage: announcement.dateCovoiturage,
+      dateCovoiturage: new Date(announcement.dateCovoiturage).toISOString().substring(0, 10), 
       nbrPlaces: announcement.nbrPlaces,
       prix: announcement.prix,
       aller_Retour: announcement.aller_Retour,
@@ -102,8 +164,10 @@ export class AnnouncementComponent implements OnInit {
       heureRetour: announcement.heureRetour,
       bagage: announcement.bagage,
       rayon: announcement.rayon,
-      datePublication: announcement.datePublication,
+      datePublication: new Date(announcement.datePublication).toISOString().substring(0, 10), 
       routeID: announcement.routeID,
+      description : announcement.description
+
     });
     this.selectedRayon = announcement.rayon;  
   }
@@ -123,15 +187,42 @@ export class AnnouncementComponent implements OnInit {
       this.announcementService.updateAnnouncement(updatedAnnouncement).subscribe(
         () => {
           Swal.fire('Success', 'Announcement updated successfully!', 'success');
-          this.availableannouncement();
         },
         error => {
           console.error('Error updating announcement:', error);
           Swal.fire('Error', 'Failed to update announcement!', 'error');
         }
+        
       );
+      location.reload();
     }
   }
 
+  currentUserMatchesAnnouncementUserId(userId: number): boolean {
+    const loggedInUserId = localStorage.getItem('idCollaborator');
+    return loggedInUserId !== null && parseInt(loggedInUserId) === userId;
+  }
 
+
+  filterByPrice(): void {
+    let filteredAnnouncements = [...this.originalAnnouncements];
+  
+    if (this.searchPrice !== undefined) {
+      const selectedPrice = Number(this.searchPrice);
+      filteredAnnouncements = filteredAnnouncements.filter(annonce =>
+        Number(annonce.prix) === selectedPrice
+      );
+    }
+    
+  
+    
+  
+    this.annoncements = filteredAnnouncements;
+  }
+  searchByPrice(): void {
+    this.filterByPrice();
+  }
+    searchFreeAnnouncements(): void {
+      this.annoncements = this.originalAnnouncements.filter(annonce => annonce.prix === 0);
+    }
 }

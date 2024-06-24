@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationRequest } from 'src/app/Models/AuthenticationRequest';
 import { AuthenticationResponse } from 'src/app/Models/AuthenticationResponse';
@@ -6,8 +6,8 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 import { timer } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalStorageService } from 'src/app/services/auth/local-storage.service';
-
 
 
 @Component({
@@ -49,7 +49,7 @@ export class LoginComponent {
         console.log("storedCollaborator : "+ storedCollaborator)
         this.isLoggedIn = true; // Set to true after successful login
         const userRole = response.role as string;
-        this.router.navigate(['annoncement-driver']);
+        this.router.navigate(['event']);
         /* if (userRole === 'ADMINISTRATOR') {
           this.router.navigate(['listpatient']);
         } */
@@ -81,3 +81,4 @@ export class LoginComponent {
 
 
 }
+

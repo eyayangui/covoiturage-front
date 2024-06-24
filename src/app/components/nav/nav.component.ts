@@ -9,15 +9,29 @@ import { AnnouncementDriverService } from 'src/app/services/announcement/announc
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent {
-  searchTerm: string = ''; // Définir la propriété searchTerm
-
+  searchTerm: string = ''; 
+  isAdmin: boolean = false;
   constructor(
     private router: Router,
     private announcementDriverService: AnnouncementDriverService
   ) { }
+  ngOnInit(): void {
+    
+    this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
+
+  }
+  isActive(url: string): boolean {
+    return this.router.url === url;}
 
   isLoginRoute(): boolean {
     return !this.router.url.includes('/login');
+  }
+  logout() {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('userDetails');
+    localStorage.removeItem('role');
+    localStorage.removeItem('idCollaborator');
+    this.router.navigate(['/login']);
   }
  /*  onSearch(): void {
     if (this.searchTerm) {

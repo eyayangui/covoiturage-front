@@ -1,4 +1,3 @@
-//import { format, parse } from 'date-fns';
 
 export interface Annonce {
     annonceID: number;
@@ -10,12 +9,14 @@ export interface Annonce {
     dateCovoiturage: Date;
     bagage: boolean;
     datePublication: Date;
-    rayon: string;
+    rayon: string; 
     routeID: number;
     departure: string;
     destination: string;
+    userId: number;
+    eventID : number;
+    description : string;
+
+
 }
 
-// Exemple d'utilisation avec date-fns pour parser et formater les heures
-//const heureDepart: string = format(parse('08:30', 'HH:mm', new Date()), 'HH:mm');
-//const heureRetour: string = format(parse('18:45', 'HH:mm', new Date()), 'HH:mm');

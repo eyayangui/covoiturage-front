@@ -15,7 +15,13 @@
         departure: string;
         destination: string;
         prix : number;
-            
+        userId: number;
+        assemblyPointsID: number;
+        eventID : number;
+        climatiseur: Boolean; 
+        description : string;
+
+        
     }
     
     

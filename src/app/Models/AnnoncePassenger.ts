@@ -13,8 +13,12 @@ export interface AnnoncePassenger {
     telephone: number;
     departure: string,
     destination: string,
-    
+    userId: number;
+    eventID : number;
+    description : string;
+
 
 }
+
 
 

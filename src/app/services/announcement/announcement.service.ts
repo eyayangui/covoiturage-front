@@ -16,15 +16,23 @@ export class AnnouncementService {
     return this.http.post<any>(`${this.apiServerUrl}/announcement/add-announcement`,annonce);
   }
   public getAnnouncement(): Observable<Annonce[]> {
-    return this.http.get<Annonce[]>(`http://localhost:8095/announcement/announcements`);
+    return this.http.get<Annonce[]>(`${this.apiServerUrl}/announcement/announcements`);
   }
   public deleteAnnouncement(annonceID : any){
-    return  this.http.delete(`http://localhost:8090/announcement/delete-announcement/${annonceID}`)
+    return  this.http.delete(`${this.apiServerUrl}/announcement/delete-announcement/${annonceID}`)
   }
 public availableannouncement () : Observable<Annonce[]>{
   return this.http.get<Annonce[]>(`${this.apiServerUrl}/announcement/available-announcement`);
 }
 public updateAnnouncement(annonce: Annonce) : Observable<Annonce> {
-  return this.http.put<Annonce>(`http://localhost:8090/announcement/update-announcement/${annonce.annonceID}`, annonce);
+  return this.http.put<Annonce>(`${this.apiServerUrl}/announcement/update-announcement/${annonce.annonceID}`, annonce);
 }
+
+public findAnnoncesByEventID(eventID: number): Observable<Annonce[]> {
+  return this.http.get<Annonce[]>(`${this.apiServerUrl}/announcement/announcement-by-event/${eventID}`);
+}
+public addAnnouncementWithEventID(annonce: Annonce, eventID: number): Observable<Annonce> {
+  return this.http.post<Annonce>(`${this.apiServerUrl}/announcement/add-announcement-with-event/${eventID}`, annonce);
+}
+
 }

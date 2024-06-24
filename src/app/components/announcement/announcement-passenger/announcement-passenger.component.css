@@ -12,3 +12,51 @@
 .orange-border {
     border: 2px solid rgb(122, 121, 121);
   }
+  .card-container {
+    height: 520px; 
+  }
+  .map-container {
+    height: 100%;
+    width: 100%;
+    min-height: 500px; /* Assurez-vous que le conteneur de la carte a une hauteur minimale */
+  }
+  @import "~leaflet/dist/leaflet.css";
+  .pagination .page-item .page-link {
+    cursor: pointer;
+  }
+  
+  .pagination .page-item.disabled .page-link {
+    cursor: not-allowed;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+  }
+  .small-button {
+    padding: 2px 5px; 
+  }
+  
+  .small-button img {
+    width: 25px; 
+    height: 25px; 
+  }
+  input::placeholder {
+    color: rgba(0, 0, 0, 0.5); 
+  }
+  
+  .card-body .d-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .card-body .justify-content-end {
+    justify-content: flex-end;
+  }
+  .card-container {
+    background-color: #fcf8f2d7;
+   
+  }
+  

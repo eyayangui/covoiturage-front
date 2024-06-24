@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,6 +29,12 @@ import { UpdatePhoneNumberComponent } from './components/profil/update-phone-num
 import { UpdateBirthDateComponent } from './components/profil/update-birth-date/update-birth-date.component';
 import { UpdateAdressComponent } from './components/profil/update-adress/update-adress.component';
 import { RouteComponent } from './components/route/route.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletMapsComponent } from './components/leaflet-maps/leaflet-maps.component';
+import { AddAnnouncementPassengerComponent } from './components/announcement/add-announcement-passenger/add-announcement-passenger.component';
+import { MapComponent } from './components/map/map.component';
+import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
+import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
 
 
 
@@ -44,6 +51,12 @@ import { RouteComponent } from './components/route/route.component';
     AnnouncementDriverComponent,
     AnnouncementPassengerComponent,
     AnnouncementDetailsComponent,
+    RouteComponent,
+    LeafletMapsComponent,
+    AddAnnouncementPassengerComponent,
+    MapComponent,
+    UpdateAnnouncementPassengerComponent,
+    AddAnnouncementEventComponent,
     ChooseVehicleTypeComponent,
     ChooseBrandComponent,
     ChooseModelComponent,
@@ -64,6 +77,9 @@ import { RouteComponent } from './components/route/route.component';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
+    LeafletModule,
+    NgxPaginationModule 
     HttpClientModule,
     FormsModule
   ],

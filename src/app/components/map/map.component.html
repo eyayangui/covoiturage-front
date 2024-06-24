@@ -1,0 +1,13 @@
+    <div class="map-container"
+        leaflet
+        [leafletOptions]="options"
+        (leafletMapReady)="onMapReady($event)"
+        (leafletClick)="mapClicked($event)">
+    </div>
+    <div class="button-container">    <a type="button" href="/annoncement-driver" (click)="updateRouteAndAnnouncement()" class="btn btn-primary" >Enregistrer</a>
+    <a type="button" href="/annoncement-driver"  class="btn btn-secondary">Anuuler</a>
+    <button class="btn" title="Modifier les points" *ngIf="assemblyPointId !== undefined" (click)="modifierPointAssemblage(assemblyPointId)">
+        <img src="assets/brand/map.png" alt="route" style="width: 40px; height: 40px;">
+      </button>
+</div>
+

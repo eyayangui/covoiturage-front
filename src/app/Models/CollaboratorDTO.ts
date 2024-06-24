@@ -12,3 +12,4 @@ export interface CollaboratorDTO {
     role: string ;
     minibio?: string;
 }
+
