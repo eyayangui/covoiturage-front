@@ -1,0 +1,36 @@
+<div class="modal fade" id="ModalAdress" [ngClass]="{'show': modalOpen}" [style.display]="modalOpen ? 'block' : 'none'" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModalLabel"> Adresse </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #modalForm="ngForm" (ngSubmit)="updateAttribute(modalForm)">
+            <div class="form-group">
+                <input type="text"
+                class="form-control"
+                id="attributeValue"
+                [(ngModel)]="attributeValue"
+                name="attributeValue"
+                required>
+         
+              <div *ngIf="modalForm.submitted && !modalForm.form.controls['attributeValue'].valid" class="alert alert-danger alert-sm" role="alert">
+                <span class="alert-icon"><span class="visually-hidden">Error</span></span>
+                <p>Ce champ ne doit pas être vide</p>
+              </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary"
+                [attr.data-bs-dismiss]="attributeValue && attributeValue.length >= 8 ? 'modal' : null"> Update
+              </button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

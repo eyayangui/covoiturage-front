@@ -10,7 +10,16 @@ import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './services/auth/auth.guard';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
+
+import { ChooseVehicleTypeComponent } from './components/profil/choose-vehicle-type/choose-vehicle-type.component';
+import { ChooseBrandComponent } from './components/profil/choose-brand/choose-brand.component';
+import { ChooseModelComponent } from './components/profil/choose-model/choose-model.component';
+import { FileUploadComponent } from './components/profil/file-upload/file-upload.component';
+import { ProfileComponent } from './components/profil/profile/profile.component';
+
+
 import { RouteComponent } from './components/route/route.component';
+
 
 
 const routes: Routes = [
@@ -25,7 +34,12 @@ const routes: Routes = [
   {path: "route" , component: RouteComponent,canActivate: [authGuard]},
 
   {path: "login" ,component: LoginComponent},
-  {path:"**",pathMatch:"full",redirectTo:"login"}
+  /* {path:"**",pathMatch:"full",redirectTo:"login"}, */
+  { path: 'choose-vehicle-type', component: ChooseVehicleTypeComponent, canActivate: [authGuard]},
+  { path: 'choose-brand', component: ChooseBrandComponent, canActivate: [authGuard] },
+  { path: 'choose-model', component: ChooseModelComponent, canActivate: [authGuard] },
+  { path: 'upload', component: FileUploadComponent, canActivate: [authGuard] },
+  { path: 'profil', component: ProfileComponent},
 
 ];
 

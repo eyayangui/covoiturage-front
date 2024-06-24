@@ -1,0 +1,8 @@
+<div>
+    <h2>Choose Model</h2>
+    <input [(ngModel)]="modelPrefix" (input)="onModelPrefixChange()" placeholder="Enter model prefix">
+    <ul>
+      <li *ngFor="let model of models" (click)="selectedModel = model">{{ model }}</li>
+    </ul>
+    <button (click)="onAssignVehicle()">Assign Vehicle</button>
+  </div>

@@ -1,5 +1,5 @@
 export interface CollaboratorDTO {
-    idCollaborator: number;
+    idCollaborator?: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -10,4 +10,5 @@ export interface CollaboratorDTO {
     adress: string;
     bonus: number;
     role: string ;
+    minibio?: string;
 }
