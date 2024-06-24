@@ -1,5 +1,5 @@
 export interface Annonce {
-    AnnonceID: number;
+   /*  AnnonceID: number;
     aller_Retour: Boolean;
     heureDepart: string;
     heureRetour: string;
@@ -11,6 +11,6 @@ export interface Annonce {
     rayon : string
     routeID : number;
     departure: string;
-    destination : string;
+    destination : string;*/
 
-}
+} 

@@ -10,4 +10,6 @@ export interface CollaboratorDTO {
     adress: string;
     bonus: number;
     role: string ;
+    jwt: string ;
+    userDetails: any;
 }

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +18,12 @@ import { AnnouncementPassengerComponent } from './components/announcement/announ
 import { LoginComponent } from './components/login/login.component';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
 import { RouteComponent } from './components/route/route.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletMapsComponent } from './components/leaflet-maps/leaflet-maps.component';
+import { AddAnnouncementPassengerComponent } from './components/announcement/add-announcement-passenger/add-announcement-passenger.component';
+import { MapComponent } from './components/map/map.component';
+import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
+import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
 
 
 
@@ -33,7 +40,13 @@ import { RouteComponent } from './components/route/route.component';
     AnnouncementDriverComponent,
     AnnouncementPassengerComponent,
     AnnouncementDetailsComponent,
-    RouteComponent
+    RouteComponent,
+    LeafletMapsComponent,
+    AddAnnouncementPassengerComponent,
+    MapComponent,
+    UpdateAnnouncementPassengerComponent,
+    AddAnnouncementEventComponent,
+    
   
    
   ],
@@ -42,8 +55,10 @@ import { RouteComponent } from './components/route/route.component';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    HttpClientModule,
-    FormsModule
+    FormsModule,
+    LeafletModule,
+    NgxPaginationModule 
+    
     ],
   providers: [],
   bootstrap: [AppComponent]

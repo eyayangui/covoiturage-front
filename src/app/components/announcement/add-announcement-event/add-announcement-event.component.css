@@ -1,0 +1,38 @@
+.map-container {
+    /* width: 900px;  */
+   height: 600px; 
+ /* margin-left: 52%;  */
+ }
+ .orange-border {
+   border: 2px solid rgb(250, 141, 17);
+ }
+ .orange-button {
+   background-color: rgb(255, 167, 5);
+   color: rgb(0, 0, 0);
+   border: none;
+   padding: 10px 20px;
+   cursor: pointer;
+}
+/* .container {
+ 
+margin-right: 20%; 
+
+} */
+.split-container {
+   display: flex;
+   flex-direction: row;
+   width: 100%;
+   height: 100vh;
+}
+.split-container > div {
+   flex: 1;
+   padding: 10px;
+   box-sizing: border-box;
+}
+.map-container {
+   border-right: 1px solid #ddd; /* Ligne de séparation */
+     width: 900px;  
+    height: 900px; 
+}
+
+

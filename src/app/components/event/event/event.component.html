@@ -2,13 +2,27 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-          <button type="button" class="tag" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
-            Add event
-          </button>       
-          <button class="btn" (click)="getEvents()" title="Historique">
-            <img src="assets/brand/historyy.png" alt="All event" style="width: 24px; height: 24px;">
-        </button>        </ol>
+        <div class="d-flex justify-content-between">
+          
+          <div class="dropdown-container d-flex align-items-start">
+            <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()" style="width: 156px;">
+
+          </div>
+          
+          <div class="d-flex align-items-center gap-3">
+            <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
+              <div *ngIf="isAdmin">
+                <button type="button" class="tag btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+                  Ajouter evenement
+                </button>
+              </div>
+              <button class="btn " (click)="getEvents()" title="Historique">
+                <img src="assets/brand/historyy.png" alt="All event" style="width: 24px; height: 24px;">
+              </button>
+            </ol>
+           
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div *ngIf="noEventsFound" class="alert alert-info" role="alert">
@@ -16,13 +30,13 @@
           <p>No Events Found</p>
         </div>
         <div class="row">
-          <div class="col-4" *ngFor="let event of events">
-            <div class="content mb-3 rounded " style="max-width: 480px;">
+          <div class="col-4" *ngFor="let event of events | paginate: { itemsPerPage: 6, currentPage: p }">
+            <div class="content mb-3 rounded" style="max-width: 480px;">
               <div class="row g-0">
                 <div class="col-md-4">
                   <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
                     <title>Placeholder</title>
-                    <rect width="100%" height="100%"  fill="#ffffff" />
+                    <rect width="100%" height="100%" fill="#ffffff" />
                     <image href="assets/brand/eventt.png" width="200" height="200" class="card-img-top" alt="..." />
                     <svg x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
                     </svg>
@@ -32,34 +46,38 @@
                   <div class="card-body">
                     <h5 class="card-title"><strong>{{ event.eventName }}</strong></h5>
                     <hr>
-                    <p class="card-text">Date de l'evenement:<strong> {{ event.eventDate  | date: 'dd/MM/yyyy'}}</strong></p>
-                    <p class="card-text">Heure: <strong>{{ event.heure }}</strong></p>
-                    <p class="card-text">localisation: <strong>{{ event.location }}</strong></p>
+                    <p class="card-text"><li>Date de l'evenement:<strong> {{ event.eventDate  | date: 'dd/MM/yyyy'}}</strong></p>
+                    <p class="card-text"><li>Heure: <strong>{{ event.heure }}H</strong></p>
+                    <p class="card-text"><li>localisation: <strong>{{ event.location }}</strong></p>
                     <p class="card-text" *ngIf="getRemainingDays(event.eventDate) >= 0">
-                      Il reste : <strong>{{ getRemainingDays(event.eventDate) }} jours</strong>
+                      <li>Il reste : <strong>{{ getRemainingDays(event.eventDate) }} jours</strong>
                     </p>
                   </div>
-                  
-                  <div class="btn-group" role="group" >
-              
-                    <a href="/annoncement-driver" class="btn btn-outline-secondary active">Annonce</a>
-                    <div class="d-flex justify-content-end" class="modify">
-                     
-                      <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(event)" title="Modifier" >
-                        <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
-                      </button>
-                      <a href="/event" class="btn btn-orange-border" (click)="deleteEvent(event.eventID)" title="Supprimer">
-                        <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
-                      </a>
+                  <div class="btn-group" role="group">
+                    <a [routerLink]="['/announcement', event.eventID]" class="btn btn-outline-secondary active">Annonce</a>
+                    <div *ngIf="isAdmin">
+                      <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" style="margin-left: 5%; height: 40px;" type="button" class="btn btn-secondary dropdown-toggle" title="Parametre" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                          <button type="button" class="btn small-button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(event)" title="Modifier">
+                            <img src="assets/brand/pencil.png" alt="Update">
+                          </button>
+                          <a href="/event" class="btn small-button" (click)="deleteEvent(event.eventID)" title="Supprimer">
+                            <img src="assets/brand/trash.png" alt="Delete">
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <hr>
-
-                  
+                  <div class="d-flex justify-content-end">
+                    <a class="btn" (click)="navigateToAddAnnouncement(event.eventID)" title="Ajouter annonce">
+                      <img src="assets/brand/more.png" alt="Add" style="width: 30px; height: 30px;">
+                    </a>
+                  </div>
                 </div>
-                
               </div>
-              
             </div>
           </div>
         </div>
@@ -67,61 +85,70 @@
     </div>
   </div>
 </div>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="p === 1">
+      <a class="page-link" (click)="p = p - 1" href="javascript:void(0)">Précédente</a>
+    </li>
+    <li *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="p === i + 1" class="page-item">
+      <a class="page-link" (click)="p = i + 1" href="javascript:void(0)">{{ i + 1 }}</a>
+    </li>
+    <li class="page-item" [class.disabled]="p === totalPages">
+      <a class="page-link" (click)="p = p + 1" href="javascript:void(0)">Suivante</a>
+    </li>
+  </ul>
+</nav>
+
 <!-- Modal update -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title w-100 text-center" id="exampleModalLabel">Modifier l'événement</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal">
+          <span class="visually-hidden">Close</span>
+        </button>
       </div>
       <div class="modal-body">
         <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
-          
-          
           <div class="mb-3">
-            <label for="eventName" class="form-label">Nom evenement : </label>
+            <label for="eventName" class="form-label">Nom evenement :</label>
             <input type="text" class="form-control" id="eventName" formControlName="eventName">
             <div *ngIf="updateForm.get('eventName')?.invalid && (updateForm.get('eventName')?.dirty || updateForm.get('eventName')?.touched)" class="text-danger">
               Le nom de l'evenement est obligatoire.
-          
-      </div>
+            </div>
           </div>
           <div class="mb-3">
             <label for="eventDate" class="form-label">Date :</label>
-            <input type="date" class="form-control" id="eventDate" formControlName="eventDate">
+            <input type="date" class="form-control" id="eventDate"[min]="today"  formControlName="eventDate">
             <div *ngIf="updateForm.get('eventDate')?.invalid && (updateForm.get('eventDate')?.dirty || updateForm.get('eventDate')?.touched)" class="text-danger">
               La date de l'evenement est obligatoire.
-          
-      </div>
+            </div>
           </div>
           <div class="mb-3">
             <label for="heure" class="form-label">Heure</label>
             <input type="time" class="form-control" id="heure" formControlName="heure">
             <div *ngIf="updateForm.get('heure')?.invalid && (updateForm.get('heure')?.dirty || updateForm.get('heure')?.touched)" class="text-danger">
               L'heure de l'evenement est obligatoire.
-          
-      </div>
+            </div>
           </div>
-        
           <div class="mb-3">
-            <label for="location" class="form-label">localisation </label>
+            <label for="location" class="form-label">localisation</label>
             <input type="text" class="form-control" id="location" formControlName="location">
             <div *ngIf="updateForm.get('location')?.invalid && (updateForm.get('location')?.dirty || updateForm.get('location')?.touched)" class="text-danger">
               La localisation de l'evenement est obligatoire.
-          
-      </div>
+            </div>
           </div>
-                      
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a type="submit" href="/event" class="btn btn-primary">Save changes</a>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
 <!-- Modal ADD -->
 <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -143,7 +170,7 @@
           </div>
           <div class="mb-3">
             <label for="eventDate" class="form-label">Date :</label>
-            <input type="date" class="form-control" id="eventDate" formControlName="eventDate">
+            <input type="date" class="form-control" id="eventDate" [min]="today"  formControlName="eventDate">
             <div *ngIf="addForm.get('eventDate')?.invalid && (addForm.get('eventDate')?.dirty || addForm.get('eventDate')?.touched)" class="text-danger">
               la date de l'evenement est obligatoire
           
@@ -175,5 +202,3 @@
     </div>
   </div>
 </div>
-
-

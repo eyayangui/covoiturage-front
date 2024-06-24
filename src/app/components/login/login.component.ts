@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationRequest } from 'src/app/Models/AuthenticationRequest';
 import { AuthenticationResponse } from 'src/app/Models/AuthenticationResponse';
@@ -6,6 +6,7 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 import { timer } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -13,24 +14,32 @@ import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
 
   authRequest: AuthenticationRequest = {};
   authResponse: AuthenticationResponse = {};
   collaborator: CollaboratorDTO | null = null;
   error: string | null = null;
+  loginForm!: FormGroup;
+  
 
   constructor(
     private authService: AuthenticationService, private collaboratorService: CollaboratorsService,
-    private router: Router
+    private router: Router,private fb:FormBuilder
   ) {
+  }
+  ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
   }
 
   isLoggedIn: boolean = false;
   loginError: boolean = false;
 
 
-  authenticate() {
+  /* authenticate() {
     this.authService.login(this.authRequest).subscribe({
       next: (response) => {
         localStorage.setItem('token', response.accessToken as string);
@@ -43,7 +52,7 @@ export class LoginComponent {
         this.router.navigate(['annoncement-driver']);
         /* if (userRole === 'ADMINISTRATOR') {
           this.router.navigate(['listpatient']);
-        } */
+        } 
       },
       error: (error) => {
         this.loginError = true;
@@ -52,7 +61,44 @@ export class LoginComponent {
         });
       }
     });
+  } */
+
+ 
+  submitForm() {
+    if (this.loginForm.valid) {
+      console.log('Login form value:', this.loginForm.value);
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (response) => {
+          console.log('Login response:', response);
+          if (response.jwt && response.role &&  response.idCollaborator) {
+            localStorage.setItem('jwt', response.jwt);
+            localStorage.setItem('userDetails', JSON.stringify(response.userDetails));
+            localStorage.setItem('role', response.role);
+            localStorage.setItem('idCollaborator', response.idCollaborator.toString()); 
+
+            this.router.navigateByUrl('/annoncement-driver');
+          } else {
+            console.error('Login failed: ', response);
+            alert('Login failed, please try again.');
+          }
+        },
+        error: (err) => {
+          console.error('Login error: ', err);
+          if (err.status === 401) {
+            alert('Incorrect email or password, please try again.');
+          } else {
+            alert('Login error, please try again.');
+          }
+        }
+      });
+    } else {
+      console.error('Form is invalid');
+      alert('Please fill in all required fields correctly.');
+    }
   }
+  
+  
+ 
 
   getCollaborator(id?: number) {
     this.collaboratorService.getCollaboratorById(id).subscribe(

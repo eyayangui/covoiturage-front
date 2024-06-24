@@ -11,18 +11,30 @@ import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './services/auth/auth.guard';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
 import { RouteComponent } from './components/route/route.component';
+import { LeafletMapsComponent } from './components/leaflet-maps/leaflet-maps.component';
+import { AdminAuthGuard } from './services/auth/AdminAuthGuard';
+import { AddAnnouncementPassengerComponent } from './components/announcement/add-announcement-passenger/add-announcement-passenger.component';
+import { MapComponent } from './components/map/map.component';
+import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
+import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
 
 
 const routes: Routes = [
   {path: "event" , component: EventComponent,canActivate: [authGuard]},
   {path: "update-event" , component: EventUpdateComponent, canActivate: [authGuard]},
-  {path: "add-event" , component: AddEventComponent},
-  {path: "annoncement" , component: AnnouncementComponent},
-  {path: "annoncement-passenger" , component: AnnouncementPassengerComponent},
-  {path: "annoncement-driver" , component: AnnouncementDriverComponent, canActivate: [authGuard]},
-  { path: 'announcement-details/:id', component: AnnouncementDetailsComponent },
+  {path: "add-event" , component: AddEventComponent,canActivate: [authGuard]},
+  {path: 'announcement/:eventID' , component: AnnouncementComponent,canActivate: [authGuard]},
+  {path: "annoncement-passenger" , component: AnnouncementPassengerComponent,canActivate: [authGuard]},
+  {path: "add-annoncement-passenger" , component: AddAnnouncementPassengerComponent,canActivate: [authGuard]},
+  {path: "annoncement-driver" , component: AnnouncementDriverComponent},
+  { path: 'announcement-details/:id', component: AnnouncementDetailsComponent,canActivate: [authGuard] },
   {path: "claim" , component: ClaimComponent,canActivate: [authGuard]},
   {path: "route" , component: RouteComponent,canActivate: [authGuard]},
+  {path: "add-annoncement-driver" , component: LeafletMapsComponent,canActivate: [authGuard]},
+  {path: "map/:routeID" , component: MapComponent,canActivate: [authGuard]},
+  {path: 'add-announcement-event/:eventID' , component: AddAnnouncementEventComponent,canActivate: [authGuard]},
+  {path: "update-route/:routeID" , component: UpdateAnnouncementPassengerComponent,canActivate: [authGuard]},
+
 
   {path: "login" ,component: LoginComponent},
   {path:"**",pathMatch:"full",redirectTo:"login"}

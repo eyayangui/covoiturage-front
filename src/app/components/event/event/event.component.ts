@@ -21,7 +21,13 @@ export class EventComponent implements OnInit {
   updateForm: FormGroup;
   selectedEvent: Event | null = null; 
   addForm: FormGroup;
-
+  isAdmin: boolean = false;
+  p: number = 1;
+  totalPages: number;
+  selectedRayon: string = '';
+  today: string = new Date().toISOString().split('T')[0]; // Add this line
+  searchDate: string | undefined;
+  originalEvent: Event[] = [];
 
 
   constructor(private eventService: EventService, private router: Router,private fb: FormBuilder) { 
@@ -33,19 +39,54 @@ export class EventComponent implements OnInit {
         location: ['', Validators.required],
         heure:['', Validators.required],
       }); 
-      this.updateForm = this.fb.group({
+      
+    this.updateForm = this.fb.group({
     eventName: ['', Validators.required],
     eventDate: ['', Validators.required],
-    datePublication: ['', Validators.required],
+    datePublication: [],
     location:['', Validators.required],
     heure:['', Validators.required],
 
   });
+  
+  this.totalPages = Math.ceil(this.events.length / 6);
+
 }
 
   ngOnInit(): void {
     this.showPlannedEvents();
+    this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
+
   }
+  /* searchByDate(): void {
+    if (this.searchDate) {
+      const selectedDate = new Date(this.searchDate);
+      this.events = this.events.filter(event =>
+        new Date(event.eventDate).toDateString() === selectedDate.toDateString()
+      );
+    }
+  }
+ */
+  filterByDate(): void {
+    let filteredEvent = [...this.originalEvent];
+  
+    if (this.searchDate) {
+      const selectedDate = new Date(this.searchDate);
+      filteredEvent = filteredEvent.filter(event => {
+        const annonceDate = new Date(event.eventDate);
+        return (
+          annonceDate.getFullYear() === selectedDate.getFullYear() &&
+          annonceDate.getMonth() === selectedDate.getMonth() &&
+          annonceDate.getDate() === selectedDate.getDate()
+        );
+      });
+    }
+    this.events = filteredEvent;
+  }
+  searchByDate(): void {
+    this.filterByDate();
+  }
+
 
   getEvents(): void {
     this.eventService.getEvent().subscribe(
@@ -64,8 +105,11 @@ export class EventComponent implements OnInit {
         if (events.length === 0) {
           this.events = [];
           this.noEventsFound = true;
+          
+
         } else {
           this.events = events;
+          this.originalEvent = [...events];
           this.noEventsFound = false;
         }
       },
@@ -78,7 +122,7 @@ export class EventComponent implements OnInit {
   deleteEvent(eventID: any): void {
     this.eventService.deleteEvent(eventID).subscribe(
       () => {
-        this.router.navigate(['/event']);
+        location.reload();
       },
       error => {
         console.error('Error deleting event:', error);
@@ -97,12 +141,13 @@ export class EventComponent implements OnInit {
     this.selectedEvent = event;
     this.updateForm.patchValue({
       eventName: event.eventName,
-      eventDate: event.eventDate,
+      eventDate: new Date(event.eventDate).toISOString().substring(0, 10), 
       location: event.location,
       datePublication: event.datePublication,
       heure : event.heure
       
-    }); 
+    });           
+
   }
   onSubmit(): void {
     if (this.updateForm.valid && this.selectedEvent) {
@@ -110,19 +155,21 @@ export class EventComponent implements OnInit {
         ...this.selectedEvent,
         ...this.updateForm.value
       };
-
+      
       this.eventService.updateEvent(updateevent).subscribe(
         () => {
           Swal.fire('Success', 'Announcement updated successfully!', 'success');
-          this.getEvents();
-        },
+          this.router.navigate(['/event']);         },
         error => {
           console.error('Error updating announcement:', error);
           Swal.fire('Error', 'Failed to update announcement!', 'error');
         }
       );
+
     }
-  }
+
+    }
+
   onAddSubmit(): void {
     
     const newevent: Event = this.addForm.value;
@@ -141,4 +188,8 @@ export class EventComponent implements OnInit {
     );
   
 }
+navigateToAddAnnouncement(eventID: number): void {
+  this.router.navigate(['/add-announcement-event', eventID]);
+}
+
 }

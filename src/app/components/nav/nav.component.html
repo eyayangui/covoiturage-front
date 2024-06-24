@@ -2,13 +2,17 @@
 <nav class="navbar navbar-expand-lg supra" data-bs-theme="dark" aria-label="Supra-navigation - Only left navbar example">
   <div class="container-xxl">
     <ul class="navbar-nav me-auto">
-      <li class="nav-item"><a href="/annoncement-driver" class="nav-link active" aria-current="page">Driver</a></li>
-      <li class="nav-item"><a href="/annoncement-passenger" class="nav-link">Passenger</a></li>
+      <li class="nav-item">
+        <a [routerLink]="['/annoncement-driver']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-driver')}" aria-current="page">Conducteur</a>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]="['/annoncement-passenger']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-passenger')}">Passager</a>
+      </li>
     </ul>
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <a href="/login" class="nav-link">
-         <img src="assets/brand/leave.png" alt="Logout" style="width: 25px; height: 25px; margin-left: 5px;">
+        <a (click)="logout()" class="nav-link" style="cursor: pointer;">
+          <img src="assets/brand/leave.png" alt="Logout" title="Logout" style="width: 25px; height: 25px; margin-left: 5px;">
         </a>
       </li>
     </ul>
@@ -34,9 +38,10 @@
         <!-- Navbar with links -->
         <div id="global-header-1.1" class="navbar-collapse collapse me-lg-auto global-header-1">
           <ul class="navbar-nav">
-               <li class="nav-item"><a class="nav-link" href="/event" aria-current="page">Event</a></li>
-               <li class="nav-item"><a class="nav-link" href="/claim" aria-disabled="true" aria-current="page">KPI</a></li>
-
+            <a class="nav-link" routerLink="/event" routerLinkActive="active-link" aria-current="page">Evènement</a>
+            <div *ngIf="isAdmin">
+            <a class="nav-link"  routerLink="/claim" routerLinkActive="active-link"  aria-current="page">KPI</a>
+          </div>
 
 
 
