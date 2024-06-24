@@ -10,6 +10,14 @@ import { ClaimComponent } from './components/Claim/claim/claim.component';
 import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './services/auth/auth.guard';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
+
+import { ChooseVehicleTypeComponent } from './components/profil/choose-vehicle-type/choose-vehicle-type.component';
+import { ChooseBrandComponent } from './components/profil/choose-brand/choose-brand.component';
+import { ChooseModelComponent } from './components/profil/choose-model/choose-model.component';
+import { FileUploadComponent } from './components/profil/file-upload/file-upload.component';
+import { ProfileComponent } from './components/profil/profile/profile.component';
+
+
 import { RouteComponent } from './components/route/route.component';
 import { LeafletMapsComponent } from './components/leaflet-maps/leaflet-maps.component';
 import { AdminAuthGuard } from './services/auth/AdminAuthGuard';
@@ -17,6 +25,7 @@ import { AddAnnouncementPassengerComponent } from './components/announcement/add
 import { MapComponent } from './components/map/map.component';
 import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
 import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
+
 
 
 const routes: Routes = [
@@ -37,7 +46,12 @@ const routes: Routes = [
 
 
   {path: "login" ,component: LoginComponent},
-  {path:"**",pathMatch:"full",redirectTo:"login"}
+  /* {path:"**",pathMatch:"full",redirectTo:"login"}, */
+  { path: 'choose-vehicle-type', component: ChooseVehicleTypeComponent, canActivate: [authGuard]},
+  { path: 'choose-brand', component: ChooseBrandComponent, canActivate: [authGuard] },
+  { path: 'choose-model', component: ChooseModelComponent, canActivate: [authGuard] },
+  { path: 'upload', component: FileUploadComponent, canActivate: [authGuard] },
+  { path: 'profil', component: ProfileComponent},
 
 ];
 

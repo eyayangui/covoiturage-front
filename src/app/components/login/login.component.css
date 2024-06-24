@@ -24,10 +24,12 @@
   padding: 73px 32px;
   width: 400px;
   transform: translate(-50%,-50%);
-  background: url('src/assets/login/login.png');
+  /* background: url('src/assets/login/login.png'); */
   background: rgba(255,255,255,0.04);
   box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
+
   background: url('src\assets\brand\car3.gif');
+
 }
 .content header{
   color: white;

@@ -7,6 +7,7 @@ import { timer } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageService } from 'src/app/services/auth/local-storage.service';
 
 
 @Component({
@@ -14,45 +15,44 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent {
 
   authRequest: AuthenticationRequest = {};
   authResponse: AuthenticationResponse = {};
-  collaborator: CollaboratorDTO | null = null;
+  collaborator?: CollaboratorDTO ;
   error: string | null = null;
-  loginForm!: FormGroup;
-  
 
   constructor(
-    private authService: AuthenticationService, private collaboratorService: CollaboratorsService,
-    private router: Router,private fb:FormBuilder
+    private authService: AuthenticationService, 
+    private collaboratorService: CollaboratorsService,
+    private localStorage: LocalStorageService,
+    private router: Router
   ) {
   }
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
-  }
+
 
   isLoggedIn: boolean = false;
   loginError: boolean = false;
 
 
-  /* authenticate() {
+
+  authenticate() {
     this.authService.login(this.authRequest).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.accessToken as string);
-        // Store user's role in local storage
-        localStorage.setItem('role', response.role as string);
-        var col = this.getCollaborator(response.idCollaborator);
-        console.log("id :" + col);
+        this.localStorage.setItem('token', response.accessToken as string);
+    
+        this.localStorage.setItem('role', response.role as string);
+    
+        this.getCollaborator(response.idCollaborator)
+        console.log("id :" + this.getCollaborator(response.idCollaborator));
+        const storedCollaborator = this.localStorage.getItem('user');
+        console.log("storedCollaborator : "+ storedCollaborator)
         this.isLoggedIn = true; // Set to true after successful login
         const userRole = response.role as string;
-        this.router.navigate(['annoncement-driver']);
+        this.router.navigate(['event']);
         /* if (userRole === 'ADMINISTRATOR') {
           this.router.navigate(['listpatient']);
-        } 
+        } */
       },
       error: (error) => {
         this.loginError = true;
@@ -61,49 +61,16 @@ export class LoginComponent implements OnInit{
         });
       }
     });
-  } */
-
- 
-  submitForm() {
-    if (this.loginForm.valid) {
-      console.log('Login form value:', this.loginForm.value);
-      this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          console.log('Login response:', response);
-          if (response.jwt && response.role &&  response.idCollaborator) {
-            localStorage.setItem('jwt', response.jwt);
-            localStorage.setItem('userDetails', JSON.stringify(response.userDetails));
-            localStorage.setItem('role', response.role);
-            localStorage.setItem('idCollaborator', response.idCollaborator.toString()); 
-
-            this.router.navigateByUrl('/annoncement-driver');
-          } else {
-            console.error('Login failed: ', response);
-            alert('Login failed, please try again.');
-          }
-        },
-        error: (err) => {
-          console.error('Login error: ', err);
-          if (err.status === 401) {
-            alert('Incorrect email or password, please try again.');
-          } else {
-            alert('Login error, please try again.');
-          }
-        }
-      });
-    } else {
-      console.error('Form is invalid');
-      alert('Please fill in all required fields correctly.');
-    }
   }
-  
-  
- 
 
   getCollaborator(id?: number) {
     this.collaboratorService.getCollaboratorById(id).subscribe(
       (data: CollaboratorDTO) => {
         this.collaborator = data;
+        console.log("Collaborator: " + JSON.stringify(this.collaborator));
+        this.localStorage.setItem('user', JSON.stringify(this.collaborator));
+        const storedCollaborator = this.localStorage.getItem('user');
+        console.log("storedCollaborator : "+ storedCollaborator)
       },
       (error) => {
         this.error = error;
@@ -112,4 +79,6 @@ export class LoginComponent implements OnInit{
   }
 
 
+
 }
+

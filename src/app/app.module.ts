@@ -17,6 +17,17 @@ import { AnnouncementDriverComponent } from './components/announcement/announcem
 import { AnnouncementPassengerComponent } from './components/announcement/announcement-passenger/announcement-passenger.component';
 import { LoginComponent } from './components/login/login.component';
 import { AnnouncementDetailsComponent } from './components/announcement/announcement-details/announcement-details.component';
+import { ChooseVehicleTypeComponent } from './components/profil/choose-vehicle-type/choose-vehicle-type.component';
+import { ChooseBrandComponent } from './components/profil/choose-brand/choose-brand.component';
+import { ChooseModelComponent } from './components/profil/choose-model/choose-model.component';
+import { FileUploadComponent } from './components/profil/file-upload/file-upload.component';
+import { CollaboratorImageComponent } from './components/profil/collaborator-image/collaborator-image.component';
+import { MinibioUpdateComponent } from './components/profil/minibio-update/minibio-update.component';
+import { ProfileComponent } from './components/profil/profile/profile.component';
+import { DeleteVehicleComponent } from './components/profil/delete-vehicle/delete-vehicle.component';
+import { UpdatePhoneNumberComponent } from './components/profil/update-phone-number/update-phone-number.component';
+import { UpdateBirthDateComponent } from './components/profil/update-birth-date/update-birth-date.component';
+import { UpdateAdressComponent } from './components/profil/update-adress/update-adress.component';
 import { RouteComponent } from './components/route/route.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletMapsComponent } from './components/leaflet-maps/leaflet-maps.component';
@@ -46,7 +57,18 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     MapComponent,
     UpdateAnnouncementPassengerComponent,
     AddAnnouncementEventComponent,
-    
+    ChooseVehicleTypeComponent,
+    ChooseBrandComponent,
+    ChooseModelComponent,
+    FileUploadComponent,
+    CollaboratorImageComponent,
+    ProfileComponent,
+    MinibioUpdateComponent,
+    DeleteVehicleComponent,
+    UpdatePhoneNumberComponent,
+    UpdateBirthDateComponent,
+    UpdateAdressComponent
+    RouteComponent
   
    
   ],
@@ -58,7 +80,9 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     FormsModule,
     LeafletModule,
     NgxPaginationModule 
-    
+    HttpClientModule,
+    FormsModule
+  ],
     ],
   providers: [],
   bootstrap: [AppComponent]

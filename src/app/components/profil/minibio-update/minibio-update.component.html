@@ -1,0 +1,19 @@
+<div class="modal fade" id="ModalMinibio" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen" *ngIf="collaborator">
+      <div class="modal-content">
+        <div class="modal-header" style="text-align: center;">
+          <h5 class="modal-dialog modal-fullscreen-sm-down" id="myModalLabel">Les autres membres veulent en savoir plus sur vous ! Que souhaitez-vous leur dire ?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <textarea class="custom-textarea" id="newMinibio" rows="5" [(ngModel)]="newMinibio" name="newMinibio" placeholder="{{collaborator.minibio}}" required> </textarea>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" (click)="updateMinibio(collaborator.idCollaborator)" [attr.data-bs-dismiss]="newMinibio ? 'modal' : null">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+</div>
+  
