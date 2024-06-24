@@ -1,0 +1,17 @@
+.file-upload {
+    max-width: 60%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .file-upload input {
+    margin: 30px 0;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+  }
+  
+ 
+  

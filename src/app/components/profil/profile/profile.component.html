@@ -1,0 +1,87 @@
+<div class="profile-card" *ngIf="collaborator">
+    <div style="display: flex; align-items: center;">
+        <app-collaborator-image [collaboratorId]="collaborator.idCollaborator"></app-collaborator-image>
+        <div style="margin-left: 20%;">
+            <h2 style="margin-top: 5%;">{{collaborator.firstName}} <span></span> {{collaborator.lastName}}</h2>
+            <div style="display: inline-table; align-items: start;">
+                <p>{{ collaborator.minibio }}</p> 
+                <a href="#" class="minibio" style=" margin-bottom: 8%; align-items: center;" data-bs-toggle="modal" data-bs-target="#ModalMinibio">
+                    <span><img src="assets/profil/pencil.png" style="width: 20px; height: 20px;"></span>
+                </a>
+            </div>
+             
+        </div>
+    </div>
+    
+    <a href="upload" class="highlighted-link" style="float: left;">Modifier la photo de profil</a>
+    
+    <hr  style="margin-top: 9%;">
+
+    <a href="#" class="telephone" data-bs-toggle="modal" data-bs-target="#ModalPhone">
+        <span><img src="assets/profil/call.png" style="width: 7%; height: 7%;"></span>
+        <span></span>
+        Num de téléphone:
+        <span class="phone-number">{{ collaborator.phoneNumber }}</span>
+      </a>   
+    <div class="hr-wrapper">
+        <hr>
+    </div>
+
+    <a href="#" class="telephone" data-bs-toggle="modal" data-bs-target="#ModalBirth">
+        <span> <img src="assets/profil/birthday.png" style="width: 7%; height: 7%;"> </span>
+        <span></span>
+        Date de Naissance : 
+        
+        <span class="phone-number">{{ collaborator.birthDate  | date: 'dd/MM/yyyy'}}</span>
+    </a>
+
+    <div class="hr-wrapper">
+        <hr>
+    </div>
+
+    <a href="#" class="telephone" data-bs-toggle="modal" data-bs-target="#ModalAdress">
+        <span> <img src="assets/profil/mahali.png" style="width: 10%; height: 10%;"> </span>
+        <span></span>
+        Adresse :        
+        <span class="phone-number">{{ collaborator.adress }}</span>
+    </a>
+
+    <hr>
+
+    <h3> Véhicules </h3>
+
+    <div *ngFor="let vehicle of vehicles">
+        <div class="vehicle">
+          <span class="icon">{{ vehicle.brand }} <span></span> {{ vehicle.model }} </span>
+          <span class="chevron">
+            <!-- <a href="#" class="minibio" style="align-items: center;" data-bs-toggle="modal" data-bs-target="#ModalMinibio">
+              <img src="assets/profil/pencil.png" style="width: 22px; height: 22px;">
+            </a> -->
+            <a href="#" class="minibio" style="margin-bottom: 8%; align-items: center;" 
+         data-bs-toggle="modal" 
+         data-bs-target="#ModalDelete"
+         (click)="setVehicleId(vehicle.idVehicule)">
+         <img src="assets/profil/trash.png" style="width: 22px; height: 22px;">
+      </a>
+          </span>
+        </div>
+        
+    </div>
+   
+
+    <a href="/choose-vehicle-type" class="highlighted-link" style="float: left; margin-bottom: 10%;">
+        <span> <img src="assets/profil/modifier-add.png" style="width: 7%; height: 7%;"> </span>
+        Ajouter un véhicule</a>
+
+
+    <app-minibio-update (collaboratorUpdated)="updateCollaboratorData($event)"></app-minibio-update>
+    <app-delete-vehicle #deleteModal [vehicleId]="selectedVehicleId" (vehicleDeleted)="getVehicles()"></app-delete-vehicle>
+    <app-update-phone-number [collaborator]="collaborator" (collaboratorUpdated)="onCollaboratorUpdated($event)"></app-update-phone-number>
+    <app-update-birth-date [collaborator]="collaborator" (collaboratorUpdated)="onCollaboratorUpdated($event)"></app-update-birth-date>
+    <app-update-adress [collaborator]="collaborator" (collaboratorUpdated)="onCollaboratorUpdated($event)"></app-update-adress>
+</div>
+
+
+
+  
+  
