@@ -1,0 +1,22 @@
+.btn-orange-border {
+    border: 3px solid rgb(255, 153, 0);
+    border-radius: 4px;
+    padding: 4px;
+    display: inline-block;
+}
+
+.annonce {
+    padding-right: 30px;
+}
+
+.orange-border {
+    border: 2px solid orange;
+  }
+  .content{
+   
+    box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
+    
+  }
+  .checked {
+    color: orange;
+  }

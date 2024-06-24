@@ -27,6 +27,7 @@ import { DeleteVehicleComponent } from './components/profil/delete-vehicle/delet
 import { UpdatePhoneNumberComponent } from './components/profil/update-phone-number/update-phone-number.component';
 import { UpdateBirthDateComponent } from './components/profil/update-birth-date/update-birth-date.component';
 import { UpdateAdressComponent } from './components/profil/update-adress/update-adress.component';
+import { RouteComponent } from './components/route/route.component';
 
 
 
@@ -54,6 +55,7 @@ import { UpdateAdressComponent } from './components/profil/update-adress/update-
     UpdatePhoneNumberComponent,
     UpdateBirthDateComponent,
     UpdateAdressComponent
+    RouteComponent
   
    
   ],
@@ -65,6 +67,7 @@ import { UpdateAdressComponent } from './components/profil/update-adress/update-
     HttpClientModule,
     FormsModule
   ],
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -3,9 +3,12 @@
     <div class="card">
       <div class="card-header">
         <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-          <li><a class="tag" href="/add-event">Add Event</a></li>
-          <li><button class="tag" (click)="showPlannedEvents()">Event Planned</button></li>
-        </ol>
+          <button type="button" class="tag" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+            Add event
+          </button>       
+          <button class="btn" (click)="getEvents()" title="Historique">
+            <img src="assets/brand/historyy.png" alt="All event" style="width: 24px; height: 24px;">
+        </button>        </ol>
       </div>
       <div class="card-body">
         <div *ngIf="noEventsFound" class="alert alert-info" role="alert">
@@ -14,12 +17,12 @@
         </div>
         <div class="row">
           <div class="col-4" *ngFor="let event of events">
-            <div class="card mb-3" style="max-width: 480px;">
+            <div class="content mb-3 rounded " style="max-width: 480px;">
               <div class="row g-0">
                 <div class="col-md-4">
                   <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
                     <title>Placeholder</title>
-                    <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
+                    <rect width="100%" height="100%"  fill="#ffffff" />
                     <image href="assets/brand/eventt.png" width="200" height="200" class="card-img-top" alt="..." />
                     <svg x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
                     </svg>
@@ -27,25 +30,31 @@
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
-                    <h5 class="card-title">{{ event.eventName }}</h5>
-                    <p class="card-text">Date of event: {{ event.eventDate }}</p>
-                    <p class="card-text">Time of event: {{ event.heure }}</p>
-                    <p class="card-text">Location: {{ event.location }}</p>
+                    <h5 class="card-title"><strong>{{ event.eventName }}</strong></h5>
+                    <hr>
+                    <p class="card-text">Date de l'evenement:<strong> {{ event.eventDate  | date: 'dd/MM/yyyy'}}</strong></p>
+                    <p class="card-text">Heure: <strong>{{ event.heure }}</strong></p>
+                    <p class="card-text">localisation: <strong>{{ event.location }}</strong></p>
+                    <p class="card-text" *ngIf="getRemainingDays(event.eventDate) >= 0">
+                      Il reste : <strong>{{ getRemainingDays(event.eventDate) }} jours</strong>
+                    </p>
                   </div>
                   
                   <div class="btn-group" role="group" >
               
-                    <a href="/annoncement" class="btn btn-outline-secondary active">Annonce</a>
+                    <a href="/annoncement-driver" class="btn btn-outline-secondary active">Annonce</a>
                     <div class="d-flex justify-content-end" class="modify">
                      
-                      <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(event)" >
+                      <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(event)" title="Modifier" >
                         <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
                       </button>
-                      <a href="/event" class="btn btn-orange-border" (click)="deleteEvent(event.eventID)">
+                      <a href="/event" class="btn btn-orange-border" (click)="deleteEvent(event.eventID)" title="Supprimer">
                         <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
                       </a>
                     </div>
                   </div>
+                  <hr>
+
                   
                 </div>
                 
@@ -58,12 +67,12 @@
     </div>
   </div>
 </div>
-<!-- Modal -->
+<!-- Modal update -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modifier l'evenement </h5>
+        <h5 class="modal-title w-100 text-center" id="exampleModalLabel">Modifier l'événement</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
       </div>
       <div class="modal-body">
@@ -71,31 +80,39 @@
           
           
           <div class="mb-3">
-            <label for="eventName" class="form-label">Nom evenement </label>
+            <label for="eventName" class="form-label">Nom evenement : </label>
             <input type="text" class="form-control" id="eventName" formControlName="eventName">
+            <div *ngIf="updateForm.get('eventName')?.invalid && (updateForm.get('eventName')?.dirty || updateForm.get('eventName')?.touched)" class="text-danger">
+              Le nom de l'evenement est obligatoire.
+          
+      </div>
           </div>
           <div class="mb-3">
-            <label for="eventDate" class="form-label">eventDate</label>
+            <label for="eventDate" class="form-label">Date :</label>
             <input type="date" class="form-control" id="eventDate" formControlName="eventDate">
+            <div *ngIf="updateForm.get('eventDate')?.invalid && (updateForm.get('eventDate')?.dirty || updateForm.get('eventDate')?.touched)" class="text-danger">
+              La date de l'evenement est obligatoire.
+          
+      </div>
           </div>
           <div class="mb-3">
             <label for="heure" class="form-label">Heure</label>
             <input type="time" class="form-control" id="heure" formControlName="heure">
-          </div>
-          <div class="mb-3">
-            <label for="datePublication" class="form-label">date de Publication </label>
-            <input type="date" class="form-control" id="datePublication" formControlName="datePublication">
-          </div>
-          <div class="mb-3">
-            <label for="location" class="form-label">location </label>
-            <input type="text" class="form-control" id="location" formControlName="location">
-          </div>
+            <div *ngIf="updateForm.get('heure')?.invalid && (updateForm.get('heure')?.dirty || updateForm.get('heure')?.touched)" class="text-danger">
+              L'heure de l'evenement est obligatoire.
           
-         
-              
+      </div>
+          </div>
         
-            
-            
+          <div class="mb-3">
+            <label for="location" class="form-label">localisation </label>
+            <input type="text" class="form-control" id="location" formControlName="location">
+            <div *ngIf="updateForm.get('location')?.invalid && (updateForm.get('location')?.dirty || updateForm.get('location')?.touched)" class="text-danger">
+              La localisation de l'evenement est obligatoire.
+          
+      </div>
+          </div>
+                      
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
@@ -105,4 +122,58 @@
     </div>
   </div>
 </div>
+<!-- Modal ADD -->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="staticBackdropLabel">Ajouter une Annonce</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+         
+          <div class="mb-3">
+            <label for="eventName" class="form-label">Nom evenement : </label>
+            <input type="text" class="form-control" id="eventName" formControlName="eventName">
+            <div *ngIf="addForm.get('eventName')?.invalid && (addForm.get('eventName')?.dirty || addForm.get('eventName')?.touched)" class="text-danger">
+              le Nom de l'evenement est obligatoire
+          
+      </div>
+          </div>
+          <div class="mb-3">
+            <label for="eventDate" class="form-label">Date :</label>
+            <input type="date" class="form-control" id="eventDate" formControlName="eventDate">
+            <div *ngIf="addForm.get('eventDate')?.invalid && (addForm.get('eventDate')?.dirty || addForm.get('eventDate')?.touched)" class="text-danger">
+              la date de l'evenement est obligatoire
+          
+      </div>
+          </div>
+          <div class="mb-3">
+            <label for="heure" class="form-label">Heure : </label>
+            <input type="time" class="form-control" id="heure" formControlName="heure">
+            <div *ngIf="addForm.get('heure')?.invalid && (addForm.get('heure')?.dirty || addForm.get('heure')?.touched)" class="text-danger">
+              l'heure de l'evenement est obligatoire
+          
+      </div>
+          </div>
+         
+          <div class="mb-3">
+            <label for="location" class="form-label">localisation : </label>
+            <input type="text" class="form-control" id="location" formControlName="location">
+            <div *ngIf="addForm.get('location')?.invalid && (addForm.get('location')?.dirty || addForm.get('location')?.touched)" class="text-danger">
+              localisation de l'evenement est obligatoire
+          
+      </div>
+          </div> 
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 

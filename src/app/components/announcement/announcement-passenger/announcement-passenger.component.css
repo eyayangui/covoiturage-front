@@ -4,3 +4,11 @@
     padding: 4px;
     display: inline-block;
 } */
+.content{
+   
+    box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
+    
+  }
+.orange-border {
+    border: 2px solid rgb(122, 121, 121);
+  }

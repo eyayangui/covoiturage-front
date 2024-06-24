@@ -3,37 +3,78 @@
       <div class="card">
         <div class="card-header">
           <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-            <li><a class="tag" href="/add-event">Add Annoncement</a></li>
+             <button type="button" class="tag" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+              Add Annoncement
+             </button>          
             <li>
-              <button class="btn" (click)="getAnnouncementPassenger()">
+             
+              <button class="btn" (click)="getAnnouncementPassenger()" title="Historique">
                   <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
               </button>
-            </li>          </ol>
-        </div>
-        <div class="card-body">
-         
+            </li>          
+          </ol>
           <div class="row">
+            
+            <div class="col-md-6 mb-3 d-flex align-items-end">
+              <div class="dropdown-container d-flex justify-content-start">
+                <button class="tag btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ selectedRayon || 'Select Rayon' }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('GrandTUNIS')">Grand Tunis</a></li>
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('SFAX')">Sfax</a></li>
+                  <li><a class="dropdown-item" (click)="filterAnnouncements('TouteLaTunisie')">Toute la Tunisie</a></li>
+                </ul>
+              </div>
+              <div style="margin-right: 2%;"></div>
+              <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" style="width: 30%;">
+              <button class="btn" (click)="searchByDate()" title="cherche"><img src="assets/brand/search.png" alt="search" style="width: 24px; height: 24px;"></button>
+            </div>
+            
+          </div>
+        </div>
+        <div class="card-body ">
+         
+          <div class="row ">
             <div class="col-4" *ngFor="let annoncement of annoncements">
-              <div class="card mb-3" style="max-width: 480px;">
-                <div class="row g-0">
-                 <div class="col-md-4">
+              <div class="content mb-3 rounded " style="max-width: 480px;">
+                <div class="row g-0 orange-border rounded-top">
+                  <div class="d-flex justify-content-end">
+                    <button class="btn " (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">
+                      <img src="assets/brand/infos.png" alt="Details" style="width: 30px; height: 30px;">
+                  </button>
+                  </div>
+                 <div class="col-md-4 ">
                     <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
                       <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
+                      <rect width="100%" height="100%"  fill="#ffffff" />
                       <image href="assets/brand/cherche.png" width="200" height="200" class="card-img-top" alt="..." />
                       <svg x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
                       </svg>
                     </svg>
                   </div> 
                   <div class="col-md-8">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ annoncement.rayon }}</h5>
-                      <p class="card-text">Date of Covoiturage: {{ annoncement.dateCovoiturage }}</p>
-                      <p class="card-text">Nombre des places: {{ annoncement.nbrPlaces }}</p>
-                      <p class="card-text">Aller et Retour: {{ annoncement.aller_Retour }}</p>
-                      <p class="card-text">Telephone: {{ annoncement.telephone }}</p>
-                      <button class="btn btn-primary" (click)="viewDetails(annoncement)">Details</button>
-
+                    <div class="card-body ">
+                      <h5 class="card-title text-primary">{{ annoncement.rayon }}</h5>
+                      <hr>
+                      <p class="card-text">Date of Covoiturage: <strong>{{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong></p>
+                      <p class="card-text">Nombre des places:<strong> {{ annoncement.nbrPlaces }}</strong></p>
+                      
+                      <p class="card-text">Départ:<strong> {{ annoncement.departure }}</strong></p>
+                      <p class="card-text">Destination:<strong> {{ annoncement.destination }}</strong></p>
+                      <p class="card-text" *ngIf="getRemainingDays(annoncement.dateCovoiturage) >= 0">
+                        Il reste : <strong>{{ getRemainingDays(annoncement.dateCovoiturage) }} jours</strong>
+                      </p>
+                      <hr>
+                      <button class="btn" (click)="viewPhone(annoncement)" title="Numero" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">
+                        <img src="assets/brand/phone.png" alt="telephone" style="width: 30px; height: 30px;">
+                      </button>
+                      <button class="btn" (click)="confirmAndUpdateSeats(annoncement)" title="Confimer" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">
+                        <img src="assets/brand/confirme.png" alt="confirme" style="width: 30px; height: 30px;">
+                      </button>
+                      <button class="btn" title="Route" (click)="showRouteDetails(annoncement.routeID)">
+                        <img src="assets/brand/map.png" alt="route" style="width: 40px; height: 40px;">
+                      </button>
                     </div>
                     <!-- <div class="btn-group" role="group">
                       <a href="/Annoncement" class="btn btn-outline-secondary active">Annonce</a>
@@ -41,28 +82,36 @@
                   </div>
                 </div>
                 
-                <div class="d-flex justify-content-end">
+              
+                <div class="d-flex justify-content-end orange-border rounded-bottom">
                   
-                  <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
+                  <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)" title="Modifier">
                     <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
                   </button>
-                  <button href="/annoncement-driver" class="btn btn-orange-border" (click)="deleteAnnouncementDriver(annoncement.annonceID)">
+                  <button href="/annoncement-passenger" class="btn btn-orange-border" (click)="deleteAnnouncementDriver(annoncement.annonceID)" title="Supprimer">
                     <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
                   </button>
+                  <button href="/claim" class="btn btn-orange-border" >
+                    <img src="assets/brand/comments.png" alt="Delete" style="width: 30px; height: 30px;">
+                  </button>
+                
                 </div>
+                
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    
   </div>
-  <!-- Modal -->
+  
+  <!-- Modal UPDATE -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modifier votre annonce </h5>
+        <h5 class="modal-title w-100 text-center" id="exampleModalLabel">Modifier votre annonce </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
       </div>
       <div class="modal-body">
@@ -74,10 +123,11 @@
                 {{ selectedRayon || 'Sélectionnez le rayon' }}
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
-                <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">GrandTUNIS</a></li>
-                <li><a class="dropdown-item"  (click)="selectRayon('SFAX')">SFAX</a></li>
-                <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">TouteLaTunisie</a></li>
+                <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">Grand tunis</a></li>
+                <li><a class="dropdown-item" (click)="selectRayon('SFAX')">Sfax</a></li>
+                <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">Toute la tunisie</a></li>
               </ul>
+
             </div>
           </div>
           
@@ -85,63 +135,175 @@
           <div class="mb-3">
             <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
             <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+            <div *ngIf="updateForm.get('dateCovoiturage')?.invalid && (updateForm.get('dateCovoiturage')?.dirty || updateForm.get('dateCovoiturage')?.touched)" class="text-danger">
+                La date de covoiturage est requise.
+            
+        </div>
           </div>
           <div class="mb-3">
             <label for="nbrPlaces" class="form-label">Nombre de places</label>
             <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+            <div *ngIf="updateForm.get('nbrPlaces')?.invalid && (updateForm.get('nbrPlaces')?.dirty || updateForm.get('dateCovoiturage')?.touched)" class="text-danger">
+              Le Nombre des places est obligatoire.
+          
+      </div>
           </div>
           
           <div class="mb-3">
             <label for="allerRetour" class="form-label">Aller Retour</label>
             <div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="allerRetour" id="allerRetourOui" [value]="true" formControlName="aller_Retour">
-                <label class="form-check-label" for="allerRetourOui">
-                  Oui
-                </label>
+                <input class="form-check-input" type="radio" id="allerRetourOui" name="aller_Retour" [value]="true" formControlName="aller_Retour">
+                <label class="form-check-label" for="allerRetourOui">Oui</label>
               </div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="allerRetour" id="allerRetourNon" [value]="false" formControlName="aller_Retour">
-                <label class="form-check-label" for="allerRetourNon">
-                  Non
-                </label>
+                <input class="form-check-input" type="radio" id="allerRetourNon" name="aller_Retour" [value]="false" formControlName="aller_Retour">
+                <label class="form-check-label" for="allerRetourNon">Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="bagage" class="form-label">Bagage</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="bagageOui" name="bagage" [value]="true" formControlName="bagage">
+                <label class="form-check-label" for="bagageOui">Oui</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="bagageNon" name="bagage" [value]="false" formControlName="bagage">
+                <label class="form-check-label" for="bagageNon">Non</label>
               </div>
             </div>
           </div>
           
+          
           <div class="mb-3">
             <label for="heureDepart" class="form-label">Heure de Depart</label>
             <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+            <div *ngIf="updateForm.get('heureDepart')?.invalid && (updateForm.get('heureDepart')?.dirty || updateForm.get('dateCovoiturage')?.touched)" class="text-danger">
+              L'heure de depart est obligatoire.
+           </div>
+          </div>
+          <div class="mb-3">
+            <label for="heureRetour" class="form-label">Heure de Retour</label>
+            <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
+          </div>
+         
+          <div class="mb-3">
+            <label for="telephone" class="form-label">Telephone</label>
+            <input type="number" class="form-control" id="telephone" formControlName="telephone">
+            <div *ngIf="updateForm.get('telephone')?.invalid && (updateForm.get('telephone')?.dirty || updateForm.get('dateCovoiturage')?.touched)" class="text-danger">
+              Le numero de telephone est obligatoire.
+           </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal ADD -->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="staticBackdropLabel">Vous cherchez une place ? </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+          <div class="mb-3">
+            <label for="rayon" class="form-label">Rayon</label>
+            <div class="dropdown">
+              <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedRayon || 'Sélectionnez le rayon' }}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                <li><a class="dropdown-item" (click)="selectRayonAdd('GrandTUNIS')">Grand tunis</a></li>
+                <li><a class="dropdown-item" (click)="selectRayonAdd('SFAX')">Sfax</a></li>
+                <li><a class="dropdown-item" (click)="selectRayonAdd('TouteLaTunisie')">Toute la tunisie</a></li>
+              </ul>
+              
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
+            <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+            <div *ngIf="addForm.get('dateCovoiturage')?.invalid && (addForm.get('dateCovoiturage')?.dirty || addForm.get('dateCovoiturage')?.touched)" class="text-danger">
+              La date de covoiturage est requise.
+          
+      </div>
+          </div>
+          <div class="mb-3">
+            <label for="nbrPlaces" class="form-label">Nombre de places</label>
+            <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+            <div *ngIf="addForm.get('nbrPlaces')?.invalid && (addForm.get('nbrPlaces')?.dirty || addForm.get('nbrPlaces')?.touched)" class="text-danger">
+              Le nombre des places est obligatoire.
+          
+      </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="allerRetour" class="form-label">Aller Retour</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="allerRetourOui" name="aller_Retour" [value]="true" formControlName="aller_Retour">
+                <label class="form-check-label" for="allerRetourOui">Oui</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="allerRetourNon" name="aller_Retour" [value]="false" formControlName="aller_Retour">
+                <label class="form-check-label" for="allerRetourNon">Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="bagage" class="form-label">Bagage</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="bagageOui" name="bagage" [value]="true" formControlName="bagage">
+                <label class="form-check-label" for="bagageOui">Oui</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="bagageNon" name="bagage" [value]="false" formControlName="bagage">
+                <label class="form-check-label" for="bagageNon">Non</label>
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="mb-3">
+            <label for="heureDepart" class="form-label">Heure de Depart</label>
+            <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+            <div *ngIf="addForm.get('heureDepart')?.invalid && (addForm.get('heureDepart')?.dirty || addForm.get('heureDepart')?.touched)" class="text-danger">
+              L'heure de depart est obligatoire.
+          
+      </div>
           </div>
           <div class="mb-3">
             <label for="heureRetour" class="form-label">Heure de Retour</label>
             <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
           </div>
           <div class="mb-3">
-            <label for="bagage" class="form-label">Bagage</label>
-            <div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="bagage" id="bagageOui" [value]="true" formControlName="bagage">
-                <label class="form-check-label" for="bagageOui">
-                  Oui
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="bagage" id="bagageNon" [value]="false" formControlName="bagage">
-                <label class="form-check-label" for="bagageNon">
-                  Non
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
             <label for="telephone" class="form-label">Telephone</label>
             <input type="number" class="form-control" id="telephone" formControlName="telephone">
+            <div *ngIf="addForm.get('telephone')?.invalid && (addForm.get('telephone')?.dirty || addForm.get('telephone')?.touched)" class="text-danger">
+              Le telephone est obligatoire.
+          
+      </div>
+          </div>
+          <div class="mb-3">
+            <label for="routID" class="form-label">routeID</label>
+            <input type="number" class="form-control" id="routeID" formControlName="routeID">
           </div>
           
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
           </div>
         </form>
       </div>

@@ -13,27 +13,32 @@ export class AnnouncementPassengerService {
 
   constructor(private http: HttpClient){}
 
-  public addAnnouncementPassenger(annonce: AnnoncePassenger): Observable<any> {
-    return this.http.post<any>(`${this.apiServerUrl}/announcement-passenger/add-announcement-passenger`, annonce);
+  public addAnnouncementPassenger(annonce: AnnoncePassenger): Observable<AnnoncePassenger> {
+    return this.http.post<AnnoncePassenger>(`${this.apiServerUrl}/announcement-passenger/add-announcement-passenger`, annonce);
   }
 
   public getAnnouncementPassenger(): Observable<AnnoncePassenger[]> {
     return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger`);
   }
   public updateAnnouncementPassenger(annonce: AnnoncePassenger) : Observable<AnnoncePassenger> {
-    return this.http.put<AnnoncePassenger>(`http://localhost:8090/announcement-passenger/update-announcement-passenger/${annonce.annonceID}`, annonce);
+    return this.http.put<AnnoncePassenger>(`${this.apiServerUrl}/announcement-passenger/update-announcement-passenger/${annonce.annonceID}`, annonce);
   }
   
 
  public deleteAnnouncementDriver(annonceID : any){
-    return  this.http.delete(`http://localhost:8090/announcement/delete-announcement/${annonceID}`)
+    return  this.http.delete(`${this.apiServerUrl}/announcement/delete-announcement/${annonceID}`)
   }
 
   public availableAnnouncementPassenger(): Observable<AnnoncePassenger[]> {
-    return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}http://localhost:8090/announcement-passenger/available-announcement`);
+    return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}:announcement-passenger/available-announcement`);
   }
 
   public announcementPassengerDate(): Observable<AnnoncePassenger[]> {
     return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger-date`);
+  }
+
+  getAnnouncementPassengerByRayon(rayon: string): Observable<AnnoncePassenger> {
+    return this.http.get<AnnoncePassenger>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger-by-rayon/${rayon}`);
+    
   }
 }

@@ -49,7 +49,7 @@ export class LoginComponent {
         console.log("storedCollaborator : "+ storedCollaborator)
         this.isLoggedIn = true; // Set to true after successful login
         const userRole = response.role as string;
-        this.router.navigate(['event']);
+        this.router.navigate(['annoncement-driver']);
         /* if (userRole === 'ADMINISTRATOR') {
           this.router.navigate(['listpatient']);
         } */
