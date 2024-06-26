@@ -1,0 +1,37 @@
+.modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .btn-close {
+    position: absolute;
+    right: 1rem;
+  }
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 10px; /* Adjust the gap between buttons if needed */
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .alert {
+    margin-bottom: 0;
+  }
+  

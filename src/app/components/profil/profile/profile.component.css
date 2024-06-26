@@ -1,0 +1,96 @@
+.profile-card {
+    width: 70%;
+    padding: 6%;
+    margin: 30px auto;
+    background-color: #fff;
+    box-shadow: 4px 4px 3px 3px rgba(223, 210, 193, 0.856);
+    border-radius: 10px;
+    text-align: center;
+}
+  
+body, html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.highlighted-link {
+    color: rgb(231, 123, 0); 
+    padding: 13px 150px 13px 5px; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-size: 16px; 
+    font-weight: bold; 
+    transition: background-color 0.3s, color 0.3s; 
+    
+  }
+ 
+  
+  .highlighted-link:hover {
+    background-color: rgba(206, 200, 192, 0.795); 
+    
+  }
+
+
+.telephone {
+    padding: 13px 150px; 
+    margin: 30px auto;
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-size: 90%; 
+    font-weight: bold; 
+    transition: background-color 0.3s, color 0.3s; 
+    display: inline-block; 
+    margin: 0; 
+    color: black;
+}
+
+.telephone:hover {
+    background-color: rgba(206, 200, 192, 0.795); 
+}
+
+.phone-number {
+    margin-top: 15px; /* Adjust margin as needed */
+    font-size: 15px; 
+    color: rgb(53, 52, 51);  
+}
+
+.hr-wrapper {
+    text-align: center;
+    color: grey;
+    width: 60%;
+    margin: auto;
+}
+
+
+.vehicle {
+    padding: 13px 150px; 
+    margin: 30px auto;
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-size: 90%; 
+    font-weight: bold; 
+    transition: background-color 0.3s, color 0.3s; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin: 0; 
+    color: black;
+}
+
+
+.icon {
+    font-size: 15px; 
+    color: black;
+}
+
+.chevron .minibio {
+    margin-right: 25px; /* Adjust this value as needed */
+}
+
+.chevron .minibio:last-child {
+    margin-right: 0; /* Ensure the last item doesn't have extra margin */
+}

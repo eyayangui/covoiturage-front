@@ -1,0 +1,11 @@
+<div *ngFor="let route of routes">
+   
+    <p>Departure: {{ route.departure }}</p>
+    <p>Destination: {{ route.destination }}</p>
+    <ul>
+      <li *ngFor="let assemblyPoint of route.assemblyPoints">
+         Point de rassemblement  : {{ assemblyPoint.points }}
+      </li>
+    </ul>
+  </div>
+  

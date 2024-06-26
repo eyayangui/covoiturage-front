@@ -1,0 +1,28 @@
+<div class="modal fade" id="ModalDelete" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="image-container">
+              <img src="assets/profil/important.png" style="width: 30%; height: 30%;">
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+            <div>
+              <h3>Êtes-vous sûr ?</h3>
+              <br>
+              <p>Si vous supprimez le véhicule de votre profil, les passagers pourront moins facilement vous retrouver au point de rendez-vous.</p>
+            </div>
+          </div>
+          
+      <div class="modal-footer">
+        <div class="button-container">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" (click)="deleteVehicle()" data-bs-dismiss="modal">Delete</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

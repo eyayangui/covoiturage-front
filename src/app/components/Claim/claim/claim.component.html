@@ -1,1 +1,59 @@
-<p>claim works!</p>
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
+            <button type="button" class="tag" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">
+              Add event
+            </button>       
+            <button class="btn" >
+              <img src="assets/brand/historyy.png" alt="All event" style="width: 24px; height: 24px;">
+          </button>        </ol>
+        </div>
+    
+          <div class="row">
+            <div class="col-4" *ngFor="let claim of claims">
+              <div class="content mb-3 rounded " style="max-width: 480px;">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                      <title>Placeholder</title>
+                      <rect width="100%" height="100%"  fill="#ffffff" />
+                      <image href="assets/brand/eventt.png" width="200" height="200" class="card-img-top" alt="..." />
+                      <svg x="30%" y="30%" width="40%" height="40%" viewBox="0 0 24 24" fill="var(--bs-tertiary-color)">
+                      </svg>
+                    </svg>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ claim.type }}</h5>
+                      <p class="card-text">Date : {{ claim.date }}</p>
+                      <p class="card-text">Titre: {{ claim.titre }}</p>
+                      <p class="card-text">description: {{ claim.description }}</p>
+                    </div>
+                    
+                   <div class="btn-group" role="group" >
+                
+                      <a href="/annoncement-driver" class="btn btn-outline-secondary active">Annonce</a>
+                      <div class="d-flex justify-content-end" class="modify">
+                       
+                        <button type="button" class="btn btn-orange-border" data-bs-toggle="modal" data-bs-target="#exampleModal" >
+                          <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
+                        </button>
+                        <a href="/event" class="btn btn-orange-border" >
+                          <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
+                        </a>
+                      </div>
+                    </div> 
+                    
+                  </div>
+                  
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  

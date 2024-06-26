@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<body>
+    
+    
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center justify-content-center w-100">
+            <h4 class="text-center m-0">Proposez un trajet</h4>
+          </div>
+          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0">
+            <button type="button" (click)="addRouteAndAnnouncement()" class="tag">
+              Ajouter
+            </button>
+          </ol>
+        </div>
+      </div>
+
+
+
+
+
+    <div class="split-container">
+        <div class="map-container"
+            leaflet
+            [leafletOptions]="options"
+            (leafletMapReady)="onMapReady($event)"
+            (leafletClick)="mapClicked($event)">
+        </div>
+        
+        <div class="container mt-5">
+            <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+                <div class="mb-3">
+                    <label for="rayon" class="form-label">Rayon</label>
+                    <div class="dropdown">
+                        <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ selectedRayon || 'Sélectionnez le rayon' }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                            <li><a class="dropdown-item" (click)="selectRayonAdd('GrandTUNIS')">Grand tunis</a></li>
+                            <li><a class="dropdown-item" (click)="selectRayonAdd('SFAX')">Sfax</a></li>
+                            <li><a class="dropdown-item" (click)="selectRayonAdd('TouteLaTunisie')">Toute la tunisie</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
+                    <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage" [min]="today">
+                    <div *ngIf="addForm.get('dateCovoiturage')?.invalid && (addForm.get('dateCovoiturage')?.dirty || addForm.get('dateCovoiturage')?.touched)" class="text-danger">
+                        La date de covoiturage est obligatoire.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="allerRetour" class="form-label">Aller Retour</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
+                            <label class="form-check-label" for="allerRetourOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
+                            <label class="form-check-label" for="allerRetourNon">Non</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="heureDepart" class="form-label">Heure de Depart</label>
+                    <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+                    <div *ngIf="addForm.get('heureDepart')?.invalid && (addForm.get('heureDepart')?.dirty || addForm.get('heureDepart')?.touched)" class="text-danger">
+                        L'heure de depart est obligatoire.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="heureRetour" class="form-label">Heure de Retour</label>
+                    <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="nbrPlaces" class="form-label">Nombre de places</label>
+                    <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+                    <div *ngIf="addForm.get('nbrPlaces')?.invalid && (addForm.get('nbrPlaces')?.dirty || addForm.get('nbrPlaces')?.touched)" class="text-danger">
+                        Le nombre des places est obligatoire.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="prix" class="form-label">Prix</label>
+                    <input type="number" class="form-control" id="prix" formControlName="prix">
+                    <div *ngIf="addForm.get('prix')?.invalid && (addForm.get('prix')?.dirty || addForm.get('prix')?.touched)" class="text-danger">
+                        Le prix est obligatoire.
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="bagage" class="form-label">Bagage</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="bagageOui" formControlName="bagage" [value]="true">
+                            <label class="form-check-label" for="bagageOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="bagageNon" formControlName="bagage" [value]="false">
+                            <label class="form-check-label" for="bagageNon">Non</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="fumer" class="form-label">Fumer</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="fumerOui" formControlName="fumer" [value]="true">
+                            <label class="form-check-label" for="fumerOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="fumerNon" formControlName="fumer" [value]="false">
+                            <label class="form-check-label" for="fumerNon">Non</label>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="mb-3">
+                    <label for="music" class="form-label">Music</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="musicOui" formControlName="music" [value]="true">
+                            <label class="form-check-label" for="musicOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="musicNon" formControlName="music" [value]="false">
+                            <label class="form-check-label" for="musicNon">Non</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="climatiseur" class="form-label">Climatiseur</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="climatiseurOui" formControlName="climatiseur" [value]="true">
+                            <label class="form-check-label" for="climatiseurOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="climatiseurNon" formControlName="climatiseur" [value]="false">
+                            <label class="form-check-label" for="climatiseurNon">Non</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="description" formControlName="description">
+                    
+                </div>
+                
+            </form>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

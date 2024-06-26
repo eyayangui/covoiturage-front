@@ -1,113 +1,206 @@
 <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header">
-          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
-            <li><a class="tag" href="/add-event">Add Annoncement</a></li>
-            <li>
-              <button class="btn" (click)="getAnnouncementDriver()">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          
+          <div class="d-flex align-items-center gap-3">
+            <div class="dropdown-container d-flex align-items-center">
+              <button class="tag btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedRayon || 'Select Rayon' }}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                <li><a class="dropdown-item" (click)="filterAnnouncements('GrandTUNIS')">Grand Tunis</a></li>
+                <li><a class="dropdown-item" (click)="filterAnnouncements('SFAX')">Sfax</a></li>
+                <li><a class="dropdown-item" (click)="filterAnnouncements('TouteLaTunisie')">Toute la Tunisie</a></li>
+              </ul>
+            </div>
+            <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()" style="width: 156px;">
+            <input type="number" class="tag form-control" id="searchPrice" [(ngModel)]="searchPrice" placeholder="Prix" (ngModelChange)="searchByPrice()" style="width: 156px;">
+            <button class="tag" (click)="searchFreeAnnouncements()">Annonces Gratuites</button>
+
+          </div>
+          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 align-items-center">
+            <a class="tag" href="/add-annoncement-driver" >
+              Proposez trajet
+            </a>
+            <li><div *ngIf="isAdmin">
+              <button class="btn" (click)="getAnnouncementDriver()" title="Historique">
                 <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
               </button>
+            </div>
             </li>
           </ol>
         </div>
         <div class="card-body">
-          <div class="row">
-            <div class="col-4" *ngFor="let annoncement of annoncements">
-              <div class="card mb-3" style="max-width: 480px;">
-                <div class="row g-0">
-                  <div class="col-md-4">
-                    <svg class="bd-placeholder-img img-fluid" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
-                      <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
-                      <image href="assets/brand/covoi.jpg" width="200" height="200" class="card-img-top" alt="..." />
-                    </svg>
-                  </div>
-                  <div class="col-md-8">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ annoncement.rayon }}</h5>
-                      <p class="card-text">Date of Covoiturage: {{ annoncement.dateCovoiturage }}</p>
-                      <p class="card-text">Nombre des places: {{ annoncement.nbrPlaces }}</p>
-                      <p class="card-text">Prix: {{ annoncement.prix }}</p>
-                      <a href="/annoncement" class="btn btn-success">Reserver</a>
-                      <button class="btn btn-primary" (click)="viewDetails(annoncement)">Details</button>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+            <div class="col" *ngFor="let annoncement of annoncements | paginate: { itemsPerPage: 6, currentPage: p }">
+              <div class="content mb-3 rounded card-container h-100">
+                <div class="row g-0 rounded-top h-100">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <div class="d-flex justify-content-end">
+                      <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="openMapWithRoute(annoncement.routeID)" title="Modifier la route">
+                        <img src="assets/brand/map.png" alt="route">
+                      </button>
+                      <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)" title="Modifier annonce">
+                        <img src="assets/brand/pencil.png" alt="Update">
+                      </button>
+                      <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="deleteAnnouncementDriver(annoncement.annonceID)" title="Supprimer">
+                        <img src="assets/brand/trash.png" alt="Delete">
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                  <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
-                    <img src="assets/brand/pencil.png" alt="Update" style="width: 30px; height: 30px;">
-                  </button>
-                  <button class="btn" (click)="deleteAnnouncementDriver(annoncement.annonceID)">
-                    <img src="assets/brand/trash.png" alt="Delete" style="width: 30px; height: 30px;">
-                  </button>
+                  <div class="flex-row h-100" [ngStyle]="{ 'padding-top': !currentUserMatchesAnnouncementUserId(annoncement.userId) ? '37px' : '0px' }">
+                    <div class="d-flex flex-column justify-content-center">
+                      <img src="assets/brand/covo.png" class="img-fluid card-img-top" alt="Covoiturage Image" style="width: 85px; height: 85px;" />
+                    </div>
+                    <div class="flex-grow-1 ms-3 d-flex flex-column justify-content-between">
+                      <div class="card-body flex-grow-1">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <h5 class="card-title text-primary">{{ annoncement.rayon }}</h5>
+                          <div class="d-flex align-items-center  text-primary">
+                            <img src="assets/brand/hourglass.png" alt="Il reste" style="width: 20px; height: 20px; margin-right: 5px;" />
+                            <strong>: {{ getRemainingDays(annoncement.dateCovoiturage) }}</strong>
+                          </div>
+                        </div>
+                        <hr>
+                        
+                        <div class="card" style="height: 300px; border: 0; overflow-y: auto;">
+                        <div class="card-body justify-content-between flex-grow-1">
+                          <p class="card-text">
+                          <li>
+                            <img src="assets/brand/month.png" alt="Date de covoiturage" style="width: 30px; height: 30px; margin-right: 5px;" />
+                            <strong>: {{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong>, <img src="assets/brand/clock.png" alt="Date de covoiturage" style="width: 20px; height: 20px; margin-right: 5px;" />
+                             <strong>: {{ annoncement.heureDepart }}H</strong>
+                          </li>
+                        </p>
+                        <p class="card-text">
+                          <li>
+                            <img src="assets/brand/group.png" alt="Nombre des places" style="width: 30px; height: 30px; margin-right: 5px;" />
+                            <strong>: {{ annoncement.nbrPlaces }}</strong>
+                          </li> 
+                        </p>  
+                          <p class="card-text">
+                            <li>
+                              <img src="assets/brand/currency-dollar.png" alt="Prix" style="width: 30px; height: 30px; margin-right: 5px;" />
+                             <strong>: {{ annoncement.prix === 0 ? 'Gratuit' : annoncement.prix + ' DT' }}</strong>
+                            </li>
+                          </p>         
+                                       
+                        <p class="card-text"><li>Départ <strong>: {{ annoncement.departure }}</strong></p>
+                        <p class="card-text"><li>Destination: <strong>: {{ annoncement.destination }}</strong></p>
+                        
+                          
+                        </div>
+                        </div>
+                      </div>
+                    
+                      
+                      <div class="d-flex align-items-center mt-auto px-3 pb-3">
+                        <a href="/annoncement" class="btn-orange me-3" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">Reserver</a>
+                        <button class="btn me-3" (click)="showRouteDetails(annoncement.routeID)" title="Route">
+                          <img src="assets/brand/locations.png" alt="route" style="width: 40px; height: 40px;">
+                        </button>
+                        <button class="btn" (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">
+                          <img src="assets/brand/info.png" alt="Details" style="width: 30px; height: 30px;">
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        
+        
+        
+        
       </div>
     </div>
   </div>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="p === 1">
+        <a class="page-link" (click)="p = p - 1" href="javascript:void(0)">Précédente</a>
+      </li>
+      <li *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="p === i + 1" class="page-item">
+        <a class="page-link" (click)="p = i + 1" href="javascript:void(0)">{{ i + 1 }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="p === totalPages">
+        <a class="page-link" (click)="p = p + 1" href="javascript:void(0)">Suivante</a>
+      </li>
+    </ul>
+  </nav>
   
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modifier votre annonce</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+    <!-- Modal update -->
+<div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="exampleModalLabel">Modifier votre annonce</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="rayon" class="form-label">Rayon</label>
+            <div class="dropdown">
+              <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedRayon || 'Sélectionnez le rayon' }}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">Grand tunis</a></li>
+                <li><a class="dropdown-item" (click)="selectRayon('SFAX')">Sfax</a></li>
+                <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">Toute la tunisie</a></li>
+              </ul>
+            </div>
           </div>
-          <div class="modal-body">
-            <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
-              <div class="mb-3">
-                <label for="rayon" class="form-label">Rayon</label>
-                <div class="dropdown">
-                  <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ selectedRayon || 'Sélectionnez le rayon' }}
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
-                    <li><a class="dropdown-item" (click)="selectRayon('GrandTUNIS')">GrandTUNIS</a></li>
-                    <li><a class="dropdown-item"  (click)="selectRayon('SFAX')">SFAX</a></li>
-                    <li><a class="dropdown-item" (click)="selectRayon('TouteLaTunisie')">TouteLaTunisie</a></li>
-                  </ul>
-                </div>
-              </div>
-              
-              
               <div class="mb-3">
                 <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
-                <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+                <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage" [min]="today">
+                <div *ngIf="updateForm.get('dateCovoiturage')?.invalid && (updateForm.get('dateCovoiturage')?.dirty || updateForm.get('dateCovoiturage')?.touched)" class="text-danger">
+                  La date de covoiturage est obligatoire.
+               </div>
+              </div>
+              <div class="mb-3">
+                <label for="allerRetour" class="form-label">Aller Retour</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
+                    <label class="form-check-label" for="allerRetourOui">Oui</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
+                    <label class="form-check-label" for="allerRetourNon">Non</label>
+                  </div>
+                </div>
               </div>
               <div class="mb-3">
                   <label for="heureDepart" class="form-label">Heure de Depart</label>
                   <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+                  <div *ngIf="updateForm.get('heureDepart')?.invalid && (updateForm.get('heureDepart')?.dirty || updateForm.get('heureDepart')?.touched)" class="text-danger">
+                    L'heure de depart est obligatoire.
+                 </div>
                 </div>
                 <div class="mb-3">
                   <label for="heureRetour" class="form-label">Heure de Retour</label>
                   <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
                 </div>
               <div class="mb-3">
-                <label for="nbrPlaces" class="form-label">Nombre de places</label>
+                <label for="nbrPlaces" class="form-label">Nombre des places</label>
                 <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+                <div *ngIf="updateForm.get('nbrPlaces')?.invalid && (updateForm.get('nbrPlaces')?.dirty || updateForm.get('nbrPlaces')?.touched)" class="text-danger">
+                  Le nombre des places est obligatoire.
+               </div>
               </div>
               <div class="mb-3">
                   <label for="prix" class="form-label">Prix</label>
                   <input type="number" class="form-control" id="prix" formControlName="prix">
+                  <div *ngIf="updateForm.get('prix')?.invalid && (updateForm.get('prix')?.dirty || updateForm.get('prix')?.touched)" class="text-danger">
+                    Le prix est obligatoire.
+                 </div>
                 </div>
-                <div class="mb-3">
-                  <label for="allerRetour" class="form-label">Aller Retour</label>
-                  <div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
-                      <label class="form-check-label" for="allerRetourOui">Oui</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
-                      <label class="form-check-label" for="allerRetourNon">Non</label>
-                    </div>
-                  </div>
-                </div>
+                
                 
                 <div class="mb-3">
                   <label for="bagage" class="form-label">Bagage</label>
@@ -122,9 +215,57 @@
                     </div>
                   </div>
                 </div>
-                            
-             
-                         
+                <div class="mb-3">
+                  <label for="fumer" class="form-label">Fumer</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="fumerOui" formControlName="fumer" [value]="true">
+                      <label class="form-check-label" for="fumerOui">Oui</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="fumerNon" formControlName="fumer" [value]="false">
+                      <label class="form-check-label" for="fumerNon">Non</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+    
+                  <label for="music" class="form-label">Music</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="musicOui" formControlName="music" [value]="true">
+                      <label class="form-check-label" for="musicOui">Oui</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="musicNon" formControlName="music" [value]="false">
+                      <label class="form-check-label" for="musicNon">Non</label>
+                   </div>
+                  </div>
+                </div>
+               
+
+                <div class="mb-3">
+                  <label for="climatiseur" class="form-label">Climatiseur
+                  </label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="climatiseurOui" formControlName="climatiseur" [value]="true">
+                      <label class="form-check-label" for="climatiseurOui">Oui</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="climatiseurNon" formControlName="climatiseur" [value]="false">
+                      <label class="form-check-label" for="climatiseurNon">Non</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description</label>
+                  <input type="text" class="form-control" id="description" formControlName="description">
+                  
+              </div>
+                <div id="map"></div>
+
+                        
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">Save changes</button>
@@ -134,4 +275,165 @@
         </div>
       </div>
     </div>
+   
     
+    <!-- Modal ADD -->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="staticBackdropLabel">Ajouter une Annonce </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+          <div class="mb-3">
+            <label for="rayon" class="form-label">Rayon</label>
+            <div class="dropdown">
+              <button class="btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedRayon || 'Sélectionnez le rayon' }}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+                <li><a class="dropdown-item" (click)="selectRayonAdd('GrandTUNIS')">Grand tunis</a></li>
+                <li><a class="dropdown-item" (click)="selectRayonAdd('SFAX')">Sfax</a></li>
+                <li><a class="dropdown-item" (click)="selectRayonAdd('TouteLaTunisie')">Toute la tunisie</a></li>
+              </ul>
+              
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="dateCovoiturage" class="form-label">Date de Covoiturage</label>
+            <input type="date" class="form-control" id="dateCovoiturage" formControlName="dateCovoiturage">
+            <div *ngIf="addForm.get('dateCovoiturage')?.invalid && (addForm.get('dateCovoiturage')?.dirty || addForm.get('dateCovoiturage')?.touched)" class="text-danger">
+              La date de covoiturage est obligatoire.
+          
+      </div>
+          </div>
+          <div class="mb-3">
+            <label for="allerRetour" class="form-label">Aller Retour</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="allerRetourOui" formControlName="aller_Retour" [value]="true">
+                <label class="form-check-label" for="allerRetourOui">Oui</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="allerRetourNon" formControlName="aller_Retour" [value]="false">
+                <label class="form-check-label" for="allerRetourNon">Non</label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+              <label for="heureDepart" class="form-label">Heure de Depart</label>
+              <input type="time" class="form-control" id="heureDepart" formControlName="heureDepart">
+              <div *ngIf="addForm.get('heureDepart')?.invalid && (addForm.get('heureDepart')?.dirty || addForm.get('heureDepart')?.touched)" class="text-danger">
+                L'heure de depart est obligatoire.
+            
+        </div>
+            </div>
+            <div class="mb-3">
+              <label for="heureRetour" class="form-label">Heure de Retour</label>
+              <input type="time" class="form-control" id="heureRetour" formControlName="heureRetour">
+            </div>
+          <div class="mb-3">
+            <label for="nbrPlaces" class="form-label">Nombre de places</label>
+            <input type="number" class="form-control" id="nbrPlaces" formControlName="nbrPlaces">
+            <div *ngIf="addForm.get('nbrPlaces')?.invalid && (addForm.get('nbrPlaces')?.dirty || addForm.get('nbrPlaces')?.touched)" class="text-danger">
+              Le nombre des places est obligatoire.
+          
+      </div>
+          </div>
+          <div class="mb-3">
+              <label for="prix" class="form-label">Prix</label>
+              <input type="number" class="form-control" id="prix" formControlName="prix">
+              <div *ngIf="addForm.get('prix')?.invalid && (addForm.get('prix')?.dirty || addForm.get('prix')?.touched)" class="text-danger">
+                Le prix est obligatoire.
+            
+        </div>
+            </div>
+            
+            
+            <div class="mb-3">
+              <label for="bagage" class="form-label">Bagage</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="bagageOui" formControlName="bagage" [value]="true">
+                  <label class="form-check-label" for="bagageOui">Oui</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="bagageNon" formControlName="bagage" [value]="false">
+                  <label class="form-check-label" for="bagageNon">Non</label>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="fumer" class="form-label">Fumer</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="fumerOui" formControlName="fumer" [value]="true">
+                  <label class="form-check-label" for="fumerOui">Oui</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="fumerNon" formControlName="fumer" [value]="false">
+                  <label class="form-check-label" for="fumerNon">Non</label>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+
+              <label for="music" class="form-label">Music</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="musicOui" formControlName="music" [value]="true">
+                  <label class="form-check-label" for="musicOui">Oui</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" id="musicNon" formControlName="music" [value]="false">
+                  <label class="form-check-label" for="musicNon">Non</label>
+               </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="routeID" class="form-label">Route</label>
+              <input type="number" class="form-control" id="routeID" formControlName="routeID">
+              <button type="button" class="btn btn-info" (click)="openMap()">Ouvrir la Carte</button>
+
+            </div>
+                       
+          <div class="modal-footer">
+
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- claim -->
+<!-- <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="modal-title w-100 text-center" id="offcanvasBottomLabel">Réclamation ?</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Close"><span class="visually-hidden">Close</span></button>
+  </div>
+  <div class="offcanvas-body small">
+    <form [formGroup]="claimForm" (ngSubmit)="onClaimSubmit()">
+      <div class="mb-3">
+        <label for="titre" class="form-label">Titre</label>
+        <input type="text" class="form-control" id="titre" formControlName="titre">
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="3" formControlName="description"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-control" id="type" formControlName="type">
+          <option value="PASSAGER">PASSAGER</option>
+          <option value="CONDUCTEUR">CONDUCTEUR</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div> -->

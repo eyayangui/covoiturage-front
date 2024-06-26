@@ -1,0 +1,55 @@
+<!--  <div class="brand-selection-container">
+  <h2>Choose Brand</h2>
+  <input [(ngModel)]="brandPrefix" (input)="onBrandPrefixChange()" placeholder="Enter brand prefix" class="brand-input">
+  <ul class="brand-list">
+    <li *ngFor="let brand of brands" (click)="selectedBrand = brand" [class.selected]="selectedBrand === brand">{{ brand }}</li>
+  </ul>
+  <button (click)="onSelectBrand()" class="next-button">Next</button>
+</div>  -->
+
+  
+ <!--  <label for="brandInput" class="form-label">Choose Brand</label>
+  <input class="form-control"  list="datalistOptions" [(ngModel)]="brandPrefix" (input)="onBrandPrefixChange()" placeholder="Enter brand prefix">
+  <datalist id="datalistOptions">
+    <option *ngFor="let brand of brands" [value]="brand">{{ brand }}</option>
+  </datalist>
+  <button class="btn btn-primary mt-3" [disabled]="!selectedBrand">Next</button> -->
+  
+  
+ <!--  <div>
+    <h2>Choose Brand</h2>
+    <label for="brandInput" class="form-label">Datalist example</label>
+    <input
+      class="form-control"
+      list="brandDataList"
+      id="brandInput"
+      [(ngModel)]="brandPrefix"
+      (input)="onBrandPrefixChange()"
+      (change)="onBrandSelect($event)"
+      placeholder="Type to search..."
+    >
+    <datalist id="brandDataList">
+      <option *ngFor="let brand of brands" [value]="brand"></option>
+    </datalist>
+    <button (click)="onSelectBrand()">Next</button>
+  </div> -->
+  
+  
+  <div>
+    <h2>Choose Brand</h2>
+    <label for="brandInput" class="form-label">Enter brand prefix</label>
+    <input [(ngModel)]="brandPrefix" (input)="onBrandPrefixChange()" id="brandInput" class="form-control" list="brandOptions" placeholder="Type to search...">
+    <datalist id="brandOptions">
+      <option *ngFor="let brand of brands" [value]="brand"></option>
+    </datalist>
+    <button (click)="onSelectBrand()" class="btn btn-primary">Next</button>
+  </div>
+   
+  
+  
+  
+  
+  
+  
+  
+  

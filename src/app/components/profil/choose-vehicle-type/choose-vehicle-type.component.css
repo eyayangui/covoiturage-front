@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.container {
+    margin-top: 100px;
+    background: #fff;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+.form-select {
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-left: 15%;
+    border: 3px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+

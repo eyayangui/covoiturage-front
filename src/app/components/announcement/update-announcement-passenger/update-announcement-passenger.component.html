@@ -1,0 +1,10 @@
+<div class="map-container"
+leaflet
+[leafletOptions]="options"
+(leafletMapReady)="onMapReady($event)"
+(leafletClick)="mapClicked($event)">
+</div>
+<div class="button-container">
+    <a type="button" href="/annoncement-passenger" (click)="updateRouteAndAnnouncement()" class="btn btn-primary">Enregistrer</a>
+    <a type="button" href="/annoncement-passenger" class="btn btn-secondary">Annuler</a>
+  </div>

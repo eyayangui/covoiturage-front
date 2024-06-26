@@ -14,24 +14,23 @@ export class AnnouncementDriverService {
   constructor(private http: HttpClient){}
 
   public addAnnouncementDriver(annonce: AnnouncementDriver): Observable<any> {
-    return this.http.post<any>(`${this.apiServerUrl}/announcement-passenger/add-announcement-passenger`, annonce);
+    return this.http.post<any>(`${this.apiServerUrl}/announcement-driver/add-announcement-driver`, annonce);
   }
   public updateAnnouncementDriver(annonce: AnnouncementDriver) : Observable<AnnouncementDriver> {
-    return this.http.put<AnnouncementDriver>(`http://localhost:8090/announcement-driver/update-announcements-driver/${annonce.annonceID}`, annonce);
+    return this.http.put<AnnouncementDriver>(`${this.apiServerUrl}/announcement-driver/update-announcement-driver/${annonce.annonceID}`, annonce);
   }
  
-
 
  public getAnnouncementDriver(): Observable<AnnouncementDriver[]> {
     return this.http.get<AnnouncementDriver[]>(`${this.apiServerUrl}/announcement-driver/announcements-driver`);
   }
   
   getAnnouncementDriverById(annonceID: number): Observable<AnnouncementDriver> {
-    return this.http.get<AnnouncementDriver>(`http://localhost:8090/announcementDriver/${annonceID}`);
+    return this.http.get<AnnouncementDriver>(`${this.apiServerUrl}/announcement-driver/announcementDriver/${annonceID}`);
   }
 
   public deleteAnnouncementDriver(annonceID : any){
-    return  this.http.delete(`http://localhost:8090/announcement/delete-announcement/${annonceID}`)
+    return  this.http.delete(`${this.apiServerUrl}/announcement/delete-announcement/${annonceID}`)
   }
 
   public availableAnnouncementDriver(): Observable<AnnouncementDriver[]> {
@@ -40,5 +39,9 @@ export class AnnouncementDriverService {
 
   public announcementDriverDate(): Observable<AnnouncementDriver[]> {
     return this.http.get<AnnouncementDriver[]>(`${this.apiServerUrl}/announcement-driver/announcement-driver-date`);
+  }
+  getAnnouncementDriverByRayon(rayon: string): Observable<AnnouncementDriver> {
+    return this.http.get<AnnouncementDriver>(`${this.apiServerUrl}/announcement-driver/announcement-driver-by-rayon/${rayon}`);
+    
   }
 }

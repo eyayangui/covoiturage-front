@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationRequest } from 'src/app/Models/AuthenticationRequest';
 import { AuthenticationResponse } from 'src/app/Models/AuthenticationResponse';
@@ -6,6 +6,9 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
 import { timer } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageService } from 'src/app/services/auth/local-storage.service';
+
 
 
 @Component({
@@ -17,14 +20,17 @@ export class LoginComponent {
 
   authRequest: AuthenticationRequest = {};
   authResponse: AuthenticationResponse = {};
-  collaborator: CollaboratorDTO | null = null;
+  collaborator?: CollaboratorDTO ;
   error: string | null = null;
 
   constructor(
-    private authService: AuthenticationService, private collaboratorService: CollaboratorsService,
+    private authService: AuthenticationService, 
+    private collaboratorService: CollaboratorsService,
+    private localStorage: LocalStorageService,
     private router: Router
   ) {
   }
+
 
   isLoggedIn: boolean = false;
   loginError: boolean = false;
@@ -33,31 +39,33 @@ export class LoginComponent {
   authenticate() {
     this.authService.login(this.authRequest).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.accessToken as string);
-        // Store user's role in local storage
-        localStorage.setItem('role', response.role as string);
-        var col = this.getCollaborator(response.idCollaborator);
-        console.log("id :" + col);
+        this.localStorage.setItem('accessToken', response.accessToken as string);
+        console.log('Token stored:' ,response);
+        
+        this.getCollaborator(response.idCollaborator);
+        const storedCollaborator = this.localStorage.getItem('user');
+        console.log("storedCollaborator : "+ storedCollaborator)
         this.isLoggedIn = true; // Set to true after successful login
-        const userRole = response.role as string;
-        this.router.navigate(['event']);
-        /* if (userRole === 'ADMINISTRATOR') {
-          this.router.navigate(['listpatient']);
-        } */
+        this.router.navigateByUrl('/annoncement-driver');
       },
       error: (error) => {
         this.loginError = true;
         timer(5000).subscribe(() => {
-          this.loginError = false; 
+          this.loginError = false;
         });
       }
     });
   }
 
+
   getCollaborator(id?: number) {
     this.collaboratorService.getCollaboratorById(id).subscribe(
       (data: CollaboratorDTO) => {
         this.collaborator = data;
+        console.log("Collaborator: " + JSON.stringify(this.collaborator));
+        localStorage.setItem('user', JSON.stringify(this.collaborator));
+        const storedCollaborator = this.localStorage.getItem('user');
+        console.log("storedCollaborator : "+ storedCollaborator)
       },
       (error) => {
         this.error = error;
@@ -66,4 +74,6 @@ export class LoginComponent {
   }
 
 
+
 }
+
