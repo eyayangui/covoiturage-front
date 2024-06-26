@@ -1,46 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
 import { AnnouncementDriverService } from 'src/app/services/announcement/announcement-driver.service';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
-export class NavComponent {
-  searchTerm: string = ''; 
+export class NavComponent implements OnInit {
+  searchTerm: string = '';
   isAdmin: boolean = false;
+
   constructor(
     private router: Router,
-    private announcementDriverService: AnnouncementDriverService
-  ) { }
-  ngOnInit(): void {
-    
-    this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
+    private announcementDriverService: AnnouncementDriverService,
+    private authService: AuthenticationService
+  ) {}
 
+  ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
+    this.authService.userRoleUpdated.subscribe(role => {
+      this.isAdmin = (role === 'ADMINISTRATOR');
+    });
   }
+
   isActive(url: string): boolean {
-    return this.router.url === url;}
+    return this.router.url === url;
+  }
 
   isLoginRoute(): boolean {
     return !this.router.url.includes('/login');
   }
+
   logout() {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('userDetails');
-    localStorage.removeItem('role');
-    localStorage.removeItem('idCollaborator');
+    localStorage.clear();
     this.router.navigate(['/login']);
+    this.authService.userRoleUpdated.next(null);
   }
- /*  onSearch(): void {
-    if (this.searchTerm) {
-      this.announcementDriverService.getAnnouncementDriverByRayon(this.searchTerm)
-        .subscribe((results: AnnouncementDriver) => {
-          console.log(results);
-          // Faites quelque chose avec les résultats, par exemple, les stocker dans une propriété pour affichage
-        });
-    }
-  } */
- 
 }

@@ -1,19 +1,3 @@
-import { inject } from '@angular/core';
-
-/* 
-export const authGuard: CanActivateFn = () => {
-  const router = inject(Router);
-
-
- if (!localStorage.getItem('token')) {
-   router.navigate(['login']);
-
-   return false;
- }
- return true;
-
-};
- */
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { AuthenticationService } from './authentication.service';
@@ -25,12 +9,16 @@ export class authGuard implements CanActivate {
   constructor(private authService: AuthenticationService, private router: Router) {}
 
   canActivate(): boolean {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('accessToken');
+    console.log('accessToken:', token); // Debugging log
     if (token) {
       return true;
     } else {
+      console.log('No token found, redirecting to login'); // Debugging log
       this.router.navigate(['/login']);
       return false;
     }
   }
+
+  
 }

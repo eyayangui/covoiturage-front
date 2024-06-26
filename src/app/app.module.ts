@@ -67,7 +67,7 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     DeleteVehicleComponent,
     UpdatePhoneNumberComponent,
     UpdateBirthDateComponent,
-    UpdateAdressComponent
+    UpdateAdressComponent,
     RouteComponent
   
    
@@ -79,11 +79,11 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     ReactiveFormsModule,
     FormsModule,
     LeafletModule,
-    NgxPaginationModule 
+    NgxPaginationModule ,
     HttpClientModule,
     FormsModule
   ],
-    ],
+    
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalStorageService } from 'src/app/services/auth/local-storage.service';
 
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -35,40 +36,34 @@ export class LoginComponent {
   loginError: boolean = false;
 
 
-
   authenticate() {
     this.authService.login(this.authRequest).subscribe({
       next: (response) => {
-        this.localStorage.setItem('token', response.accessToken as string);
-    
-        this.localStorage.setItem('role', response.role as string);
-    
-        this.getCollaborator(response.idCollaborator)
-        console.log("id :" + this.getCollaborator(response.idCollaborator));
+        this.localStorage.setItem('accessToken', response.accessToken as string);
+        console.log('Token stored:' ,response);
+        
+        this.getCollaborator(response.idCollaborator);
         const storedCollaborator = this.localStorage.getItem('user');
         console.log("storedCollaborator : "+ storedCollaborator)
         this.isLoggedIn = true; // Set to true after successful login
-        const userRole = response.role as string;
-        this.router.navigate(['event']);
-        /* if (userRole === 'ADMINISTRATOR') {
-          this.router.navigate(['listpatient']);
-        } */
+        this.router.navigateByUrl('/annoncement-driver');
       },
       error: (error) => {
         this.loginError = true;
         timer(5000).subscribe(() => {
-          this.loginError = false; 
+          this.loginError = false;
         });
       }
     });
   }
+
 
   getCollaborator(id?: number) {
     this.collaboratorService.getCollaboratorById(id).subscribe(
       (data: CollaboratorDTO) => {
         this.collaborator = data;
         console.log("Collaborator: " + JSON.stringify(this.collaborator));
-        this.localStorage.setItem('user', JSON.stringify(this.collaborator));
+        localStorage.setItem('user', JSON.stringify(this.collaborator));
         const storedCollaborator = this.localStorage.getItem('user');
         console.log("storedCollaborator : "+ storedCollaborator)
       },

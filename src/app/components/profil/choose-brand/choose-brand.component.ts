@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleService } from 'src/app/services/vehicle.service';
 
+
 @Component({
   selector: 'app-choose-brand',
   templateUrl: './choose-brand.component.html',

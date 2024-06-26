@@ -43,8 +43,6 @@ const routes: Routes = [
   {path: "map/:routeID" , component: MapComponent,canActivate: [authGuard]},
   {path: 'add-announcement-event/:eventID' , component: AddAnnouncementEventComponent,canActivate: [authGuard]},
   {path: "update-route/:routeID" , component: UpdateAnnouncementPassengerComponent,canActivate: [authGuard]},
-
-
   {path: "login" ,component: LoginComponent},
   /* {path:"**",pathMatch:"full",redirectTo:"login"}, */
   { path: 'choose-vehicle-type', component: ChooseVehicleTypeComponent, canActivate: [authGuard]},

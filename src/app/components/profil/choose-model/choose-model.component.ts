@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { VehicleService } from 'src/app/services/vehicle.service';
 
+
 @Component({
   selector: 'app-choose-model',
   templateUrl: './choose-model.component.html',
