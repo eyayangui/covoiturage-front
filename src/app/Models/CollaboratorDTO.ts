@@ -11,5 +11,7 @@ export interface CollaboratorDTO {
     bonus: number;
     role: string ;
     minibio?: string;
+    dataImage?: Blob;  
+
 }
 

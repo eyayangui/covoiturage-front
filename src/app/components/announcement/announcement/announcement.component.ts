@@ -8,6 +8,9 @@ import { AnnouncementService } from 'src/app/services/announcement/announcement.
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouteP } from 'src/app/Models/RouteP';
 import { RouteService } from 'src/app/services/Route/route.service';
+import { forkJoin } from 'rxjs';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
+import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 
 @Component({
   selector: 'app-announcement',
@@ -23,11 +26,14 @@ export class AnnouncementComponent implements OnInit {
   isAdmin: boolean = false;
   searchPrice: number | undefined;
   originalAnnouncements: Annonce[] = [];
+  collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
+  collaborator?: CollaboratorDTO ;
 
 
   constructor(private announcementService: AnnouncementService,
     private route: ActivatedRoute,
     private routeService: RouteService, 
+    private collaboratorsService: CollaboratorsService,
     private router: Router,
 
     private fb: FormBuilder) {
@@ -61,6 +67,7 @@ export class AnnouncementComponent implements OnInit {
       (response: Annonce[]) => {
         this.annoncements = response;
         this.originalAnnouncements = [...response];
+        this.loadAnnouncements(this.annoncements);
 
       },
       (error: any) => {
@@ -68,6 +75,32 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
+  loadAnnouncements(annoncements: Annonce[]): void {
+    this.annoncements = annoncements;
+    const userIds = new Set(annoncements.map(annonce => annonce.userId));
+    const requests = Array.from(userIds).map(userId => this.collaboratorsService.getCollaboratorById(userId));
+    
+    forkJoin(requests).subscribe(
+      collaborators => {
+        collaborators.forEach(collaborator => {
+          this.collaboratorMap.set(collaborator.idCollaborator ?? 0, collaborator);
+        });
+      },
+      error => {
+        console.error('Error fetching collaborators:', error);
+      }
+    );
+  }
+
+  getCollaboratorName(userId: number | undefined): string {
+    if (userId === undefined) {
+      return ''; // Gérer le cas où userId est indéfini
+    }
+  
+    const collaborator = this.collaboratorMap.get(userId);
+    return collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '';
+  }
+
   getAnnouncement(): void {
     this.announcementService.getAnnouncement().subscribe(
       annoncements => {
@@ -199,7 +232,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   currentUserMatchesAnnouncementUserId(userId: number): boolean {
-    const loggedInUserId = localStorage.getItem('idCollaborator');
+    const loggedInUserId = localStorage.getItem('userId');
     return loggedInUserId !== null && parseInt(loggedInUserId) === userId;
   }
 

@@ -142,8 +142,26 @@ export class LeafletMapsComponent  {
     this.markers.splice(index, 1);
    
   }
-
+ /*  addDeparture() {
+    const geocoder = (Leaflet.Control as any).geocoder({
+      defaultMarkGeocode: false
+    }).on('markgeocode', (e: any) => {
+      const latlng = e.geocode.center;
+      const address = e.geocode.name; 
   
+      // Demandez à l'utilisateur d'entrer une description pour cette adresse
+      const description = prompt('Veuillez entrer une description pour cette adresse:');
+  
+      const destinationMarker = Leaflet.marker(latlng).addTo(this.map);
+      this.map.panTo(latlng);
+  
+      // Ajoutez la description dans le popup
+      destinationMarker.bindPopup(`<b>${address}</b><br>${description}`).openPopup();
+  
+      this.departureAddress = address;
+    }).addTo(this.map);
+  }
+   */
  addDeparture() {
   const geocoder = (Leaflet.Control as any).geocoder({
     defaultMarkGeocode: false
@@ -358,10 +376,10 @@ addRouteAndAnnouncement() {
   }
 
   // Récupérer l'identifiant du collaborateur à partir du stockage local
-  const userId = localStorage.getItem('idCollaborator');
+  const userId = localStorage.getItem('userId');
   if (!userId) {
       console.error('User ID not found in local storage.');
-      return;
+      return; 
   }
 
   // Convertir l'identifiant du collaborateur en nombre

@@ -30,5 +30,13 @@ export class CollaboratorImageComponent implements OnInit{
       );
     }
   }
-
+  uploadFile(event: any, collaboratorId: number): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.collaboratorService.uploadCollaboratorImage(collaboratorId, file).subscribe({
+        next: (response) => console.log('Upload success', response),
+        error: (error) => console.log('Upload error:', error)
+      });
+    }
+  }
 }

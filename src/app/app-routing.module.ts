@@ -49,7 +49,7 @@ const routes: Routes = [
   { path: 'choose-brand', component: ChooseBrandComponent, canActivate: [authGuard] },
   { path: 'choose-model', component: ChooseModelComponent, canActivate: [authGuard] },
   { path: 'upload', component: FileUploadComponent, canActivate: [authGuard] },
-  { path: 'profil', component: ProfileComponent},
+  { path: 'profil', component: ProfileComponent, canActivate: [authGuard]},
 
 ];
 
