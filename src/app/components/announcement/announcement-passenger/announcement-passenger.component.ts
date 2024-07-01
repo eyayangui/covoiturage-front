@@ -13,6 +13,9 @@ import { ClaimService } from 'src/app/services/Claim/claim.service';
 import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
 import 'leaflet-routing-machine'; 
 import { ActivatedRoute } from '@angular/router';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
+import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { forkJoin } from 'rxjs';
 
 
 Leaflet.Icon.Default.imagePath = 'assets/';
@@ -45,6 +48,8 @@ export class AnnouncementPassengerComponent implements OnInit  {
   isAdmin: boolean = false;
   today: string = new Date().toISOString().split('T')[0]; 
   originalAnnouncements: AnnoncePassenger[] = [];
+  collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
+  collaborator?: CollaboratorDTO ;
 
   totalPages: number;
   options = {
@@ -62,7 +67,9 @@ export class AnnouncementPassengerComponent implements OnInit  {
     private announcementPassengerService: AnnouncementPassengerService,
     private router: Router,
     private fb: FormBuilder,
-    private routeService: RouteService
+    private routeService: RouteService,
+    private collaboratorsService: CollaboratorsService
+
 
   ) {
     this.addForm = this.fb.group({
@@ -113,7 +120,7 @@ export class AnnouncementPassengerComponent implements OnInit  {
     });
   }
   currentUserMatchesAnnouncementUserId(userId: number): boolean {
-    const loggedInUserId = localStorage.getItem('idCollaborator');
+    const loggedInUserId = localStorage.getItem('userId');
     return loggedInUserId !== null && parseInt(loggedInUserId) === userId;
   }
   announcementPassengerDate(): void {
@@ -122,6 +129,8 @@ export class AnnouncementPassengerComponent implements OnInit  {
         console.log('Annoncements:', annoncements); 
         this.annoncements = annoncements;
         this.originalAnnouncements = [...annoncements];
+        this.loadAnnouncements(annoncements);
+
 
       },
       error => {
@@ -129,6 +138,34 @@ export class AnnouncementPassengerComponent implements OnInit  {
       }
     );
   }
+  loadAnnouncements(annoncements: AnnoncePassenger[]): void {
+    this.annoncements = annoncements;
+    const userIds = new Set(annoncements.map(annonce => annonce.userId));
+    const requests = Array.from(userIds).map(userId => this.collaboratorsService.getCollaboratorById(userId));
+    
+    forkJoin(requests).subscribe(
+      collaborators => {
+        collaborators.forEach(collaborator => {
+          this.collaboratorMap.set(collaborator.idCollaborator ?? 0, collaborator);
+        });
+      },
+      error => {
+        console.error('Error fetching collaborators:', error);
+      }
+    );
+  }
+
+  getCollaboratorName(userId: number | undefined): string {
+    if (userId === undefined) {
+      return ''; // Gérer le cas où userId est indéfini
+    }
+  
+    const collaborator = this.collaboratorMap.get(userId);
+    return collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '';
+  }
+
+
+
   formatDateOnly(dateString: Date): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
      return new Date(dateString).toLocaleDateString(undefined, options);}

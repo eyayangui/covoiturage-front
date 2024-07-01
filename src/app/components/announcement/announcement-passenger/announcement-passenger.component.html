@@ -48,6 +48,9 @@
               <div class="flex-row h-100" [ngStyle]="{ 'padding-top': !currentUserMatchesAnnouncementUserId(annoncement.userId) ? '37px' : '0px' }">
                 <div class="d-flex flex-column justify-content-center">
                     <img src="assets/brand/cherche.png" class="img-fluid card-img-top" alt="Covoiturage Image" style="width: 80px; height: 80px;" />
+                    <p class="card-text mb-0">
+                      <strong>{{ getCollaboratorName(annoncement.userId) }}</strong>
+                    </p>
                   </div>
                   <div class="flex-grow-1 ms-3 d-flex flex-column justify-content-between">
                     <div class="card-body flex-grow-1">

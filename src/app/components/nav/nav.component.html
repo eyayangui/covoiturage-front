@@ -9,12 +9,19 @@
           <a [routerLink]="['/annoncement-passenger']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-passenger')}">Passager</a>
         </li>
       </ul>
-      <ul class="navbar-nav ms-auto">
+      
+      <ul class="navbar-nav ms-auto ml-auto">
+        <a routerLink="/profil" class="nav-link icon svg-avatar"  style="cursor: pointer;">
+          <span class="sr-only">Profil</span>
+          <img src="assets/brand/accountt.png" alt="account" title="account" style="width: 25px; height: 25px; margin-left: 5px;">
+        </a>
         <li class="nav-item">
           <a (click)="logout()" class="nav-link" style="cursor: pointer;">
             <img src="assets/brand/leave.png" alt="Logout" title="Logout" style="width: 25px; height: 25px; margin-left: 5px;">
           </a>
+          
         </li>
+       
       </ul>
     </div>
   </nav>
@@ -60,8 +67,9 @@
                 </a>
               </li>
               <form class="d-flex navbar-item ms-3" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-primary" type="submit">Search</button>
+<!--                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+ --><!--                 <button class="btn btn-primary" type="submit">Search</button>
+ -->                           
               </form>
               <li class="nav-item">
                 <a href="#" class="nav-link nav-icon">

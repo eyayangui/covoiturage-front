@@ -17,7 +17,6 @@
             <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()" style="width: 156px;">
             <input type="number" class="tag form-control" id="searchPrice" [(ngModel)]="searchPrice" placeholder="Prix" (ngModelChange)="searchByPrice()" style="width: 156px;">
             <button class="tag" (click)="searchFreeAnnouncements()">Annonces Gratuites</button>
-
           </div>
           <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 align-items-center">
             <a class="tag" href="/add-annoncement-driver" >
@@ -37,6 +36,7 @@
               <div class="content mb-3 rounded card-container h-100">
                 <div class="row g-0 rounded-top h-100">
                   <div class="col-md-12 d-flex justify-content-end">
+                    
                     <div class="d-flex justify-content-end">
                       <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="openMapWithRoute(annoncement.routeID)" title="Modifier la route">
                         <img src="assets/brand/map.png" alt="route">
@@ -52,6 +52,9 @@
                   <div class="flex-row h-100" [ngStyle]="{ 'padding-top': !currentUserMatchesAnnouncementUserId(annoncement.userId) ? '37px' : '0px' }">
                     <div class="d-flex flex-column justify-content-center">
                       <img src="assets/brand/covo.png" class="img-fluid card-img-top" alt="Covoiturage Image" style="width: 85px; height: 85px;" />
+                      <p class="card-text mb-0">
+                        <strong>{{ getCollaboratorName(annoncement.userId) }}</strong>
+                      </p>
                     </div>
                     <div class="flex-grow-1 ms-3 d-flex flex-column justify-content-between">
                       <div class="card-body flex-grow-1">
@@ -88,8 +91,9 @@
                                        
                         <p class="card-text"><li>Départ <strong>: {{ annoncement.departure }}</strong></p>
                         <p class="card-text"><li>Destination: <strong>: {{ annoncement.destination }}</strong></p>
-                        
-                          
+<!--                         <p class="card-text"><li>Créé par : <strong>{{ getCollaboratorName(annoncement.userId) }}</strong></li></p>
+ -->
+
                         </div>
                         </div>
                       </div>
@@ -111,10 +115,7 @@
             </div>
           </div>
         </div>
-        
-        
-        
-        
+                
       </div>
     </div>
   </div>

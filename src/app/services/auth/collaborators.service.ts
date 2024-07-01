@@ -52,5 +52,10 @@ export class CollaboratorsService {
     };
     return this.http.patch<CollaboratorDTO>(url, body);
   } 
+  uploadCollaboratorImage(id: number, file: File): Observable<CollaboratorDTO> {
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
 
+    return this.http.put<CollaboratorDTO>(`${this.baseUrl}/${id}/image`, formData);
+  }
 }

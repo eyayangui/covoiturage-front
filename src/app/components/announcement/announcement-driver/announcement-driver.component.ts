@@ -39,6 +39,8 @@ export class AnnouncementDriverComponent implements OnInit {
   today: string = new Date().toISOString().split('T')[0]; 
   searchPrice: number | undefined;
   originalAnnouncements: AnnouncementDriver[] = [];
+  collaborator?: CollaboratorDTO ;
+  collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
 
  
 
@@ -100,25 +102,54 @@ export class AnnouncementDriverComponent implements OnInit {
     this.announcementDriverDate();
     this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
 
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.collaborator = JSON.parse(storedUser); 
+    }
   }
  
 
   currentUserMatchesAnnouncementUserId(userId: number): boolean {
-    const loggedInUserId = localStorage.getItem('idCollaborator');
+    const loggedInUserId = localStorage.getItem('userId');
     return loggedInUserId !== null && parseInt(loggedInUserId) === userId;
   }
   announcementDriverDate(): void {
     this.announcementDriverService.announcementDriverDate().subscribe(
       annoncements => {
-        this.annoncements = annoncements;
-        this.originalAnnouncements = [...annoncements];
+        this.originalAnnouncements = annoncements;
+        this.loadAnnouncements(annoncements);
       },
       error => {
-        console.error('Error fetching planned annoncement:', error);
+        console.error('Error fetching planned annonce:', error);
       }
     );
   }
 
+  loadAnnouncements(annoncements: AnnouncementDriver[]): void {
+    this.annoncements = annoncements;
+    const userIds = new Set(annoncements.map(annonce => annonce.userId));
+    const requests = Array.from(userIds).map(userId => this.collaboratorsService.getCollaboratorById(userId));
+    
+    forkJoin(requests).subscribe(
+      collaborators => {
+        collaborators.forEach(collaborator => {
+          this.collaboratorMap.set(collaborator.idCollaborator ?? 0, collaborator);
+        });
+      },
+      error => {
+        console.error('Error fetching collaborators:', error);
+      }
+    );
+  }
+
+  getCollaboratorName(userId: number | undefined): string {
+    if (userId === undefined) {
+      return ''; // Gérer le cas où userId est indéfini
+    }
+  
+    const collaborator = this.collaboratorMap.get(userId);
+    return collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '';
+  }
 
   formatDateOnly(dateString: Date): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
