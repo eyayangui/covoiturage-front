@@ -11,11 +11,11 @@ import { VehicleService } from 'src/app/services/vehicle.service';
 })
 export class ChooseModelComponent implements OnInit {
 
-  vehicleType?: string |null;
+  vehicleType?: string | null;
   brand!: string | null;
-  models!: string[];
-  selectedModel!: string;
-  modelPrefix!: string;
+  models: string[] = [];
+  selectedModel: string = '';
+  modelPrefix: string = '';
   collaborator?: CollaboratorDTO;
 
   constructor(
@@ -29,15 +29,14 @@ export class ChooseModelComponent implements OnInit {
     this.brand = this.route.snapshot.paramMap.get('brand');
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      this.collaborator = JSON.parse(storedUser); 
+      this.collaborator = JSON.parse(storedUser);
     }
   }
-
 
   onModelPrefixChange() {
     if (this.vehicleType && this.brand) {
       this.vehicleService.getModels(this.vehicleType, this.brand, this.modelPrefix).subscribe(data => {
-        this.models = data.map(vehicle => vehicle.model); 
+        this.models = data.map(vehicle => vehicle.model);
       });
     } else {
       console.error('Vehicle type or brand is not specified');
@@ -45,8 +44,9 @@ export class ChooseModelComponent implements OnInit {
   }
 
   onAssignVehicle() {
-    if (this.vehicleType && this.brand && this.selectedModel && this.collaborator && this.collaborator.idCollaborator) {
-      this.vehicleService.assignVehicle(this.collaborator.idCollaborator, this.vehicleType, this.brand, this.selectedModel).subscribe(response => {
+    if (this.vehicleType && this.brand && (this.selectedModel || this.modelPrefix) && this.collaborator && this.collaborator.idCollaborator) {
+      const modelToAssign = this.selectedModel || this.modelPrefix;
+      this.vehicleService.assignVehicle(this.collaborator.idCollaborator, this.vehicleType, this.brand, modelToAssign).subscribe(response => {
         console.log('Vehicle assigned successfully:', response);
         this.router.navigate(['/profil']);
       }, error => {
@@ -56,5 +56,4 @@ export class ChooseModelComponent implements OnInit {
       console.error('Vehicle type, brand, collaborator, or selected model is not specified');
     }
   }
-  
 }

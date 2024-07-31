@@ -8,6 +8,7 @@ import { CollaboratorsService } from 'src/app/services/auth/collaborators.servic
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalStorageService } from 'src/app/services/auth/local-storage.service';
+import { Location } from '@angular/common';
 
 
 
@@ -27,7 +28,7 @@ export class LoginComponent {
     private authService: AuthenticationService, 
     private collaboratorService: CollaboratorsService,
     private localStorage: LocalStorageService,
-    private router: Router
+    private router: Router, private location: Location
   ) {
   }
 
@@ -41,12 +42,17 @@ export class LoginComponent {
       next: (response) => {
         this.localStorage.setItem('accessToken', response.accessToken as string);
         console.log('Token stored:' ,response);
-        
-        this.getCollaborator(response.idCollaborator);
-        const storedCollaborator = this.localStorage.getItem('user');
+        this.fetchCollaboratorImage(response.idCollaborator);
+        const storedCollaborator = localStorage.getItem('user');
         console.log("storedCollaborator : "+ storedCollaborator)
-        this.isLoggedIn = true; // Set to true after successful login
-        this.router.navigateByUrl('/annoncement-driver');
+        this.isLoggedIn = true; 
+        
+        this.router.navigateByUrl('/annoncement-driver').then(() => {
+          this.location.go('/annoncement-driver'); 
+          window.location.reload();
+        });
+        
+
       },
       error: (error) => {
         this.loginError = true;
@@ -73,6 +79,18 @@ export class LoginComponent {
     );
   }
 
+  fetchCollaboratorImage(id?: number) {
+    this.collaboratorService.getCollaboratorImage(id).subscribe(
+      response => {
+        const objectURL = URL.createObjectURL(response);
+        localStorage.setItem('userImage', objectURL); 
+        console.log("image :" +objectURL );
+      },
+      error => {
+        console.error('Error fetching image', error);
+      }
+    );
+  }
 
 
 }

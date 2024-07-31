@@ -8,6 +8,11 @@ import { AnnouncementService } from 'src/app/services/announcement/announcement.
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouteP } from 'src/app/Models/RouteP';
 import { RouteService } from 'src/app/services/Route/route.service';
+import { forkJoin } from 'rxjs';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
+import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
+import { BookingService } from 'src/app/services/booking.service';
 
 @Component({
   selector: 'app-announcement',
@@ -23,12 +28,22 @@ export class AnnouncementComponent implements OnInit {
   isAdmin: boolean = false;
   searchPrice: number | undefined;
   originalAnnouncements: Annonce[] = [];
+  collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
+  collaborator?: CollaboratorDTO ;
+  annoncement: AnnouncementDriver[] = [];
+  modalOpen = false;
+  driverId!: number; 
+  announcementId!: number;
+  attributeValue!: string;
 
 
   constructor(private announcementService: AnnouncementService,
+    private bookingService: BookingService,
     private route: ActivatedRoute,
     private routeService: RouteService, 
+    private collaboratorsService: CollaboratorsService,
     private router: Router,
+    
 
     private fb: FormBuilder) {
     this.updateForm = this.fb.group({
@@ -54,13 +69,56 @@ export class AnnouncementComponent implements OnInit {
     });
     this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
 
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.collaborator = JSON.parse(storedUser); 
+    }
+
   }
 
+  navigateToDetails(announcementId: any): void {
+    const idString = announcementId.toString();
+    this.router.navigate(['/booking', idString]);
+  }
+
+  openModal(event: Event, announcementId: number, driverId: number): void {
+    if (announcementId === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    this.announcementId = announcementId;
+    this.driverId = driverId;
+    this.modalOpen = true;
+    console.log(`Driver ID: ${this.driverId}, Announcement ID: ${this.announcementId}`);
+  }
+
+  updateAttribute(modalForm: any): void {
+    if (modalForm.valid) {
+      const params = {
+        announcementId: this.announcementId.toString(),
+        passengerId: this.collaborator?.idCollaborator?.toString(),
+        location: this.attributeValue
+      };
+
+      this.bookingService.startBookingProcess(params).subscribe(
+        response => {
+          Swal.fire('Success', 'Booking process started successfully!', 'success');
+          this.modalOpen = false;
+        },
+        error => {
+          console.error('Error starting booking process:', error);
+          Swal.fire('Error', 'Failed to start booking process!', 'error');
+        }
+      );
+    }
+  }
   getAnnoncesByEventID(eventID: number): void {
     this.announcementService.findAnnoncesByEventID(eventID).subscribe(
       (response: Annonce[]) => {
         this.annoncements = response;
         this.originalAnnouncements = [...response];
+        this.loadAnnouncements(this.annoncements);
 
       },
       (error: any) => {
@@ -68,6 +126,32 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
+  loadAnnouncements(annoncements: Annonce[]): void {
+    this.annoncements = annoncements;
+    const userIds = new Set(annoncements.map(annonce => annonce.userId));
+    const requests = Array.from(userIds).map(userId => this.collaboratorsService.getCollaboratorById(userId));
+    
+    forkJoin(requests).subscribe(
+      collaborators => {
+        collaborators.forEach(collaborator => {
+          this.collaboratorMap.set(collaborator.idCollaborator ?? 0, collaborator);
+        });
+      },
+      error => {
+        console.error('Error fetching collaborators:', error);
+      }
+    );
+  }
+
+  getCollaboratorName(userId: number | undefined): string {
+    if (userId === undefined) {
+      return ''; // Gérer le cas où userId est indéfini
+    }
+  
+    const collaborator = this.collaboratorMap.get(userId);
+    return collaborator ? `${collaborator.firstName} ${collaborator.lastName}` : '';
+  }
+
   getAnnouncement(): void {
     this.announcementService.getAnnouncement().subscribe(
       annoncements => {
@@ -199,7 +283,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   currentUserMatchesAnnouncementUserId(userId: number): boolean {
-    const loggedInUserId = localStorage.getItem('idCollaborator');
+    const loggedInUserId = localStorage.getItem('userId');
     return loggedInUserId !== null && parseInt(loggedInUserId) === userId;
   }
 
@@ -225,4 +309,8 @@ export class AnnouncementComponent implements OnInit {
     searchFreeAnnouncements(): void {
       this.annoncements = this.originalAnnouncements.filter(annonce => annonce.prix === 0);
     }
+
+
+
+  
 }

@@ -10,9 +10,12 @@
             <button class="tag" (click)="searchFreeAnnouncements()">Annonces Gratuites</button>
 
           </div>
-          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 align-items-center">
+          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 align-items-center" *ngFor="let annoncement of annoncement">
             
             <li><div *ngIf="isAdmin">
+              <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="navigateToDetails(annoncement.annonceID)">
+                <img src="assets/brand/teaming-meeting.png" alt="Delete">
+              </button>
               <button class="btn" (click)="getAnnouncement()" title="Historique">
                 <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
               </button>
@@ -27,6 +30,9 @@
               <div class="content mb-3 rounded card-container">
                 <div class="row g-0 rounded-top">
                   <div class="d-flex justify-content-end">
+                    <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="navigateToDetails(annoncement.annonceID)">
+                      <img src="assets/brand/teaming-meeting.png" alt="Delete">
+                    </button>
                     <button type="button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" class="btn btn-orange-border small-button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
                       <img src="assets/brand/pencil.png" alt="Update">
                     </button>
@@ -41,6 +47,8 @@
                       <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
                       <image href="assets/brand/covoi.jpg" width="200" height="200" class="card-img-top" alt="..." />
                     </svg>
+                    <strong>{{ getCollaboratorName(annoncement.userId) }}</strong>
+
                   </div>
                   <div class="col-md-8">
                     
@@ -52,7 +60,8 @@
                       <p class="card-text">Nombre des places: <strong>{{ annoncement.nbrPlaces }}</strong></p>
                       <p class="card-text">Prix: <strong>{{ annoncement.prix === 0 ? 'Gratuit' : annoncement.prix + ' DT' }}</strong></p>
                       <hr>
-                      <a href="#" class="btn-orange" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">Reserver</a>
+                      <a class="btn-orange" 
+                      [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null" (click)="openModal($event, annoncement.annonceID, annoncement.userId)">Reserver</a>
                         <button class="btn " (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">
                           <img src="assets/brand/info.png" alt="Details" style="width: 30px; height: 30px;">
                       </button>
@@ -171,3 +180,32 @@
     </div>
   </div>
   
+
+
+  <div class="modal fade" id="ModalAdress" [ngClass]="{'show': modalOpen}" [style.display]="modalOpen ? 'block' : 'none'" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModalLabel">Point de départ</h5>
+          <button type="button" class="btn-close" (click)="modalOpen = false" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #modalForm="ngForm" (ngSubmit)="updateAttribute(modalForm)">
+            <div class="form-group">
+              <input type="text" class="form-control" id="attributeValue" [(ngModel)]="attributeValue" name="attributeValue" required>
+              <div *ngIf="modalForm.submitted && !modalForm.form.controls['attributeValue'].valid" class="alert alert-danger alert-sm" role="alert">
+                <span class="alert-icon"><span class="visually-hidden">Error</span></span>
+                <p>Ce champ ne doit pas être vide</p>
+              </div>
+            </div>
+            <input type="hidden" [(ngModel)]="driverId" name="driverId">
+            <input type="hidden" [(ngModel)]="announcementId" name="announcementId">
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="modalOpen = false">Fermer</button>
+              <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="attributeValue && attributeValue.length >= 8 ? 'modal' : null">Confirmer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

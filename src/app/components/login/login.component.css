@@ -57,8 +57,7 @@
   border: none;
   outline: none;
   color: #222;
-  font-size: 16px;
-  font-family: 'Poppins',sans-serif;
+ 
 }
 .space{
   margin-top: 16px;
@@ -114,3 +113,11 @@
     right: 10px; /* Adjust this value to your preference */
 }
 
+
+.ng-pristine {
+  box-shadow: none;
+}
+
+.ng-dirty {
+  box-shadow: none;
+}

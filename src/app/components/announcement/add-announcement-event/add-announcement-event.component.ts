@@ -362,7 +362,7 @@ export class AddAnnouncementEventComponent implements OnInit {
       return;
     }
 
-    const userId = localStorage.getItem('idCollaborator');
+    const userId = localStorage.getItem('userId');
     if (!userId || !this.eventID) {
       console.error('User ID or Event ID not found.');
       return;

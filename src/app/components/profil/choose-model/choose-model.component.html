@@ -1,8 +1,9 @@
-<div>
-    <h2>Choose Model</h2>
-    <input [(ngModel)]="modelPrefix" (input)="onModelPrefixChange()" placeholder="Enter model prefix">
-    <ul>
-      <li *ngFor="let model of models" (click)="selectedModel = model">{{ model }}</li>
-    </ul>
-    <button (click)="onAssignVehicle()">Assign Vehicle</button>
-  </div>
+<div class="model-selection-container">
+  <h2>Choisir le modèle</h2>
+  <input [(ngModel)]="modelPrefix" (input)="onModelPrefixChange()" placeholder="Entrer le modèle" class="model-input">
+  <ul class="model-list">
+    <li *ngFor="let model of models" (click)="selectedModel = model" [class.selected]="selectedModel === model">{{ model }}</li>
+  </ul>
+  <button (click)="onAssignVehicle()" class="btn btn-secondary btn">Terminer</button>
+</div>
+

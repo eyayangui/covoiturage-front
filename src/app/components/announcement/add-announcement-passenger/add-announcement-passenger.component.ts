@@ -325,7 +325,7 @@ addRouteAndAnnouncement() {
   }
 
   // Récupérer l'identifiant du collaborateur à partir du stockage local
-  const userId = localStorage.getItem('idCollaborator');
+  const userId = localStorage.getItem('userId');
   if (!userId) {
     console.error('User ID not found in local storage.');
     return;

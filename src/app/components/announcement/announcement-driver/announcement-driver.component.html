@@ -1,43 +1,44 @@
 <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          
-          <div class="d-flex align-items-center gap-3">
-            <div class="dropdown-container d-flex align-items-center">
-              <button class="tag btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ selectedRayon || 'Select Rayon' }}
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
-                <li><a class="dropdown-item" (click)="filterAnnouncements('GrandTUNIS')">Grand Tunis</a></li>
-                <li><a class="dropdown-item" (click)="filterAnnouncements('SFAX')">Sfax</a></li>
-                <li><a class="dropdown-item" (click)="filterAnnouncements('TouteLaTunisie')">Toute la Tunisie</a></li>
-              </ul>
-            </div>
-            <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()" style="width: 156px;">
-            <input type="number" class="tag form-control" id="searchPrice" [(ngModel)]="searchPrice" placeholder="Prix" (ngModelChange)="searchByPrice()" style="width: 156px;">
+        <div class="card-header responsive-container">
+          <div class="dropdown-container">
+            <button class="tag btn btn-dropdown dropdown-toggle" type="button" id="dropdownRayonButton" aria-expanded="false">
+              {{ selectedRayon || 'Select Rayon' }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownRayonButton">
+              <li><a class="dropdown-item" (click)="filterAnnouncements('GrandTUNIS')">Grand Tunis</a></li>
+              <li><a class="dropdown-item" (click)="filterAnnouncements('SFAX')">Sfax</a></li>
+              <li><a class="dropdown-item" (click)="filterAnnouncements('TouteLaTunisie')">Toute la Tunisie</a></li>
+            </ul>
+            <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()">
+            <input type="number" class="tag form-control" id="searchPrice" [(ngModel)]="searchPrice" placeholder="Prix" (ngModelChange)="searchByPrice()">
             <button class="tag" (click)="searchFreeAnnouncements()">Annonces Gratuites</button>
-
           </div>
-          <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 align-items-center">
-            <a class="tag" href="/add-annoncement-driver" >
+          <ol class="list-unstyled">
+            <a class="tag" href="/add-annoncement-driver">
               Proposez trajet
             </a>
-            <li><div *ngIf="isAdmin">
+            <li *ngIf="isAdmin">
               <button class="btn" (click)="getAnnouncementDriver()" title="Historique">
                 <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
               </button>
-            </div>
             </li>
           </ol>
         </div>
+        
+        
         <div class="card-body">
           <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
             <div class="col" *ngFor="let annoncement of annoncements | paginate: { itemsPerPage: 6, currentPage: p }">
               <div class="content mb-3 rounded card-container h-100">
                 <div class="row g-0 rounded-top h-100">
                   <div class="col-md-12 d-flex justify-content-end">
+                    
                     <div class="d-flex justify-content-end">
+                      <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="navigateToDetails(annoncement.annonceID)">
+                        <img src="assets/brand/teaming-meeting.png" alt="Delete">
+                      </button>
                       <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="openMapWithRoute(annoncement.routeID)" title="Modifier la route">
                         <img src="assets/brand/map.png" alt="route">
                       </button>
@@ -47,11 +48,15 @@
                       <button class="btn small-button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" (click)="deleteAnnouncementDriver(annoncement.annonceID)" title="Supprimer">
                         <img src="assets/brand/trash.png" alt="Delete">
                       </button>
+                      
                     </div>
                   </div>
                   <div class="flex-row h-100" [ngStyle]="{ 'padding-top': !currentUserMatchesAnnouncementUserId(annoncement.userId) ? '37px' : '0px' }">
                     <div class="d-flex flex-column justify-content-center">
                       <img src="assets/brand/covo.png" class="img-fluid card-img-top" alt="Covoiturage Image" style="width: 85px; height: 85px;" />
+                      <p class="card-text mb-0">
+                        <strong>{{ getCollaboratorName(annoncement.userId) }}</strong>
+                      </p>
                     </div>
                     <div class="flex-grow-1 ms-3 d-flex flex-column justify-content-between">
                       <div class="card-body flex-grow-1">
@@ -88,15 +93,19 @@
                                        
                         <p class="card-text"><li>Départ <strong>: {{ annoncement.departure }}</strong></p>
                         <p class="card-text"><li>Destination: <strong>: {{ annoncement.destination }}</strong></p>
-                        
-                          
+<!--                         <p class="card-text"><li>Créé par : <strong>{{ getCollaboratorName(annoncement.userId) }}</strong></li></p>
+ -->
+
                         </div>
                         </div>
                       </div>
-                    
-                      
+                                         
                       <div class="d-flex align-items-center mt-auto px-3 pb-3">
-                        <a href="/annoncement" class="btn-orange me-3" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">Reserver</a>
+                        
+                        <a class="btn-orange me-3" 
+                        [class.disabled]="annoncement.nbrPlaces === 0" (click)="handleReservation(annoncement)"> 
+                        {{ isBooked(annoncement.annonceID) ? 'Annuler' : 'Reserver' }} </a>
+
                         <button class="btn me-3" (click)="showRouteDetails(annoncement.routeID)" title="Route">
                           <img src="assets/brand/locations.png" alt="route" style="width: 40px; height: 40px;">
                         </button>
@@ -111,10 +120,7 @@
             </div>
           </div>
         </div>
-        
-        
-        
-        
+                
       </div>
     </div>
   </div>
@@ -410,30 +416,33 @@
     </div>
   </div>
 </div>
-<!-- claim -->
-<!-- <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-  <div class="offcanvas-header">
-    <h5 class="modal-title w-100 text-center" id="offcanvasBottomLabel">Réclamation ?</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Close"><span class="visually-hidden">Close</span></button>
+
+
+
+<div class="modal fade" id="ModalAdress" [ngClass]="{'show': modalOpen}" [style.display]="modalOpen ? 'block' : 'none'" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateModalLabel">Point de départ</h5>
+        <button type="button" class="btn-close" (click)="modalOpen = false" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #modalForm="ngForm" (ngSubmit)="updateAttribute(modalForm)">
+          <div class="form-group">
+            <input type="text" class="form-control" id="attributeValue" [(ngModel)]="attributeValue" name="attributeValue" required>
+            <div *ngIf="modalForm.submitted && !modalForm.form.controls['attributeValue'].valid" class="alert alert-danger alert-sm" role="alert">
+              <span class="alert-icon"><span class="visually-hidden">Error</span></span>
+              <p>Ce champ ne doit pas être vide</p>
+            </div>
+          </div>
+          <input type="hidden" [(ngModel)]="driverId" name="driverId">
+          <input type="hidden" [(ngModel)]="announcementId" name="announcementId">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modalOpen = false">Fermer</button>
+            <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="attributeValue && attributeValue.length >= 8 ? 'modal' : null">Confirmer</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <div class="offcanvas-body small">
-    <form [formGroup]="claimForm" (ngSubmit)="onClaimSubmit()">
-      <div class="mb-3">
-        <label for="titre" class="form-label">Titre</label>
-        <input type="text" class="form-control" id="titre" formControlName="titre">
-      </div>
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" rows="3" formControlName="description"></textarea>
-      </div>
-      <div class="mb-3">
-        <label for="type" class="form-label">Type</label>
-        <select class="form-control" id="type" formControlName="type">
-          <option value="PASSAGER">PASSAGER</option>
-          <option value="CONDUCTEUR">CONDUCTEUR</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
-</div> -->
+</div>

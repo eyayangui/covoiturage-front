@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -17,7 +18,8 @@ export class FileUploadComponent implements OnInit{
   collaborator?: CollaboratorDTO;
 
   constructor(private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private collaboratorService: CollaboratorsService
   ) {}
 
   onFileSelected(event: any) {
@@ -35,7 +37,7 @@ export class FileUploadComponent implements OnInit{
     this.collaboratorId = this.collaborator?.idCollaborator;
   }
 
-  onUpload() {
+  /* onUpload() {
     if (!this.selectedFile || !this.collaboratorId) {
       console.error('File or collaborator ID is missing');
       return;
@@ -58,7 +60,30 @@ export class FileUploadComponent implements OnInit{
         }
       );
   }
-  
+   */
+
+  onUpload() {
+    if (!this.selectedFile || !this.collaboratorId) {
+      console.error('File or collaborator ID is missing');
+      return;
+    }
+
+    this.collaboratorService.uploadFile(this.selectedFile, this.collaboratorId)
+      .subscribe(
+        response => {
+          this.router.navigate(['/profil']);
+          this.uploadResponse = response;
+          this.errorMessage = null;
+        },
+        error => {
+          console.error('Upload error:', error);
+          this.errorMessage = error;
+          this.uploadResponse = null;
+        }
+      );
+  }
+
+
   private getErrorMessage(error: HttpErrorResponse): string {
     if (error.error instanceof ErrorEvent) {
       // Client-side error
