@@ -19,7 +19,7 @@ export class EventComponent implements OnInit {
   noEventsFound: boolean = false;
   isupdated = false;
   updateForm: FormGroup;
-  selectedEvent: Event | null = null; 
+  selectedEvent: Event | null = null;
   addForm: FormGroup;
   isAdmin: boolean = false;
   p: number = 1;
@@ -28,35 +28,35 @@ export class EventComponent implements OnInit {
   today: string = new Date().toISOString().split('T')[0]; // Add this line
   searchDate: string | undefined;
   originalEvent: Event[] = [];
-
-
-  constructor(private eventService: EventService, private router: Router,private fb: FormBuilder) { 
-    
+ 
+ 
+  constructor(private eventService: EventService, private router: Router,private fb: FormBuilder) {
+   
       this.addForm = this.fb.group({
         eventName: ['', Validators.required],
         eventDate: ['', Validators.required],
         datePublication:['', Validators.required],
         location: ['', Validators.required],
         heure:['', Validators.required],
-      }); 
-      
+      });
+     
     this.updateForm = this.fb.group({
     eventName: ['', Validators.required],
     eventDate: ['', Validators.required],
     datePublication: [],
     location:['', Validators.required],
     heure:['', Validators.required],
-
+ 
   });
-  
+ 
   this.totalPages = Math.ceil(this.events.length / 6);
-
+ 
 }
-
+ 
   ngOnInit(): void {
     this.showPlannedEvents();
     this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
-
+ 
   }
   /* searchByDate(): void {
     if (this.searchDate) {
@@ -69,7 +69,7 @@ export class EventComponent implements OnInit {
  */
   filterByDate(): void {
     let filteredEvent = [...this.originalEvent];
-  
+ 
     if (this.searchDate) {
       const selectedDate = new Date(this.searchDate);
       filteredEvent = filteredEvent.filter(event => {
@@ -86,8 +86,8 @@ export class EventComponent implements OnInit {
   searchByDate(): void {
     this.filterByDate();
   }
-
-
+ 
+ 
   getEvents(): void {
     this.eventService.getEvent().subscribe(
       events => {
@@ -98,15 +98,15 @@ export class EventComponent implements OnInit {
       }
     );
   }
-
+ 
   showPlannedEvents(): void {
     this.eventService.eventPlanned().subscribe(
       events => {
         if (events.length === 0) {
           this.events = [];
           this.noEventsFound = true;
-          
-
+          location.reload();
+ 
         } else {
           this.events = events;
           this.originalEvent = [...events];
@@ -118,7 +118,7 @@ export class EventComponent implements OnInit {
       }
     );
   }
-
+ 
   deleteEvent(eventID: any): void {
     this.eventService.deleteEvent(eventID).subscribe(
       () => {
@@ -136,18 +136,18 @@ export class EventComponent implements OnInit {
     const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
     return differenceInDays;
   }
-
+ 
   openUpdateModal(event: any): void {
     this.selectedEvent = event;
     this.updateForm.patchValue({
       eventName: event.eventName,
-      eventDate: new Date(event.eventDate).toISOString().substring(0, 10), 
+      eventDate: new Date(event.eventDate).toISOString().substring(0, 10),
       location: event.location,
       datePublication: event.datePublication,
       heure : event.heure
-      
-    });           
-
+     
+    });          
+ 
   }
   onSubmit(): void {
     if (this.updateForm.valid && this.selectedEvent) {
@@ -155,7 +155,7 @@ export class EventComponent implements OnInit {
         ...this.selectedEvent,
         ...this.updateForm.value
       };
-      
+     
       this.eventService.updateEvent(updateevent).subscribe(
         () => {
           Swal.fire('Success', 'Announcement updated successfully!', 'success');
@@ -165,31 +165,34 @@ export class EventComponent implements OnInit {
           Swal.fire('Error', 'Failed to update announcement!', 'error');
         }
       );
-
+      location.reload();
+ 
+ 
     }
-
+ 
     }
-
+ 
   onAddSubmit(): void {
-    
+   
     const newevent: Event = this.addForm.value;
     this.eventService.AddEvent(newevent).subscribe(
       (response: Event) => {
         Swal.fire('Success', 'event added successfully!', 'success');
-        
+       
         this.showPlannedEvents();
         this.addForm.reset();
       },
-    
+   
       (error: any) => {
         console.error('Error adding event:', error);
         Swal.fire('Error', 'Failed to add event!', 'error');
       }
     );
-  
+ 
 }
 navigateToAddAnnouncement(eventID: number): void {
   this.router.navigate(['/add-announcement-event', eventID]);
 }
-
+ 
 }
+ 

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
+import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { AnnouncementDriverService } from 'src/app/services/announcement/announcement-driver.service';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
+import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 
 @Component({
   selector: 'app-nav',
@@ -10,13 +12,16 @@ import { AuthenticationService } from 'src/app/services/auth/authentication.serv
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
+  collaborator?: CollaboratorDTO;
   searchTerm: string = '';
   isAdmin: boolean = false;
+  imageUrl!: SafeUrl;
+  @Input() collaboratorId?: number;
 
   constructor(
     private router: Router,
-    private announcementDriverService: AnnouncementDriverService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private sanitizer: DomSanitizer, private collaboratorService: CollaboratorsService,
   ) {}
 
   ngOnInit(): void {
@@ -24,6 +29,21 @@ export class NavComponent implements OnInit {
     this.authService.userRoleUpdated.subscribe(role => {
       this.isAdmin = (role === 'ADMINISTRATOR');
     });
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.collaborator = JSON.parse(storedUser); 
+    }
+    if (this.collaborator?.idCollaborator) {
+      this.collaboratorService.getCollaboratorImage(this.collaborator?.idCollaborator).subscribe(
+        response => {
+          let objectURL = URL.createObjectURL(response);
+          this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        },
+        error => {
+          console.error('Error fetching image', error);
+        }
+      );
+    }
   }
 
   isActive(url: string): boolean {

@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg supra" data-bs-theme="dark" aria-label="Supra-navigation - Only left navbar example">
+    <div class="d-flex align-items-center justify-content-center w-100" style="margin-top: 12px; margin-bottom: 12px;">
+        <h4 class="text-center m-0">Mes réservations</h4>
+      </div>
+</nav>
+
+
+<div class="d-flex flex-column align-items-center" *ngFor="let booking of bookings">
+    <div class="card" *ngIf="booking.bookingStatus !== 'REFUSED' && booking.bookingStatus !== 'ACCEPTED' && booking.bookingStatus !== 'CANCELED'">    
+      <div class="card-content">
+        <div class="timeline">
+          <div class="time">12:30</div>
+          <div class="line">
+            <div class="duration">1h25</div>
+          </div>
+          <div class="time">13:55</div>
+        </div>
+        <div class="timeline" style="margin-top: 2%;">
+          <div class="time"> <b>Localisation : </b>{{booking.location}}</div>           
+        </div>   
+        <div class="booking-container">
+          <a aria-expanded="false" style="cursor: pointer;">
+            <img [src]="userImages.get(booking.userId)" class="img-fluid booking-image" alt="User Image">
+            <div class="username-container">
+              <p class="username">{{ usernames.get(booking.userId)}}</p>
+            </div>
+          </a>
+          <div>
+            <div class="d-flex justify-content-end">
+              <button class="btn small-button" (click)="updateStatus(booking.idReservation, 'ACCEPTED')" style="cursor: pointer;">
+                <img src="assets/brand/ok.png" alt="Delete" style="width: 40px; height: 40px;">
+              </button>
+              <button class="btn small-button" (click)="updateStatus(booking.idReservation, 'REFUSED')" style="cursor: pointer;">
+                <img src="assets/brand/not-ok.png" alt="route" style="width: 40px; height: 40px;">
+              </button>
+            </div>
+          </div>
+        </div>   
+      </div>
+    </div>
+  </div>
+  

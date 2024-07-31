@@ -11,6 +11,8 @@ import { RouteService } from 'src/app/services/Route/route.service';
 import { forkJoin } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
+import { BookingService } from 'src/app/services/booking.service';
 
 @Component({
   selector: 'app-announcement',
@@ -28,13 +30,20 @@ export class AnnouncementComponent implements OnInit {
   originalAnnouncements: Annonce[] = [];
   collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
   collaborator?: CollaboratorDTO ;
+  annoncement: AnnouncementDriver[] = [];
+  modalOpen = false;
+  driverId!: number; 
+  announcementId!: number;
+  attributeValue!: string;
 
 
   constructor(private announcementService: AnnouncementService,
+    private bookingService: BookingService,
     private route: ActivatedRoute,
     private routeService: RouteService, 
     private collaboratorsService: CollaboratorsService,
     private router: Router,
+    
 
     private fb: FormBuilder) {
     this.updateForm = this.fb.group({
@@ -60,8 +69,50 @@ export class AnnouncementComponent implements OnInit {
     });
     this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
 
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.collaborator = JSON.parse(storedUser); 
+    }
+
   }
 
+  navigateToDetails(announcementId: any): void {
+    const idString = announcementId.toString();
+    this.router.navigate(['/booking', idString]);
+  }
+
+  openModal(event: Event, announcementId: number, driverId: number): void {
+    if (announcementId === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    this.announcementId = announcementId;
+    this.driverId = driverId;
+    this.modalOpen = true;
+    console.log(`Driver ID: ${this.driverId}, Announcement ID: ${this.announcementId}`);
+  }
+
+  updateAttribute(modalForm: any): void {
+    if (modalForm.valid) {
+      const params = {
+        announcementId: this.announcementId.toString(),
+        passengerId: this.collaborator?.idCollaborator?.toString(),
+        location: this.attributeValue
+      };
+
+      this.bookingService.startBookingProcess(params).subscribe(
+        response => {
+          Swal.fire('Success', 'Booking process started successfully!', 'success');
+          this.modalOpen = false;
+        },
+        error => {
+          console.error('Error starting booking process:', error);
+          Swal.fire('Error', 'Failed to start booking process!', 'error');
+        }
+      );
+    }
+  }
   getAnnoncesByEventID(eventID: number): void {
     this.announcementService.findAnnoncesByEventID(eventID).subscribe(
       (response: Annonce[]) => {
@@ -258,4 +309,8 @@ export class AnnouncementComponent implements OnInit {
     searchFreeAnnouncements(): void {
       this.annoncements = this.originalAnnouncements.filter(annonce => annonce.prix === 0);
     }
+
+
+
+  
 }

@@ -3,12 +3,12 @@
     <div class="card">
       <div class="card-header">
         <div class="d-flex justify-content-between">
-          
+         
           <div class="dropdown-container d-flex align-items-start">
             <input type="date" class="tag form-control" id="searchDate" [(ngModel)]="searchDate" [min]="today" (ngModelChange)="searchByDate()" style="width: 156px;">
 
           </div>
-          
+         
           <div class="d-flex align-items-center gap-3">
             <ol class="list-unstyled d-flex gap-2 flex-wrap m-0 justify-content-end">
               <div *ngIf="isAdmin">
@@ -98,7 +98,7 @@
     </li>
   </ul>
 </nav>
-
+ 
 <!-- Modal update -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -120,7 +120,7 @@
           </div>
           <div class="mb-3">
             <label for="eventDate" class="form-label">Date :</label>
-            <input type="date" class="form-control" id="eventDate"[min]="today"  formControlName="eventDate">
+            <input type="date" class="form-control" id="eventDate" [min]="today" formControlName="eventDate">
             <div *ngIf="updateForm.get('eventDate')?.invalid && (updateForm.get('eventDate')?.dirty || updateForm.get('eventDate')?.touched)" class="text-danger">
               La date de l'evenement est obligatoire.
             </div>
@@ -141,14 +141,14 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <a type="submit" href="/event" class="btn btn-primary">Save changes</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-
+ 
 <!-- Modal ADD -->
 <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -165,7 +165,7 @@
             <input type="text" class="form-control" id="eventName" formControlName="eventName">
             <div *ngIf="addForm.get('eventName')?.invalid && (addForm.get('eventName')?.dirty || addForm.get('eventName')?.touched)" class="text-danger">
               le Nom de l'evenement est obligatoire
-          
+         
       </div>
           </div>
           <div class="mb-3">
@@ -173,7 +173,7 @@
             <input type="date" class="form-control" id="eventDate" [min]="today"  formControlName="eventDate">
             <div *ngIf="addForm.get('eventDate')?.invalid && (addForm.get('eventDate')?.dirty || addForm.get('eventDate')?.touched)" class="text-danger">
               la date de l'evenement est obligatoire
-          
+         
       </div>
           </div>
           <div class="mb-3">
@@ -181,7 +181,7 @@
             <input type="time" class="form-control" id="heure" formControlName="heure">
             <div *ngIf="addForm.get('heure')?.invalid && (addForm.get('heure')?.dirty || addForm.get('heure')?.touched)" class="text-danger">
               l'heure de l'evenement est obligatoire
-          
+         
       </div>
           </div>
          
@@ -190,9 +190,9 @@
             <input type="text" class="form-control" id="location" formControlName="location">
             <div *ngIf="addForm.get('location')?.invalid && (addForm.get('location')?.dirty || addForm.get('location')?.touched)" class="text-danger">
               localisation de l'evenement est obligatoire
-          
+         
       </div>
-          </div> 
+          </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             <button type="submit" class="btn btn-primary">Ajouter</button>

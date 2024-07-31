@@ -18,7 +18,7 @@ export class ChooseBrandComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private vehicleService: VehicleService // Update service import
+    private vehicleService: VehicleService
   ) {}
 
   ngOnInit(): void {
@@ -36,10 +36,10 @@ export class ChooseBrandComponent implements OnInit {
   }
 
   onSelectBrand(): void {
-    if (this.selectedBrand) {
-      this.router.navigate(['/choose-model', { vehicleType: this.vehicleType, brand: this.selectedBrand }]);
+    if (this.vehicleType) {
+      this.router.navigate(['/choose-model', { vehicleType: this.vehicleType, brand: this.selectedBrand || this.brandPrefix }]);
     } else {
-      console.error('Brand is not selected');
+      console.error('Vehicle type is not specified');
     }
   }
 

@@ -1,33 +1,43 @@
 <header data-bs-theme="light" *ngIf="isLoginRoute()">
-  <nav class="navbar navbar-expand-lg supra" data-bs-theme="dark" aria-label="Supra-navigation - Only left navbar example">
-    <div class="container-xxl">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a [routerLink]="['/annoncement-driver']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-driver')}" aria-current="page">Conducteur</a>
-        </li>
-        <li class="nav-item">
-          <a [routerLink]="['/annoncement-passenger']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-passenger')}">Passager</a>
-        </li>
-      </ul>
-      
-      <ul class="navbar-nav ms-auto ml-auto">
-        <a routerLink="/profil" class="nav-link icon svg-avatar"  style="cursor: pointer;">
-          <span class="sr-only">Profil</span>
-          <img src="assets/brand/accountt.png" alt="account" title="account" style="width: 25px; height: 25px; margin-left: 5px;">
-        </a>
-        <li class="nav-item">
-          <a (click)="logout()" class="nav-link" style="cursor: pointer;">
-            <img src="assets/brand/leave.png" alt="Logout" title="Logout" style="width: 25px; height: 25px; margin-left: 5px;">
-          </a>
-          
-        </li>
-       
-      </ul>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between w-100">
+        <ul class="navbar-nav d-flex flex-row me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a [routerLink]="['/annoncement-driver']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-driver')}" aria-current="page">Conducteur</a>
+          </li>
+          <li class="nav-item">
+            <a [routerLink]="['/annoncement-passenger']" [ngClass]="{'nav-link': true, 'active': isActive('/annoncement-passenger')}">Passager</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav d-flex flex-row ms-auto mb-2 mb-lg-0" *ngIf="imageUrl">
+          <!-- <span *ngIf="collaborator" style="color: white;">{{collaborator.dataImage}}</span> -->
+          <li class="nav-item dropdown">
+            
+            <a class="nav-link p-0 dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+              <img [src]="imageUrl" alt="account" title="profile" class="img-fluid" style="width: 30px; height: 30px; border-radius: 50%;">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li>
+                <a routerLink="/profil" class="dropdown-item" style="cursor: pointer;">
+                  Profil
+                </a>
+              </li>
+              <li>
+                <a (click)="logout()" class="dropdown-item" style="cursor: pointer;">
+                  Déconnexion
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+      </div>
     </div>
   </nav>
   
 
-    <nav class="navbar navbar-expand-lg" aria-label="Global navigation - Standard example">
+    <nav class="navbar navbar-expand-lg" aria-label="Global navigation - Standard example" *ngIf="collaborator">
       <div class="container-xxl">
   
         <!-- Orange brand logo -->
@@ -50,8 +60,6 @@
             <div *ngIf="isAdmin">
             <a class="nav-link"  routerLink="/claim" routerLinkActive="active-link"  aria-current="page">KPI</a>
           </div>
-
-
 
           </ul>
         </div>

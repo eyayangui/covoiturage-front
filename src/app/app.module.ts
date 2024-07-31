@@ -35,6 +35,8 @@ import { AddAnnouncementPassengerComponent } from './components/announcement/add
 import { MapComponent } from './components/map/map.component';
 import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
 import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
+import { ModalLocationComponent } from './components/modal-location/modal-location.component';
+import { ManageBookingComponent } from './components/manage-booking/manage-booking.component';
 
 
 
@@ -68,7 +70,9 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     UpdatePhoneNumberComponent,
     UpdateBirthDateComponent,
     UpdateAdressComponent,
-    RouteComponent
+    RouteComponent,
+    ModalLocationComponent,
+    ManageBookingComponent
   
    
   ],

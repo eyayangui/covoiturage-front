@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AnnouncementDriver } from 'src/app/Models/AnnouncementDriver';
 import { AnnouncementDriverService } from 'src/app/services/announcement/announcement-driver.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClaimService } from 'src/app/services/Claim/claim.service';
-import { formatDate } from '@angular/common';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { forkJoin } from 'rxjs';
 import { RouteP } from 'src/app/Models/RouteP';
 import { RouteService } from 'src/app/services/Route/route.service';
-import * as Leaflet from 'leaflet';
+import { BookingService } from 'src/app/services/booking.service';
+import { BookingDTO } from 'src/app/Models/BookingDTO';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class AnnouncementDriverComponent implements OnInit {
   paginatedAnnouncements: AnnouncementDriver[] = [];
   selectedAnnouncement: AnnouncementDriver | null = null; 
   updateForm: FormGroup;
-    selectedRayon: string = '';
+  selectedRayon: string = '';
   addForm: FormGroup;
   claimForm: FormGroup;
   selectedAnnonceID: number | null = null;
@@ -41,11 +41,13 @@ export class AnnouncementDriverComponent implements OnInit {
   originalAnnouncements: AnnouncementDriver[] = [];
   collaborator?: CollaboratorDTO ;
   collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
-
+  modalOpen = false;
+  driverId!: number; 
+  announcementId!: number;
+  attributeValue!: string;
+  bookingMap: Map<number, BookingDTO> = new Map<number, BookingDTO>();
  
-
-  
-
+ 
 
   constructor(private announcementDriverService: AnnouncementDriverService, 
     private router: Router, private fb: FormBuilder,
@@ -53,9 +55,7 @@ export class AnnouncementDriverComponent implements OnInit {
     private collaboratorsService: CollaboratorsService,
     private claimService: ClaimService , 
     private authService: AuthenticationService,
-
-   
-
+    private bookingService: BookingService, private cdr: ChangeDetectorRef
   ) {
     this.addForm = this.fb.group({
       rayon: ['', Validators.required],
@@ -135,6 +135,7 @@ export class AnnouncementDriverComponent implements OnInit {
         collaborators.forEach(collaborator => {
           this.collaboratorMap.set(collaborator.idCollaborator ?? 0, collaborator);
         });
+        this.loadBookings();
       },
       error => {
         console.error('Error fetching collaborators:', error);
@@ -188,7 +189,7 @@ export class AnnouncementDriverComponent implements OnInit {
     );
   }
 
-  deleteAnnouncementDriver(annonceID: number): void {
+  /* deleteAnnouncementDriver(annonceID: number): void {
     Swal.fire({
         title: 'Êtes-vous sûr ?',
         text: "Vous ne pourrez pas revenir en arrière !",
@@ -214,7 +215,37 @@ export class AnnouncementDriverComponent implements OnInit {
             );
         }location.reload();
     });
+} */
+
+deleteAnnouncementDriver(annonceID: number): void {
+  Swal.fire({
+      title: 'Êtes-vous sûr ?',
+      text: "Vous ne pourrez pas revenir en arrière !",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff7900',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimer !',
+      cancelButtonText: 'Annuler'
+  }).then((result) => {
+      if (result.isConfirmed) {
+          this.bookingService.deleteBooking(annonceID).subscribe(
+              () => {
+                  Swal.fire(
+                      'Supprimé !',
+                      'L\'annonce a été supprimée.',
+                      'success'
+                  ).then(() => {
+                      location.reload();
+                  });
+              },
+              
+          );
+      }location.reload();
+  });
 }
+
+
 viewDetails(annonce: AnnouncementDriver, routeID: number): void {
   this.routeService.routeById(routeID).subscribe(
     (route: RouteP) => {
@@ -495,4 +526,111 @@ filterByPrice(): void {
   searchFreeAnnouncements(): void {
     this.annoncements = this.originalAnnouncements.filter(annonce => annonce.prix === 0);
   }
+
+  openModal(event: Event, announcementId: number, driverId: number): void {
+    if (announcementId === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    this.announcementId = announcementId;
+    this.driverId = driverId;
+    this.modalOpen = true;
+    console.log(`Driver ID: ${this.driverId}, Announcement ID: ${this.announcementId}`);
+  }
+
+  /* updateAttribute(modalForm: any): void {
+    // Handle the form submission logic
+    console.log(`Driver ID: ${this.driverId}, Announcement ID: ${this.announcementId}`);
+    this.modalOpen = false;
+  }
+ */
+
+  updateAttribute(modalForm: any): void {
+    if (modalForm.valid) {
+      const params = {
+        announcementId: this.announcementId.toString(),
+        passengerId: this.collaborator?.idCollaborator?.toString(),
+        location: this.attributeValue
+      };
+
+      this.bookingService.startBookingProcess(params).subscribe(
+        response => {
+          Swal.fire('Success', 'Le processus de réservation a démarré avec succès !', 'success');
+          this.modalOpen = false;
+          this.loadBookings();
+        },
+        error => {
+          console.error('Error starting booking process:', error);
+          Swal.fire('Error', 'Failed to start booking process!', 'error');
+        }
+      );
+    }
+  }
+  
+  navigateToDetails(announcementId: any): void {
+    const idString = announcementId.toString();
+    this.router.navigate(['/booking', idString]);
+  }
+
+  isBooked(announcementId: number): boolean {
+    return this.bookingMap.has(announcementId);
+  }
+
+  loadBookings(): void {
+    const requests = this.annoncements.map(annonce => 
+      this.bookingService.getBookingByAnnouncementAndDriver(annonce.annonceID, this.collaborator?.idCollaborator)
+    );
+
+    forkJoin(requests).subscribe(
+      bookings => {
+        bookings.forEach(booking => {
+          if (booking) {
+            this.bookingMap.set(booking.announcementId, booking);
+          }
+        });
+      },
+      error => {
+        console.error('Error fetching bookings:', error);
+      }
+    );
+  }
+
+  handleReservation(announcement: AnnouncementDriver): void {
+    const booking = this.bookingMap.get(announcement.annonceID);
+    if (booking) {
+      // Handle cancellation
+      Swal.fire({
+        title: 'Etes-vous sûr de vouloir annuler cette réservation ?',
+        input: 'text',
+        inputLabel: 'raison de l annulation',
+        inputPlaceholder: 'la raison de l annulation',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, annule-le !',
+        cancelButtonText: 'Non, garde-le'
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          this.bookingService.cancelBooking(booking.idReservation, result.value).subscribe(
+            () => {
+              Swal.fire('Success', 'Réservation annulée avec succès !', 'success');
+              this.loadBookings(); // Refresh bookings after successful cancellation
+
+            // Update the announcement to reflect the change in availability
+            announcement.nbrPlaces += 1;
+
+            this.cdr.detectChanges();
+            },
+            error => {
+              console.error('Error cancelling reservation:', error);
+              Swal.fire('Error', 'Impossible d annuler la réservation !', 'error');
+            }
+          );
+        }
+      });
+    } else {
+      // Handle reservation
+      this.openModal(new Event(''), announcement.annonceID, announcement.userId);
+    }
+  }
+
 }
