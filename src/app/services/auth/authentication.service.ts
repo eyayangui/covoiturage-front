@@ -4,6 +4,7 @@
   import { AuthenticationRequest } from 'src/app/Models/AuthenticationRequest';
   import { AuthenticationResponse } from 'src/app/Models/AuthenticationResponse';
   import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { environment } from 'src/environments/environment';
 
   @Injectable({
     providedIn: 'root'
@@ -13,7 +14,8 @@
     userDetailsUpdated: Subject<void> = new Subject<void>();
     userRoleUpdated: Subject<string | null> = new Subject<string | null>();
   
-    private baseUrl = 'http://localhost:8888';
+    private baseUrl = environment.apiBaseUrl;
+
   
     constructor(private http: HttpClient) { }
   

@@ -40,7 +40,9 @@ export class MapComponent implements OnInit{
   isLoggedIn: boolean = false;
   assemblyPointId: number | undefined;
   today: string = new Date().toISOString().split('T')[0]; 
-
+  routeDuration: string = '';
+  distance: number | null = null; // Distance en kilomètres
+  duration: number | null = null;
 
   options = {
     layers: [
@@ -292,6 +294,33 @@ addDestination() {
         missingRouteTolerance: 50 // You can adjust the tolerance value according to your needs
       }
     }).addTo(this.map);
+    this.routeControl.on('routesfound', (e: any) => {
+      const route = e.routes[0];
+      this.distance = route.summary.totalDistance / 1000; // Convertir en kilomètres
+    
+      const totalDurationMinutes = route.summary.totalTime / 60; // Convertir en minutes
+      const hours = Math.floor(totalDurationMinutes / 60);
+      const minutes = Math.round(totalDurationMinutes % 60);
+    
+      this.routeDuration = `${hours}h ${minutes}min`;
+    
+      console.log(`Distance: ${this.distance.toFixed(2)} km`);
+      console.log(`Duration: ${this.routeDuration}`);
+    });
+    
+  
+    // Ajoutez vos propres marqueurs personnalisés si nécessaire
+    waypoints.forEach((latLng, i) => {
+      const marker = Leaflet.marker(latLng, {
+        draggable: true
+      }).on('click', () => {
+        this.map.removeLayer(marker);
+        this.markers = this.markers.filter(m => m.getLatLng() !== latLng);
+        this.drawRouteBetweenPoints(); // Met à jour la route après la suppression du marqueur
+      }).addTo(this.map);
+      this.markers.push(marker);
+    });
+  
   }
   
   
@@ -322,6 +351,7 @@ addDestination() {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point
@@ -368,6 +398,7 @@ updateRouteAndAnnouncement() {
     routeID: this.routeIDToUpdate,
     departure: this.departureAddress,
     destination: this.destinationAddress,
+    duration: this.routeDuration, // Assigner la durée calculée
     assemblyPoints: this.assemblyPoints.map((point, index) => ({
       assemblyPointsID: index,
       points: point

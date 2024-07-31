@@ -11,6 +11,8 @@ import { RouteService } from 'src/app/services/Route/route.service';
 import { forkJoin } from 'rxjs';
 import { CollaboratorsService } from 'src/app/services/auth/collaborators.service';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { VehicleService } from 'src/app/services/vehicle.service';
+import { Vehicle } from 'src/app/Models/Vehicle';
 
 @Component({
   selector: 'app-announcement',
@@ -35,6 +37,7 @@ export class AnnouncementComponent implements OnInit {
     private routeService: RouteService, 
     private collaboratorsService: CollaboratorsService,
     private router: Router,
+    private vehicleService: VehicleService,
 
     private fb: FormBuilder) {
     this.updateForm = this.fb.group({
@@ -75,6 +78,8 @@ export class AnnouncementComponent implements OnInit {
       }
     );
   }
+
+ 
   loadAnnouncements(annoncements: Annonce[]): void {
     this.annoncements = annoncements;
     const userIds = new Set(annoncements.map(annonce => annonce.userId));
@@ -146,46 +151,62 @@ export class AnnouncementComponent implements OnInit {
       return value ? 'Oui' : 'Non';
     }
 
-  viewDetails(annonce: Annonce, routeID: number): void {
-    this.routeService.routeById(routeID).subscribe(
-      (route: RouteP) => {
-        const assemblyPointsHtml = route.assemblyPoints.length > 0
-          ? `<p><strong>Point de rassemblement:</strong></p>
-             <ul>
-               ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
-             </ul>`
-          : '';
+    viewDetails(annonce: Annonce, routeID: number): void {
+      this.routeService.routeById(routeID).subscribe(
+          (route: RouteP) => {
+             
   
-        Swal.fire({
-          title: annonce.rayon,
-          color: '#000',
-          html: `
-            <hr>
-            <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
-            <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
-            <p>Prix: <strong>${annonce.prix === 0 ? 'Gratuit' : `${annonce.prix} DT`}</strong></p>
-            <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
-            <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
-            ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
-            <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
-            <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
-            ${annonce.description ? `<p> Description:<strong> ${annonce.description}</strong></p>` : ''}
+              this.vehicleService.getVehiclesByCollaboratorId(annonce.userId).subscribe(
+                  (vehicles: Vehicle[]) => {
+                      const vehicle = vehicles.length > 0 ? vehicles[0] : null; // Assume the first vehicle for simplicity
+  
+                      const assemblyPointsHtml = route.assemblyPoints.length > 0
+                          ? `<p><strong>Point de rassemblement:</strong></p>
+                             <ul>
+                               ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
+                             </ul>`
+                          : '';
+  
+                      const vehicleInfoHtml = vehicle ? `<p><li>Voiture: <strong>${vehicle.brand} ${vehicle.model}</strong></p>` : '';
+  
+                      Swal.fire({
+                          title: annonce.rayon,
+                          color: '#000',
+                          html: `
+                            <hr>
+                            <p>Date de Covoiturage:<strong> ${this.formatDateOnly(annonce.dateCovoiturage)} </strong></p> 
+                            <p>Nombre des places:<strong> ${annonce.nbrPlaces}</strong></p>
+                            <p>Prix: <strong>${annonce.prix === 0 ? 'Gratuit' : `${annonce.prix} DT`}</strong></p>
+                            <p>Aller Retour:<strong> ${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
+                            <p>Heure de Depart:<strong> ${annonce.heureDepart}</strong></p>
+                            ${annonce.heureRetour ? `<p>Heure de Retour:<strong> ${annonce.heureRetour}</strong></p>` : ''}
+                            <p>Duree:<strong> ${route.duration}</strong></p>
 
-            <hr>
-            <p><strong>Départ:</strong><br> ${route.departure}</p>
-            <p><strong>Destination:</strong><br> ${route.destination}</p>
-            ${assemblyPointsHtml}
-          `,
-          confirmButtonColor: '#ff7900',
-        });
-      },
-      error => {
-        console.error('Error fetching route details:', error);
-        Swal.fire('Error', 'Failed to fetch route details!', 'error');
-      }
-    );
+                            <p>Bagage:<strong> ${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
+                            <p>Date publication:<strong> ${annonce.datePublication}</strong></p>
+                            ${annonce.description ? `<p> Description:<strong> ${annonce.description}</strong></p>` : ''}
+                            ${vehicleInfoHtml}
+                            <hr>
+                            <p><strong>Départ:</strong><br> ${route.departure}</p>
+                            <p><strong>Destination:</strong><br> ${route.destination}</p>
+                            ${assemblyPointsHtml}
+                          `,
+                          confirmButtonColor: '#ff7900',
+                      });
+                  },
+                  error => {
+                      console.error('Error fetching vehicle details:', error);
+                      Swal.fire('Error', 'Failed to fetch vehicle details!', 'error');
+                  }
+              );
+          },
+          error => {
+              console.error('Error fetching route details:', error);
+              Swal.fire('Error', 'Failed to fetch route details!', 'error');
+          }
+      );
   }
-
+  
   openUpdateModal(announcement: Annonce): void {
     this.selectedAnnouncement = { ...announcement }; 
     this.updateForm.patchValue({

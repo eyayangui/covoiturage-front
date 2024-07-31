@@ -24,8 +24,8 @@
          
           <div class="row">
             <div class="col-4" *ngFor="let annoncement of annoncements">
-              <div class="content mb-3 rounded card-container">
-                <div class="row g-0 rounded-top">
+              <div class="content mb-3 rounded card-container h-100">
+                <div class="row g-0 rounded-top h-100">
                   <div class="d-flex justify-content-end">
                     <button type="button" *ngIf="currentUserMatchesAnnouncementUserId(annoncement.userId)" class="btn btn-orange-border small-button" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openUpdateModal(annoncement)">
                       <img src="assets/brand/pencil.png" alt="Update">
@@ -41,18 +41,42 @@
                       <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
                       <image href="assets/brand/covoi.jpg" width="200" height="200" class="card-img-top" alt="..." />
                     </svg>
-                    <strong>{{ getCollaboratorName(annoncement.userId) }}</strong>
 
                   </div>
                   <div class="col-md-8">
                     
                     <div class="card-body">
                     
-                      <h5 class="card-title text-primary">{{ annoncement.rayon }} </h5>
+                      <div class="d-flex justify-content-between">
+                        <h5 class="card-title text-primary">{{ annoncement.rayon }}</h5>
+                      </div>                      
                       <hr>
-                      <p class="card-text">Date de covoiturage: <strong>{{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }} </strong> À: <strong>{{ annoncement.heureDepart }}H</strong></p>
-                      <p class="card-text">Nombre des places: <strong>{{ annoncement.nbrPlaces }}</strong></p>
-                      <p class="card-text">Prix: <strong>{{ annoncement.prix === 0 ? 'Gratuit' : annoncement.prix + ' DT' }}</strong></p>
+                      <p class="card-text">
+                        <li>
+                          <img src="assets/brand/month.png" alt="Date de covoiturage" style="width: 30px; height: 30px; margin-right: 5px;" />
+                          <strong>: {{ annoncement.dateCovoiturage | date: 'dd/MM/yyyy' }}</strong>, <img src="assets/brand/clock.png" alt="Date de covoiturage" style="width: 20px; height: 20px; margin-right: 5px;" />
+                           <strong>: {{ annoncement.heureDepart }}H</strong>
+                        </li>
+                      </p>
+                      <p class="card-text">
+                        <li>
+                          <img src="assets/brand/group.png" alt="Nombre des places" style="width: 30px; height: 30px; margin-right: 5px;" />
+                          <strong>: {{ annoncement.nbrPlaces }}</strong>
+                        </li> 
+                      </p>                       
+                      <p class="card-text">
+                        <li>
+                          <img src="assets/brand/currency-dollar.png" alt="Prix" style="width: 30px; height: 30px; margin-right: 5px;" />
+                         <strong>: {{ annoncement.prix === 0 ? 'Gratuit' : annoncement.prix + ' DT' }}</strong>
+                        </li>
+                      </p>
+                      <p class="card-text">
+                        <li>
+                          <img src="assets/brand/contact.png" alt="Prix" style="width: 30px; height: 30px; margin-right: 5px;" />
+                          <strong>: {{ getCollaboratorName(annoncement.userId) }}</strong>                        </li>
+                      </p>
+                      
+
                       <hr>
                       <a href="#" class="btn-orange" [class.disabled]="annoncement.nbrPlaces === 0" (click)="annoncement.nbrPlaces === 0 ? $event.preventDefault() : null">Reserver</a>
                         <button class="btn " (click)="viewDetails(annoncement, annoncement.routeID)" title="Details">

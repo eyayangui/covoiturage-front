@@ -35,7 +35,9 @@ export class AddAnnouncementEventComponent implements OnInit {
   isLoggedIn: boolean = false;
   eventID: number | undefined;
   today: string = new Date().toISOString().split('T')[0]; // Add this line
-
+  routeDuration: string = '';
+  distance: number | null = null; 
+  duration: number | null = null;
   options = {
     layers: [
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -273,25 +275,52 @@ export class AddAnnouncementEventComponent implements OnInit {
     }
   }
 
-  drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
-    if (this.routeControl) {
-      this.map.removeControl(this.routeControl);
-    }
-
-    const waypoints = [startCoords, ...assemblyPoints, endCoords]; // Include all waypoints
-
-    this.routeControl = Leaflet.Routing.control({
-      waypoints: waypoints,
-      routeWhileDragging: true,
-      showAlternatives: false,
-      lineOptions: {
-        styles: [{ color: 'blue', weight: 5 }],
-        addWaypoints: false,
-        extendToWaypoints: false,
-        missingRouteTolerance: 50 // You can adjust the tolerance value according to your needs
+    drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
+      if (this.routeControl) {
+        this.map.removeControl(this.routeControl);
       }
-    }).addTo(this.map);
-  }
+
+      const waypoints = [startCoords, ...assemblyPoints, endCoords]; // Include all waypoints
+
+      this.routeControl = Leaflet.Routing.control({
+        waypoints: waypoints,
+        routeWhileDragging: true,
+        showAlternatives: false,
+        lineOptions: {
+          styles: [{ color: 'blue', weight: 5 }],
+          addWaypoints: false,
+          extendToWaypoints: false,
+          missingRouteTolerance: 50 // You can adjust the tolerance value according to your needs
+        }
+      }).addTo(this.map);
+      this.routeControl.on('routesfound', (e: any) => {
+        const route = e.routes[0];
+        this.distance = route.summary.totalDistance / 1000; // Convertir en kilomètres
+      
+        const totalDurationMinutes = route.summary.totalTime / 60; // Convertir en minutes
+        const hours = Math.floor(totalDurationMinutes / 60);
+        const minutes = Math.round(totalDurationMinutes % 60);
+      
+        this.routeDuration = `${hours}h ${minutes}min`;
+      
+        console.log(`Distance: ${this.distance.toFixed(2)} km`);
+        console.log(`Duration: ${this.routeDuration}`);
+      });
+      
+    
+      // Ajoutez vos propres marqueurs personnalisés si nécessaire
+      waypoints.forEach((latLng, i) => {
+        const marker = Leaflet.marker(latLng, {
+          draggable: true
+        }).on('click', () => {
+          this.map.removeLayer(marker);
+          this.markers = this.markers.filter(m => m.getLatLng() !== latLng);
+          this.drawRouteBetweenPoints(); // Met à jour la route après la suppression du marqueur
+        }).addTo(this.map);
+        this.markers.push(marker);
+      });
+    
+    }
 
   geocodeLatLng(latlng: Leaflet.LatLng) {
     this.geocoder.reverse(latlng, this.map.getZoom(), (results: any) => {
@@ -319,6 +348,7 @@ export class AddAnnouncementEventComponent implements OnInit {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point
@@ -378,6 +408,7 @@ export class AddAnnouncementEventComponent implements OnInit {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point

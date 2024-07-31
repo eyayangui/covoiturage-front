@@ -2,18 +2,20 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { CollaboratorDTO } from 'src/app/Models/CollaboratorDTO';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CollaboratorsService {
 
-  private baseUrl = 'http://localhost:8888/collaborators'
+  private baseUrl = environment.apiBaseUrl;
+  private apiServerUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) { }
 
   getCollaboratorById(id?: number): Observable<CollaboratorDTO> {
-    return this.http.get<CollaboratorDTO>(`${this.baseUrl}/${id}`)
+    return this.http.get<CollaboratorDTO>(`${this.apiServerUrl}/collaborators/${id}`)
       .pipe(
         catchError(this.handleError)
       );
@@ -32,7 +34,7 @@ export class CollaboratorsService {
   }
 
   getCollaboratorImage(id: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/${id}/display-image`, { responseType: 'blob' });
+    return this.http.get(`${this.apiServerUrl}/collaborators/${id}/display-image`, { responseType: 'blob' });
   }
 
   /* updateCollaboratorAttribute(id?: number, attributeName?: string, attributeValue?: string): Observable<CollaboratorDTO> {
@@ -45,7 +47,7 @@ export class CollaboratorsService {
   } */
 
   updateCollaboratorAttribute(id?: number, attributeName?: string, attributeValue?: string): Observable<CollaboratorDTO> {
-    const url = `${this.baseUrl}/attribute/${id}`;
+    const url = `${this.apiServerUrl}/collaborators/attribute/${id}`;
     const body = {
       attributeName: attributeName,
       attributeValue: attributeValue
@@ -56,6 +58,6 @@ export class CollaboratorsService {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
 
-    return this.http.put<CollaboratorDTO>(`${this.baseUrl}/${id}/image`, formData);
+    return this.http.put<CollaboratorDTO>(`${this.apiServerUrl}/collaborators/${id}/image`, formData);
   }
 }

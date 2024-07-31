@@ -35,7 +35,10 @@ import { AddAnnouncementPassengerComponent } from './components/announcement/add
 import { MapComponent } from './components/map/map.component';
 import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
 import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
-
+import { HistoryAnnouncementDriverComponent } from './components/announcement/history-announcement-driver/history-announcement-driver.component';
+import { HistoryAnnouncementPassenerComponent } from './components/announcement/history-announcement-passener/history-announcement-passener.component';
+import { KPIComponent } from './components/kpi/kpi.component';
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -65,10 +68,14 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     ProfileComponent,
     MinibioUpdateComponent,
     DeleteVehicleComponent,
-    UpdatePhoneNumberComponent,
-    UpdateBirthDateComponent,
     UpdateAdressComponent,
-    RouteComponent
+    UpdateBirthDateComponent,
+    UpdatePhoneNumberComponent,
+    RouteComponent,
+    HistoryAnnouncementDriverComponent,
+    HistoryAnnouncementPassenerComponent,
+    KPIComponent,
+    
   
    
   ],
@@ -81,7 +88,8 @@ import { AddAnnouncementEventComponent } from './components/announcement/add-ann
     LeafletModule,
     NgxPaginationModule ,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgChartsModule
   ],
     
   providers: [],

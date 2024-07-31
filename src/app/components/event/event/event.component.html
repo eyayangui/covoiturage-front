@@ -120,7 +120,7 @@
           </div>
           <div class="mb-3">
             <label for="eventDate" class="form-label">Date :</label>
-            <input type="date" class="form-control" id="eventDate"[min]="today"  formControlName="eventDate">
+            <input type="date" class="form-control" id="eventDate" [min]="today" formControlName="eventDate">
             <div *ngIf="updateForm.get('eventDate')?.invalid && (updateForm.get('eventDate')?.dirty || updateForm.get('eventDate')?.touched)" class="text-danger">
               La date de l'evenement est obligatoire.
             </div>
@@ -141,7 +141,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <a type="submit" href="/event" class="btn btn-primary">Save changes</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
         </form>
       </div>

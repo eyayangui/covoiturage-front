@@ -26,8 +26,11 @@
               <button class="btn" (click)="getAnnouncementDriver()" title="Historique">
                 <img src="assets/brand/historyy.png" alt="All Annoncement" style="width: 24px; height: 24px;">
               </button>
-            </div>
-            </li>
+              </div>
+             </li>
+              <a class="btn" href="/history-driver" title="Mon historique">
+              <img src="assets/brand/history1.png" alt="All Annoncement" style="width: 24px; height: 24px;">
+              </a> 
           </ol>
         </div>
         <div class="card-body">
@@ -91,9 +94,6 @@
                                        
                         <p class="card-text"><li>Départ <strong>: {{ annoncement.departure }}</strong></p>
                         <p class="card-text"><li>Destination: <strong>: {{ annoncement.destination }}</strong></p>
-<!--                         <p class="card-text"><li>Créé par : <strong>{{ getCollaboratorName(annoncement.userId) }}</strong></li></p>
- -->
-
                         </div>
                         </div>
                       </div>

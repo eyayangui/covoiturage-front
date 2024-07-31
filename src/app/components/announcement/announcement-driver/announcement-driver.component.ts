@@ -13,6 +13,8 @@ import { forkJoin } from 'rxjs';
 import { RouteP } from 'src/app/Models/RouteP';
 import { RouteService } from 'src/app/services/Route/route.service';
 import * as Leaflet from 'leaflet';
+import { VehicleService } from 'src/app/services/vehicle.service';
+import { Vehicle } from 'src/app/Models/Vehicle';
 
 
 @Component({
@@ -41,8 +43,7 @@ export class AnnouncementDriverComponent implements OnInit {
   originalAnnouncements: AnnouncementDriver[] = [];
   collaborator?: CollaboratorDTO ;
   collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
-
- 
+  userId: number | undefined;
 
   
 
@@ -53,7 +54,7 @@ export class AnnouncementDriverComponent implements OnInit {
     private collaboratorsService: CollaboratorsService,
     private claimService: ClaimService , 
     private authService: AuthenticationService,
-
+    private vehicleService: VehicleService
    
 
   ) {
@@ -100,6 +101,7 @@ export class AnnouncementDriverComponent implements OnInit {
 
   ngOnInit(): void {
     this.announcementDriverDate();
+
     this.isAdmin = localStorage.getItem('role') === 'ADMINISTRATOR';
 
     const storedUser = localStorage.getItem('user');
@@ -107,7 +109,7 @@ export class AnnouncementDriverComponent implements OnInit {
       this.collaborator = JSON.parse(storedUser); 
     }
   }
- 
+  
 
   currentUserMatchesAnnouncementUserId(userId: number): boolean {
     const loggedInUserId = localStorage.getItem('userId');
@@ -187,6 +189,18 @@ export class AnnouncementDriverComponent implements OnInit {
       }
     );
   }
+  findAnnoncesByuserId(userId: number): void {
+    this.announcementDriverService.findAnnoncesByuserId(userId).subscribe(
+      (annoncements: AnnouncementDriver[]) => {
+        this.annoncements = annoncements;
+      },
+      (error: any) => {
+        console.error('Error fetching announcements:', error);
+      }
+    );
+  }
+  
+  
 
   deleteAnnouncementDriver(annonceID: number): void {
     Swal.fire({
@@ -218,37 +232,51 @@ export class AnnouncementDriverComponent implements OnInit {
 viewDetails(annonce: AnnouncementDriver, routeID: number): void {
   this.routeService.routeById(routeID).subscribe(
     (route: RouteP) => {
-      const assemblyPointsHtml = route.assemblyPoints && route.assemblyPoints.length > 0
-        ? `<p><strong>Points de rassemblement:</strong></p>
-           <ul>
-             ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
-           </ul>`
-        : '';
+      this.vehicleService.getVehiclesByCollaboratorId(annonce.userId).subscribe(
+        (vehicles: Vehicle[]) => {
+          const vehicle = vehicles.length > 0 ? vehicles[0] : null; // Assume the first vehicle for simplicity
 
-      Swal.fire({
-        title: annonce.rayon,
-        color: '#000',
-        html: `
-          <hr>
-          <p><li>Date de Covoiturage: <strong>${this.formatDateOnly(annonce.dateCovoiturage)}</strong></p>
-          <p><li>Nombre des places: <strong>${annonce.nbrPlaces}</strong></p>
-          <p><li>Prix: <strong>${annonce.prix === 0 ? 'Gratuit' : `${annonce.prix} DT`}</strong></p>
-          <p><li>Aller Retour: <strong>${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
-          <p><li>Heure de Depart: <strong>${annonce.heureDepart}</strong></p>
-          ${annonce.heureRetour ? `<p><li>Heure de Retour: <strong>${annonce.heureRetour}</strong></p>` : ''}
-          <p><li>Bagage: <strong>${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
-          <p><li>Fumer: <strong>${this.convertBooleanToYesNo(annonce.fumer)}</strong></p>
-          <p><li>Music: <strong>${this.convertBooleanToYesNo(annonce.music)}</strong></p>
-          <p><li>Climatiseur: <strong>${this.convertBooleanToYesNo(annonce.climatiseur)}</strong></p>
-          ${annonce.description ? `<p><li>Description: <strong>${annonce.description}</strong></p>` : ''}
-          <p><li>Date publication: <strong>${annonce.datePublication}</strong></p>
-          <hr>
-          <p><strong>Départ:</strong><br> ${route.departure}</p>
-          <p><strong>Destination:</strong><br> ${route.destination}</p>
-          ${assemblyPointsHtml}
-        `,
-        confirmButtonColor: '#ff7900',
-      });
+          const assemblyPointsHtml = route.assemblyPoints && route.assemblyPoints.length > 0
+            ? `<p><strong>Points de rassemblement:</strong></p>
+               <ul>
+                 ${route.assemblyPoints.map(point => `<li>${point.points}</li>`).join('')}
+               </ul>`
+            : '';
+
+          const vehicleInfoHtml = vehicle ? `<p><li> Voiture: <strong>${vehicle.brand} ${vehicle.model}</strong></p>` : '';
+
+          Swal.fire({
+            title: annonce.rayon,
+            color: '#000',
+            html: `
+              <hr>
+              <p><li>Date de Covoiturage: <strong>${this.formatDateOnly(annonce.dateCovoiturage)}</strong></p>
+              <p><li>Nombre des places: <strong>${annonce.nbrPlaces}</strong></p>
+              <p><li>Prix: <strong>${annonce.prix === 0 ? 'Gratuit' : `${annonce.prix} DT`}</strong></p>
+              <p><li>Aller Retour: <strong>${this.convertBooleanToYesNo(annonce.aller_Retour)}</strong></p>
+              <p><li>Heure de Depart: <strong>${annonce.heureDepart}</strong></p>
+              <p><li>Duree: <strong>${route.duration}</strong></p>
+              ${annonce.heureRetour ? `<p><li>Heure de Retour: <strong>${annonce.heureRetour}</strong></p>` : ''}
+              <p><li>Bagage: <strong>${this.convertBooleanToYesNo(annonce.bagage)}</strong></p>
+              <p><li>Fumer: <strong>${this.convertBooleanToYesNo(annonce.fumer)}</strong></p>
+              <p><li>Music: <strong>${this.convertBooleanToYesNo(annonce.music)}</strong></p>
+              <p><li>Climatiseur: <strong>${this.convertBooleanToYesNo(annonce.climatiseur)}</strong></p>
+              ${annonce.description ? `<p><li>Description: <strong>${annonce.description}</strong></p>` : ''}
+              <p><li>Date publication: <strong>${annonce.datePublication}</strong></p>
+              ${vehicleInfoHtml}
+              <hr>
+              <p><strong>Départ:</strong><br> ${route.departure}</p>
+              <p><strong>Destination:</strong><br> ${route.destination}</p>
+              ${assemblyPointsHtml}
+            `,
+            confirmButtonColor: '#ff7900',
+          });
+        },
+        error => {
+          console.error('Error fetching vehicle details:', error);
+          Swal.fire('Error', 'Failed to fetch vehicle details!', 'error');
+        }
+      );
     },
     error => {
       console.error('Error fetching route details:', error);
@@ -256,6 +284,8 @@ viewDetails(annonce: AnnouncementDriver, routeID: number): void {
     }
   );
 }
+
+
 
   openUpdateModal(announcement: AnnouncementDriver): void {
     this.selectedAnnouncement = announcement;

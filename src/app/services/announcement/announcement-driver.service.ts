@@ -44,4 +44,8 @@ export class AnnouncementDriverService {
     return this.http.get<AnnouncementDriver>(`${this.apiServerUrl}/announcement-driver/announcement-driver-by-rayon/${rayon}`);
     
   }
+
+  findAnnoncesByuserId(userId: any): Observable<AnnouncementDriver[]> {
+    return this.http.get<AnnouncementDriver[]>(`${this.apiServerUrl}/announcement-driver/announcement-by-user/${userId}`);
+  }
 }

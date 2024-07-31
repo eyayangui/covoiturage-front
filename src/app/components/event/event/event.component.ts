@@ -105,7 +105,7 @@ export class EventComponent implements OnInit {
         if (events.length === 0) {
           this.events = [];
           this.noEventsFound = true;
-          
+          location.reload();
 
         } else {
           this.events = events;
@@ -165,6 +165,8 @@ export class EventComponent implements OnInit {
           Swal.fire('Error', 'Failed to update announcement!', 'error');
         }
       );
+      location.reload();
+
 
     }
 

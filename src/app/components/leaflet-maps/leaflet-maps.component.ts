@@ -30,12 +30,14 @@ export class LeafletMapsComponent  {
   markers: Leaflet.Marker[] = [];
   departureAddress: string | undefined;
   destinationAddress: string | undefined;
+  durationAddress: string | undefined;
   assemblyPoints: string[] = [];
   annoncements: AnnouncementDriver[] = [];
   today: string = new Date().toISOString().split('T')[0]; // Add this line
-
+  routeDuration: string = '';
   isLoggedIn: boolean = false;
-
+  distance: number | null = null; // Distance en kilomètres
+  duration: number | null = null;
   options = {
     layers: [
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -162,99 +164,108 @@ export class LeafletMapsComponent  {
     }).addTo(this.map);
   }
    */
- addDeparture() {
-  const geocoder = (Leaflet.Control as any).geocoder({
-    defaultMarkGeocode: false
-  }).on('markgeocode', (e: any) => {
-    const latlng = e.geocode.center;
-    const address = e.geocode.name;
+  addDeparture() {
+    const geocoder = (Leaflet.Control as any).geocoder({
+      defaultMarkGeocode: false
+    }).on('markgeocode', (e: any) => {
+      const latlng = e.geocode.center;
+      const address = e.geocode.name;
 
-    const marker = Leaflet.marker(latlng).addTo(this.map);
-    marker.bindPopup(address).openPopup();
+      const marker = Leaflet.marker(latlng).addTo(this.map);
+      marker.bindPopup(address).openPopup();
 
-    marker.on('click', () => {
-      this.map.removeLayer(marker);
-      this.departureAddress = undefined; 
-      this.markers = this.markers.filter(m => m !== marker);
-      this.drawRouteBetweenPoints(); // Update route after removing marker
+      marker.on('click', () => {
+        this.map.removeLayer(marker);
+        this.departureAddress = undefined; // Optionally reset the departure address
+        this.markers = this.markers.filter(m => m !== marker);
+        this.drawRouteBetweenPoints(); // Update route after removing marker
+      });
+
+      this.map.panTo(latlng);
+      this.departureAddress = address;
+      this.markers.push(marker);
+
+      // Draw the route if both departure and destination are set
+      this.drawRouteBetweenPoints();
+    }).addTo(this.map);
+  }
+
+  addAssemblyPoints() {
+    const geocoder = (Leaflet.Control as any).geocoder({
+      defaultMarkGeocode: false
+    }).on('markgeocode', (e: any) => {
+      const latlng = e.geocode.center;
+      const address = e.geocode.name;
+
+      const marker = Leaflet.marker(latlng).addTo(this.map);
+      marker.bindPopup(address).openPopup();
+
+      marker.on('click', () => {
+        this.map.removeLayer(marker);
+        this.assemblyPoints = this.assemblyPoints.filter(point => point !== address);
+        this.markers = this.markers.filter(m => m !== marker);
+        this.drawRouteBetweenPoints(); // Update route after removing marker
+      });
+
+      this.map.panTo(latlng);
+      this.assemblyPoints.push(address);
+      this.markers.push(marker);
+
+      this.drawRouteBetweenPoints();
+    }).addTo(this.map);
+  }
+
+  addDestination() {
+    const redIcon = Leaflet.icon({
+      iconUrl: 'assets/marker-icon-red.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowUrl: 'assets/marker-shadow.png',
+      shadowSize: [41, 41]
     });
+    const geocoder = (Leaflet.Control as any).geocoder({
+      defaultMarkGeocode: false
+    }).on('markgeocode', (e: any) => {
+      const latlng = e.geocode.center;
+      const address = e.geocode.name;
 
-    this.map.panTo(latlng);
-    this.departureAddress = address;
-    this.markers.push(marker);
+      const marker = Leaflet.marker(latlng).addTo(this.map);
+      marker.bindPopup(address).openPopup();
 
-    this.drawRouteBetweenPoints();
-    
-  }).addTo(this.map);
- 
-}
+      marker.on('click', () => {
+        this.map.removeLayer(marker);
+        this.destinationAddress = undefined; // Optionally reset the destination address
+        this.markers = this.markers.filter(m => m !== marker);
+        this.drawRouteBetweenPoints(); // Update route after removing marker
+      });
 
-addAssemblyPoints() {
-  const geocoder = (Leaflet.Control as any).geocoder({
-    defaultMarkGeocode: false
-  }).on('markgeocode', (e: any) => {
-    const latlng = e.geocode.center;
-    const address = e.geocode.name;
+      this.map.panTo(latlng);
+      this.destinationAddress = address;
+      this.markers.push(marker);
 
-    const marker = Leaflet.marker(latlng).addTo(this.map);
-    marker.bindPopup(address).openPopup();
+      // Draw the route if both departure and destination are set
+      this.drawRouteBetweenPoints();
+    }).addTo(this.map);
+  }  
 
-    marker.on('click', () => {
-      this.map.removeLayer(marker);
-      this.assemblyPoints = this.assemblyPoints.filter(point => point !== address);
-      this.markers = this.markers.filter(m => m !== marker);
-      this.drawRouteBetweenPoints(); // Update route after removing marker
-    });
-
-    this.map.panTo(latlng);
-    this.assemblyPoints.push(address);
-    this.markers.push(marker);
-
-    this.drawRouteBetweenPoints();
-  }).addTo(this.map);
-}
-
-addDestination() {
-  const redIcon = Leaflet.icon({
-    iconUrl: 'assets/marker-icon-red.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'assets/marker-shadow.png',
-    shadowSize: [41, 41]
-  });
-  const geocoder = (Leaflet.Control as any).geocoder({
-    defaultMarkGeocode: false
-  }).on('markgeocode', (e: any) => {
-    const latlng = e.geocode.center;
-    const address = e.geocode.name;
-
-    const marker = Leaflet.marker(latlng).addTo(this.map);
-    marker.bindPopup(address).openPopup();
-
-    marker.on('click', () => {
-      this.map.removeLayer(marker);
-      this.destinationAddress = undefined; 
-      this.markers = this.markers.filter(m => m !== marker);
-      this.drawRouteBetweenPoints(); // Update route after removing marker
-    });
-
-    this.map.panTo(latlng);
-    this.destinationAddress = address;
-    this.markers.push(marker);
-
-    this.drawRouteBetweenPoints();
-  }).addTo(this.map);
-}  
   drawRouteBetweenPoints() {
+    const departureMarker = this.markers.find(m => m.getPopup()?.getContent() === this.departureAddress)?.getLatLng();
+    const destinationMarker = this.markers.find(m => m.getPopup()?.getContent() === this.destinationAddress)?.getLatLng();
+    if (departureMarker && destinationMarker && this.assemblyPoints.length > 0) {
+      const assemblyPointsLatLng = this.assemblyPoints.map(address => this.markers.find(m => m.getPopup()?.getContent() === address)?.getLatLng()!);
+      this.drawRoute(departureMarker, destinationMarker, assemblyPointsLatLng);
+    }
+  }
+/*   drawRouteBetweenPoints() {
     const departureMarker = this.markers.find(m => m.getPopup()?.getContent() === this.departureAddress)?.getLatLng();
     const destinationMarker = this.markers.find(m => m.getPopup()?.getContent() === this.destinationAddress)?.getLatLng();
     if (departureMarker && destinationMarker && this.assemblyPoints.length >= 0) {
       const assemblyPointsLatLng = this.assemblyPoints.map(address => this.markers.find(m => m.getPopup()?.getContent() === address)?.getLatLng()!);
       this.drawRoute(departureMarker, destinationMarker, assemblyPointsLatLng);
     }
-  }
-  
+  } */
+ 
   getAddress(lat: number, lng: number) {
     const geocoder = (Leaflet.Control as any).Geocoder.nominatim();
     return new Promise((resolve, reject) => {
@@ -285,27 +296,127 @@ addDestination() {
       console.error('Geolocation is not supported by this browser.');
     }
   }
-  drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
+/* drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
     if (this.routeControl) {
-      this.map.removeControl(this.routeControl);
+        this.map.removeControl(this.routeControl);
     }
-  
-    const waypoints = [startCoords, ...assemblyPoints, endCoords]; 
-    
+
+    const waypoints = [startCoords, ...assemblyPoints, endCoords];
+
+    // Créez le contrôle de routage sans marqueurs par défaut
     this.routeControl = Leaflet.Routing.control({
-      waypoints: waypoints,
-      routeWhileDragging: true,
-      showAlternatives: false,
-      lineOptions: {
-        styles: [{ color: 'blue', weight: 5 }],
-        addWaypoints: false,
-        extendToWaypoints: false,
-        missingRouteTolerance: 50 // You can adjust the tolerance value according to your needs
-      }
+        waypoints: waypoints,
+        routeWhileDragging: true,
+        showAlternatives: true,
+        lineOptions: {
+            styles: [{ color: 'blue', weight: 5 }],
+            addWaypoints: false,
+            extendToWaypoints: false,
+            missingRouteTolerance: 50
+        }
     }).addTo(this.map);
+
+    // Ajoutez vos propres marqueurs personnalisés
+    waypoints.forEach((latLng, i) => {
+        const marker = Leaflet.marker(latLng, {
+            draggable: true
+        }).on('click', () => {
+            this.map.removeLayer(marker);
+            this.markers = this.markers.filter(m => m.getLatLng() !== latLng);
+            this.drawRouteBetweenPoints(); // Met à jour la route après la suppression du marqueur
+        }).addTo(this.map);
+        this.markers.push(marker);
+    });
+} */
+/* drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
+  if (this.routeControl) {
+    this.map.removeControl(this.routeControl);
   }
+
+  const waypoints = [startCoords, ...assemblyPoints, endCoords];
+
+  this.routeControl = Leaflet.Routing.control({
+    waypoints: waypoints,
+    routeWhileDragging: true,
+    showAlternatives: true,
+    lineOptions: {
+      styles: [{ color: 'blue', weight: 5 }],
+      addWaypoints: false,
+      extendToWaypoints: false,
+      missingRouteTolerance: 50
+    }
+  }).addTo(this.map);
+
+  // Écouter les événements de routage pour obtenir la distance et la durée
+  this.routeControl.on('routesfound', (e: any) => {
+    const route = e.routes[0]; // Première route trouvée
+    this.distance = route.summary.totalDistance / 1000; // Convertir en kilomètres
+    this.duration = route.summary.totalTime / 60; // Convertir en minutes
+
+    console.log(`Distance: ${this.distance.toFixed(2)} km`);
+    console.log(`Duration: ${Math.floor(this.duration)} min`);
+  });
+
+  // Ajoutez vos propres marqueurs personnalisés si nécessaire
+  waypoints.forEach((latLng, i) => {
+    const marker = Leaflet.marker(latLng, {
+      draggable: true
+    }).on('click', () => {
+      this.map.removeLayer(marker);
+      this.markers = this.markers.filter(m => m.getLatLng() !== latLng);
+      this.drawRouteBetweenPoints(); // Met à jour la route après la suppression du marqueur
+    }).addTo(this.map);
+    this.markers.push(marker);
+  });
+} */
+
+drawRoute(startCoords: Leaflet.LatLng, endCoords: Leaflet.LatLng, assemblyPoints: Leaflet.LatLng[]) {
+  if (this.routeControl) {
+    this.map.removeControl(this.routeControl);
+  }
+
+  const waypoints = [startCoords, ...assemblyPoints, endCoords]; // Include all waypoints
+
+  this.routeControl = Leaflet.Routing.control({
+    waypoints: waypoints,
+    routeWhileDragging: true,
+    showAlternatives: false,
+    lineOptions: {
+      styles: [{ color: 'blue', weight: 5 }],
+      addWaypoints: false,
+      extendToWaypoints: false,
+      missingRouteTolerance: 50 // You can adjust the tolerance value according to your needs
+    }
+  }).addTo(this.map);
+  this.routeControl.on('routesfound', (e: any) => {
+    const route = e.routes[0];
+    this.distance = route.summary.totalDistance / 1000; // Convertir en kilomètres
   
+    const totalDurationMinutes = route.summary.totalTime / 60; // Convertir en minutes
+    const hours = Math.floor(totalDurationMinutes / 60);
+    const minutes = Math.round(totalDurationMinutes % 60);
   
+    this.routeDuration = `${hours}h ${minutes}min`;
+  
+    console.log(`Distance: ${this.distance.toFixed(2)} km`);
+    console.log(`Duration: ${this.routeDuration}`);
+  });
+  
+
+  // Ajoutez vos propres marqueurs personnalisés si nécessaire
+  waypoints.forEach((latLng, i) => {
+    const marker = Leaflet.marker(latLng, {
+      draggable: true
+    }).on('click', () => {
+      this.map.removeLayer(marker);
+      this.markers = this.markers.filter(m => m.getLatLng() !== latLng);
+      this.drawRouteBetweenPoints(); // Met à jour la route après la suppression du marqueur
+    }).addTo(this.map);
+    this.markers.push(marker);
+  });
+
+}
+
 
   geocodeLatLng(latlng: Leaflet.LatLng) {
     this.geocoder.reverse(latlng, this.map.getZoom(), (results: any) => {
@@ -323,7 +434,7 @@ addDestination() {
   }
 
   // Méthode pour ajouter une route
-  addRoute() {
+ /*  addRoute() {
     if (!this.departureAddress || !this.destinationAddress) {
       console.error('Le point de départ ou la destination est manquant.');
       return;
@@ -333,6 +444,7 @@ addDestination() {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point
@@ -344,7 +456,31 @@ addDestination() {
     }, error => {
       console.error('Erreur lors de l\'ajout de la route', error);
     });
+  } */
+  addRoute() {
+    if (!this.departureAddress || !this.destinationAddress) {
+      console.error('Le point de départ ou la destination est manquant.');
+      return;
+    }
+  
+    const route: RouteP = {
+      routeID: 0, // L'ID sera généré par le backend
+      departure: this.departureAddress,
+      destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
+      assemblyPoints: this.assemblyPoints.map((point, index) => ({
+        assemblyPointsID: index,
+        points: point
+      }))
+    };
+  
+    this.routeService.addRoute(route).subscribe(response => {
+      console.log('Route ajoutée avec succès', response);
+    }, error => {
+      console.error('Erreur lors de l\'ajout de la route', error);
+    });
   }
+  
   onAddSubmit(): void {
     
     const newAnnouncement: AnnouncementDriver = this.addForm.value;
@@ -369,7 +505,7 @@ selectRayonAdd(rayon: string): void {
   this.addForm.get('rayon')?.setValue(rayon);
 }
 
-addRouteAndAnnouncement() {
+/* addRouteAndAnnouncement() {
   if (!this.departureAddress || !this.destinationAddress) {
       console.error('Le point de départ ou la destination est manquant.');
       return;
@@ -422,7 +558,61 @@ addRouteAndAnnouncement() {
   }, error => {
       console.error('Erreur lors de l\'ajout de la route', error);
   });
+} */
+
+addRouteAndAnnouncement() {
+  if (!this.departureAddress || !this.destinationAddress) {
+    console.error('Le point de départ ou la destination est manquant.');
+    return;
+  }
+
+  // Récupérer l'identifiant du collaborateur à partir du stockage local
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    console.error('User ID not found in local storage.');
+    return; 
+  }
+
+  // Convertir l'identifiant du collaborateur en nombre
+  const userIdNumber = parseInt(userId, 10);
+  if (isNaN(userIdNumber)) {
+    console.error('User ID is not a valid number.');
+    return;
+  }
+
+  const route: RouteP = {
+    routeID: 0, // L'ID sera généré par le backend
+    departure: this.departureAddress,
+    destination: this.destinationAddress,
+    duration: this.routeDuration, // Assigner la durée calculée
+    assemblyPoints: this.assemblyPoints.map((point, index) => ({
+      assemblyPointsID: index,
+      points: point
+    }))
+  };
+
+  // Ajouter la route
+  this.routeService.addRoute(route).subscribe(response => {
+    console.log('Route ajoutée avec succès', response);
+
+    // Maintenant que la route est ajoutée, soumettre l'annonce
+    const newAnnouncement: AnnouncementDriver = this.addForm.value;
+    newAnnouncement.routeID = response.routeID; // Assigner l'ID de la route à l'annonce
+    newAnnouncement.userId = userIdNumber; // Associer l'annonce à l'utilisateur connecté
+    this.announcementDriverService.addAnnouncementDriver(newAnnouncement).subscribe(
+      (announcementDriverService: AnnouncementDriver) => {
+        Swal.fire('Success', 'Announcement added successfully!', 'success');
+        this.router.navigate(['/annoncement-driver']);
+        this.addForm.reset();
+      },
+      (error: any) => {
+        console.error('Error adding announcement:', error);
+        Swal.fire('Error', 'Failed to add announcement!', 'error');
+      }
+    );
+
+  }, error => {
+    console.error('Erreur lors de l\'ajout de la route', error);
+  });
 }
-
-
 }
