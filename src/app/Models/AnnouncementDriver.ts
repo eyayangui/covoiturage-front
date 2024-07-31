@@ -1,5 +1,6 @@
 
     export interface AnnouncementDriver {
+        collaboratorId: number | undefined;
         annonceID: number;
         aller_Retour: Boolean;
         heureDepart: string;

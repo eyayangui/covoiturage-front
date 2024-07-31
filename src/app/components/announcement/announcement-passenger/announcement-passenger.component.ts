@@ -50,7 +50,7 @@ export class AnnouncementPassengerComponent implements OnInit  {
   originalAnnouncements: AnnoncePassenger[] = [];
   collaboratorMap: Map<number, CollaboratorDTO> = new Map<number, CollaboratorDTO>();
   collaborator?: CollaboratorDTO ;
-
+  routeDuration: string = '';
   totalPages: number;
   options = {
     layers: [
@@ -675,6 +675,8 @@ const route: RouteP = {
   routeID: 0, 
   departure: this.departureAddress,
   destination: this.destinationAddress,
+  duration: this.routeDuration, // Assigner la durée calculée
+
   assemblyPoints: this.assemblyPoints.map((point, index) => ({
     assemblyPointsID: index,
     points: point
@@ -700,6 +702,8 @@ updateRouteAndAnnouncement() {
     routeID: this.routeIDToUpdate,
     departure: this.departureAddress,
     destination: this.destinationAddress,
+    duration: this.routeDuration, // Assigner la durée calculée
+
     assemblyPoints: this.assemblyPoints.map((point, index) => ({
       assemblyPointsID: index,
       points: point

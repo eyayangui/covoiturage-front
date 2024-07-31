@@ -36,48 +36,49 @@
     </div>
   </nav>
   
-
-    <nav class="navbar navbar-expand-lg" aria-label="Global navigation - Standard example" *ngIf="collaborator">
-      <div class="container-xxl">
-  
-        <!-- Orange brand logo -->
-        <div class="navbar-brand me-auto me-lg-4">
-          <a class="stretched-link" href="/annoncement-driver">
-            <img src="assets/brand/logo.png" alt="Covoiturage" loading="lazy">
-          </a>
-          <h1 class="title">Covoiturage</h1>
-        </div>
-  
-        <!-- Burger menu (visible on small screens) -->
-        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target=".global-header-1" aria-controls="global-header-1.1 global-header-1.2" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-  
-        <!-- Navbar with links -->
-        <div id="global-header-1.1" class="navbar-collapse collapse me-lg-auto global-header-1">
-          <ul class="navbar-nav">
-            <a class="nav-link" routerLink="/event" routerLinkActive="active-link" aria-current="page">Evènement</a>
-            <div *ngIf="isAdmin">
-            <a class="nav-link"  routerLink="/claim" routerLinkActive="active-link"  aria-current="page">KPI</a>
+      <nav class="navbar navbar-expand-lg" aria-label="Global navigation - Standard example">
+        <div class="container-xxl">
+    
+          <!-- Orange brand logo -->
+          <div class="navbar-brand me-auto me-lg-4">
+            <a class="stretched-link" href="/annoncement-driver">
+              <img src="assets/brand/logo.png" alt="Covoiturage" loading="lazy">
+            </a>
+            <h1 class="title">Covoiturage</h1>
           </div>
-
-          </ul>
-        </div>
-         
-      
-        <!-- Navbar with action icons -->
-        <div id="global-header-1.2" class="navbar-collapse collapse d-sm-flex global-header-1">
-          <ul class="navbar-nav flex-row">
-            <li class="nav-item">
-              <a href="#" class="nav-link nav-icon">
-                <svg width="1.5rem" height="1.5rem" fill="currentColor" aria-hidden="true" focusable="false" class="overflow-visible">
-                </svg>
-                <span class="visually-hidden">Search</span>
-              </a>
-            </li>
-            <form class="d-flex navbar-item ms-3" role="search">
-<!--               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
- --><!--               <button class="btn btn-primary" type="submit">Search</button>
+    
+          <!-- Burger menu (visible on small screens) -->
+          <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target=".global-header-1" aria-controls="global-header-1.1 global-header-1.2" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <!-- Navbar with links -->
+          <div id="global-header-1.1" class="navbar-collapse collapse me-lg-auto global-header-1">
+            <ul class="navbar-nav" style="margin-bottom: 10px ;">
+              <a class="nav-link" routerLink="/event" routerLinkActive="active-link" aria-current="page">Evènement</a>
+              <div *ngIf="isAdmin">
+              <a class="nav-link"  routerLink="/KPI" routerLinkActive="active-link"  aria-current="page">KPI</a>
+            </div>
+  
+  
+  
+            </ul>
+          </div>
+           
+        
+          <!-- Navbar with action icons -->
+          <div id="global-header-1.2" class="navbar-collapse collapse d-sm-flex global-header-1">
+            <ul class="navbar-nav flex-row">
+              <li class="nav-item">
+                <a href="#" class="nav-link nav-icon">
+                  <svg width="1.5rem" height="1.5rem" fill="currentColor" aria-hidden="true" focusable="false" class="overflow-visible">
+                  </svg>
+                  <span class="visually-hidden">Search</span>
+                </a>
+              </li>
+              <form class="d-flex navbar-item ms-3" role="search">
+<!--                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+ --><!--                 <button class="btn btn-primary" type="submit">Search</button>
  -->                           
             </form>
             <li class="nav-item">

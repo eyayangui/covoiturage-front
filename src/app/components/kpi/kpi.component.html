@@ -1,0 +1,97 @@
+<div class="container">
+    <!-- Boutons de navigation -->
+    <div class="row mt-4" id="navButtons">
+      <div class="col-md-12">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-dark" [class.btn-active]="isDriverChartSelected" (click)="switchToDriverCharts()">Graphiques Conducteur</button>
+          <button type="button" class="btn btn-dark" [class.btn-active]="isPassengerChartSelected" (click)="switchToPassengerCharts()">Graphiques Passager</button>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4" id="chartButtons">
+      <div class="col-md-12">
+        <div class="btn-group mt-2" role="group">
+          <button type="button" class="btn btn-secondary" [class.active]="currentChart === 'year'" (click)="switchChart('year', 'yearSection')">Année</button>
+          <button type="button" class="btn btn-secondary" [class.active]="currentChart === 'month'" (click)="switchChart('month', 'monthSection')">Mois</button>
+          <button type="button" class="btn btn-secondary" [class.active]="currentChart === 'rayon'" (click)="switchChart('rayon', 'rayonSection')">Rayon</button>
+          <button *ngIf="isDriverChartSelected" type="button" class="btn btn-secondary" [class.active]="currentChart === 'price'" (click)="switchChart('price', 'priceSection')">Prix</button>
+        </div>
+      </div>
+    </div>
+    <!-- Graphique Nombre d'annonces par année -->
+    <div class="row mt-4" *ngIf="currentChart === 'year'">
+      <div class="col-md-12">
+        <div class="card card-custom">
+          <div class="card-header">
+            Nombre d'annonces par année
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+                    [datasets]="yearChartData.datasets"
+                    [labels]="yearChartData.labels"
+                    [options]="barChartOptions"
+                    chartType="bar">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Graphique Nombre d'annonces par mois -->
+    <div class="row mt-4" *ngIf="currentChart === 'month'">
+      <div class="col-md-12">
+        <div class="card card-custom">
+          <div class="card-header">
+            Nombre d'annonces par mois
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+                    [datasets]="monthChartData.datasets"
+                    [labels]="monthChartData.labels"
+                    [options]="pieChartOptions"
+                    chartType="pie">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Graphique Nombre d'annonces par rayon -->
+    <div class="row mt-4" *ngIf="currentChart === 'rayon'">
+      <div class="col-md-12">
+        <div class="card card-custom">
+          <div class="card-header">
+            Nombre d'annonces par rayon
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+                    [datasets]="pieChartDataSet.datasets"
+                    [labels]="pieChartDataSet.labels"
+                    [options]="pieChartOptions"
+                    chartType="pie">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Graphique Nombre d'annonces par prix -->
+    <div class="row mt-4" *ngIf="currentChart === 'price'">
+      <div class="col-md-12">
+        <div class="card card-custom">
+          <div class="card-header">
+            Nombre d'annonces par prix
+          </div>
+          <div class="card-body">
+            <canvas baseChart
+            [datasets]="priceChartData.datasets"
+            [labels]="priceChartData.labels"
+            [options]="barChartOptions"
+            chartType="bar">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

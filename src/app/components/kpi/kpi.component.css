@@ -1,0 +1,41 @@
+.card.card-custom {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .card.card-custom .card-header {
+    background-color: #ff7300;
+    color: #fff;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .card.card-custom .card-body {
+    padding: 15px;
+  }
+  
+  /* Style pour le titre du graphique */
+  .card.card-custom .card-header {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Style pour le corps du graphique */
+  .card.card-custom .card-body {
+    text-align: center;
+  }
+  
+  /* Style pour le graphique lui-même */
+  .card.card-custom canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+  .btn-active {
+    background-color: #fd8420; /* Couleur de fond sombre */
+    color: white; /* Couleur du texte blanc */
+    border-color: #fd8420; /* Couleur de la bordure sombre */
+  }
+  

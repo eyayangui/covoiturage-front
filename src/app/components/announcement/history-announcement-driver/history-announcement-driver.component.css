@@ -1,0 +1,142 @@
+.btn-orange-border {
+    border: 3px solid rgb(241, 241, 239);
+    border-radius: 4px;
+    padding: 4px;
+    display: inline-block;
+  }
+  
+  .content{
+   
+    box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
+    
+  }
+  .btn-orange {
+    background-color: #ff7900; 
+    
+}
+  
+  .swal2-confirm.buttonsStyling {
+    background-color: orange !important; /* Changer la couleur de fond en orange */
+    border-color: orange !important;     /* Changer la couleur de la bordure en orange */
+    color: white !important;             /* Assurez-vous que le texte soit visible */
+  }
+  .orange-border {
+    border: 2px solid rgb(250, 250, 250);
+  }
+  .btn-orange {
+    background-color: #f8790a; /* Couleur orange */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-orange:hover {
+    background-color: #e67e22; /* Couleur orange foncé au survol */
+}
+.orange-border {
+  border: 2px solid rgb(122, 121, 121);
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.card-container {
+  height: 200px; 
+
+}
+.dropdown-menu {
+  margin-top: 10px; 
+  width: 20px; 
+  height: 50px; 
+}
+.btn-group {
+  margin-top: 10px; 
+  width: 30px; 
+  height: 10px; 
+}
+
+.pagination .page-item .page-link {
+  cursor: pointer;
+}
+
+.pagination .page-item.disabled .page-link {
+  cursor: not-allowed;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+.small-button {
+  padding: 2px 5px; 
+}
+
+.small-button img {
+  width: 25px; 
+  height: 25px; 
+}
+/* .card-body6{
+  width: 1900px; 
+  height: 3700px; 
+} */
+.small-button {
+  padding: 0.25rem 0.5rem;
+}
+
+
+
+.d-inline {
+  display: inline-block;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.card-body .d-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body .justify-content-end {
+  justify-content: flex-end;
+}
+.card-container {
+  background-color: #fcf8f2d7;
+ 
+}
+
+
+.d-flex.align-items-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.d-flex.align-items-center {
+  margin-block-end: auto;
+}
+
+/* .height_cards{
+  hei
+} */
+.card-container {
+  background-color: #fcf8f2d7;
+ 
+}
+.card{
+  background-color: #fcf8f2d7;
+}
+
+
+
+

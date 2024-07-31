@@ -22,6 +22,9 @@ import { AddAnnouncementPassengerComponent } from './components/announcement/add
 import { MapComponent } from './components/map/map.component';
 import { UpdateAnnouncementPassengerComponent } from './components/announcement/update-announcement-passenger/update-announcement-passenger.component';
 import { AddAnnouncementEventComponent } from './components/announcement/add-announcement-event/add-announcement-event.component';
+import { HistoryAnnouncementDriverComponent } from './components/announcement/history-announcement-driver/history-announcement-driver.component';
+import { HistoryAnnouncementPassenerComponent } from './components/announcement/history-announcement-passener/history-announcement-passener.component';
+import { KPIComponent } from './components/kpi/kpi.component';
 import { ManageBookingComponent } from './components/manage-booking/manage-booking.component';
 
 
@@ -34,7 +37,7 @@ const routes: Routes = [
   {path: "annoncement-passenger" , component: AnnouncementPassengerComponent,canActivate: [authGuard]},
   {path: "add-annoncement-passenger" , component: AddAnnouncementPassengerComponent,canActivate: [authGuard]},
   {path: "annoncement-driver" , component: AnnouncementDriverComponent},
-  { path: 'announcement-details/:id', component: AnnouncementDetailsComponent,canActivate: [authGuard] },
+  {path: 'announcement-details/:id', component: AnnouncementDetailsComponent,canActivate: [authGuard] },
   {path: "claim" , component: ClaimComponent,canActivate: [authGuard]},
   {path: "route" , component: RouteComponent,canActivate: [authGuard]},
   {path: "add-annoncement-driver" , component: LeafletMapsComponent,canActivate: [authGuard]},
@@ -48,6 +51,9 @@ const routes: Routes = [
   { path: 'choose-model', component: ChooseModelComponent, canActivate: [authGuard] },
   { path: 'upload', component: FileUploadComponent, canActivate: [authGuard] },
   { path: 'profil', component: ProfileComponent, canActivate: [authGuard]},
+  { path: 'history-driver', component: HistoryAnnouncementDriverComponent, canActivate: [authGuard]},
+  { path: 'history-passenger', component: HistoryAnnouncementPassenerComponent, canActivate: [authGuard]},
+  { path: 'KPI', component: KPIComponent, canActivate: [authGuard]},
   { path: 'booking/:id', component: ManageBookingComponent, canActivate: [authGuard]},
 
 ];

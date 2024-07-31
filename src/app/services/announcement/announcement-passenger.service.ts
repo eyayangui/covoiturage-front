@@ -41,4 +41,7 @@ export class AnnouncementPassengerService {
     return this.http.get<AnnoncePassenger>(`${this.apiServerUrl}/announcement-passenger/announcement-passenger-by-rayon/${rayon}`);
     
   }
+  findAnnoncesPassagerByuserId(userId: any): Observable<AnnoncePassenger[]> {
+    return this.http.get<AnnoncePassenger[]>(`${this.apiServerUrl}/announcement-passenger/announcement-passener-by-user/${userId}`);
+  }
 }

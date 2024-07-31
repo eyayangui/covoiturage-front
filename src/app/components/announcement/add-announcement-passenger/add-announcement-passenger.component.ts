@@ -31,7 +31,7 @@ export class AddAnnouncementPassengerComponent {
   annoncements: AnnoncePassenger[] = [];
   drawnRoutes: Leaflet.Polyline[] = [];
   today: string = new Date().toISOString().split('T')[0]; 
-
+  routeDuration: string = '';
 
  
   options = {
@@ -286,6 +286,8 @@ export class AddAnnouncementPassengerComponent {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
+
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point
@@ -342,6 +344,8 @@ addRouteAndAnnouncement() {
     routeID: 0, // L'ID sera généré par le backend
     departure: this.departureAddress,
     destination: this.destinationAddress,
+    duration: this.routeDuration, // Assigner la durée calculée
+
     assemblyPoints: this.assemblyPoints.map((point, index) => ({
       assemblyPointsID: index,
       points: point

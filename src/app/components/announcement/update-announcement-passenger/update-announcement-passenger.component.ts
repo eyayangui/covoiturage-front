@@ -36,6 +36,7 @@ export class UpdateAnnouncementPassengerComponent implements OnInit{
   isLoggedIn: boolean = false;
   assemblyPointsIDToUpdate: number | undefined;
   assemblyPoint: AssemblyPoint[] = [];
+  routeDuration: string = '';
 
 
 
@@ -296,6 +297,8 @@ addDestination() {
       routeID: 0, // L'ID sera généré par le backend
       departure: this.departureAddress,
       destination: this.destinationAddress,
+      duration: this.routeDuration, // Assigner la durée calculée
+
       assemblyPoints: this.assemblyPoints.map((point, index) => ({
         assemblyPointsID: index,
         points: point
@@ -373,6 +376,8 @@ updateRouteAndAnnouncement() {
     routeID: this.routeIDToUpdate,
     departure: this.departureAddress,
     destination: this.destinationAddress,
+    duration: this.routeDuration, // Assigner la durée calculée
+
     assemblyPoints: this.assemblyPoints.map((point, index) => ({
       assemblyPointsID: index,
       points: point
